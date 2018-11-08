@@ -1,3 +1,3 @@
-import TextInput from "./TextInput";
+import TreeTable from "./TreeTable.jsx";
 
-export {TextInput};
+export {TreeTable};
