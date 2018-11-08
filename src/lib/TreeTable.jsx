@@ -30,12 +30,10 @@ class TreeTable extends React.Component {
     }
 
     rowExpandOrCollapse = (selectedRowID) => {
-        console.log(selectedRowID);
         let newTree = (function recurse(children) {
             return children.map(node => {
-                console.log(node);
-                let setExpanded = node.rowID === selectedRowID ? true : node.expanded;
-                let setVisible = node.parentRowID === selectedRowID ? true : node.visible;
+                let setExpanded = node.rowID === selectedRowID ? !node.expanded : node.expanded;
+                let setVisible = node.parentRowID === selectedRowID ? !node.visible : node.visible;
                 return Object.assign({}, node, {
                     visible: setVisible,
                     expanded: setExpanded,
@@ -87,10 +85,9 @@ class TreeTable extends React.Component {
         headingRows.push(this.props.columnHeadings.map((heading) =>
             <th key={heading}>{heading}</th>
         ));
-        console.log(this.state.enhancedTableData);
         let tableBody = this.generateTableBody(this.props.dataFields, this.state.enhancedTableData);
         return (
-            <table className="table">
+            <table className="table table-bordered">
                 <thead>
                 <tr>
                     {headingRows}
