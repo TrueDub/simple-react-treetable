@@ -59,8 +59,7 @@ class TreeTable extends React.Component {
         return tableBody;
     }
 
-    processDataRow(dataFields, dataRow) {
-        let rowBody = [];
+    generateExpandColumn(dataRow, key, dataField) {
         if (dataRow.children.length > 0) {
             let iconCell = <FontAwesomeIcon icon={faAngleRight}
                                             onClick={this.rowExpandOrCollapse.bind(this, dataRow.rowID)}/>;
@@ -68,26 +67,39 @@ class TreeTable extends React.Component {
                 iconCell = <FontAwesomeIcon icon={faAngleDown}
                                             onClick={this.rowExpandOrCollapse.bind(this, dataRow.rowID)}/>;
             }
-            rowBody.push(<td key="f0">{iconCell}</td>);
+            return (<td key={key}>{iconCell} <span className="expandCell">{dataRow.data[dataField]}</span></td>);
         } else {
-            rowBody.push(<td key="f0"></td>);
+            return (<td key={key}><span className="expandCell">{dataRow.data[dataField]}</span></td>);
         }
+    }
+
+    processDataRow(dataFields, dataRow) {
+        let rowBody = [];
         rowBody.push(dataFields.map((dataField, index) => {
                 let key = dataRow.parentRowID + "-" + dataRow.rowID + '-' + index;
-                return (<td key={key}>{dataRow.data[dataField]}</td>)
+                if (index === 0) {
+                    return this.generateExpandColumn(dataRow, key, dataField);
+                } else {
+                    return (<td key={key}>{dataRow.data[dataField]}</td>)
+                }
             }
         ));
         return rowBody;
     }
 
-    render() {
-        let headingRows = [<th key="r0"></th>];
+    generateHeaderRow() {
+        let headingRows = [];
         headingRows.push(this.props.columnHeadings.map((heading) =>
             <th key={heading}>{heading}</th>
         ));
+        return headingRows;
+    }
+
+    render() {
+        let headingRows = this.generateHeaderRow();
         let tableBody = this.generateTableBody(this.props.dataFields, this.state.enhancedTableData);
         return (
-            <table className="table table-bordered">
+            <table className="table">
                 <thead>
                 <tr>
                     {headingRows}
