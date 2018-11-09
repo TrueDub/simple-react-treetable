@@ -29,7 +29,7 @@ class TreeTable extends React.Component {
         })(tree);
     }
 
-    rowExpandOrCollapse = (selectedRowID) => {
+    rowExpandOrCollapse(selectedRowID) {
         let newTree = (function recurse(children) {
             return children.map(node => {
                 let setExpanded = node.rowID === selectedRowID ? !node.expanded : node.expanded;

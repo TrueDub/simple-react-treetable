@@ -1,0 +1,11 @@
+.shown {
+
+}
+
+.hidden {
+    display: none;
+}
+
+.expandCell {
+    padding-left: 1em;
+}

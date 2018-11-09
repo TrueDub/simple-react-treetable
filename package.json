@@ -9,8 +9,9 @@
     "prop-types": "^15.6.2"
   },
   "scripts": {
+    "clean": "node buildScript/deleteDistFolder.js",
     "start": "react-scripts start",
-    "build": "rm -rf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__",
+    "build": "npm run clean && babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -18,8 +19,10 @@
     "extends": "react-app"
   },
   "devDependencies": {
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.5",
     "@babel/preset-react": "^7.0.0",
-    "babel-cli": "^6.26.0",
+    "del": "^3.0.0",
     "react": "^16.6.1",
     "react-dom": "^16.6.1",
     "react-scripts": "2.1.1"
