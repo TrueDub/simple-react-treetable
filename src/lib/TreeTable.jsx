@@ -80,10 +80,10 @@ class TreeTable extends React.Component {
 
     generateExpandColumn(dataRow, key, dataField) {
         if (dataRow.children && dataRow.children.length > 0) {
-            let iconCell = <FontAwesomeIcon icon={faAngleRight}
+            let iconCell = <FontAwesomeIcon icon={faAngleRight} fixedWidth
                                             onClick={this.rowExpandOrCollapse.bind(this, dataRow.rowID)}/>;
             if (dataRow.expanded) {
-                iconCell = <FontAwesomeIcon icon={faAngleDown}
+                iconCell = <FontAwesomeIcon icon={faAngleDown} fixedWidth
                                             onClick={this.rowExpandOrCollapse.bind(this, dataRow.rowID)}/>;
             }
             return (<td key={key}><span
@@ -92,7 +92,9 @@ class TreeTable extends React.Component {
             );
         } else {
             return (
-                <td key={key}><span style={{marginLeft: dataRow.rowLevel + 'em'}}>{dataRow.data[dataField]}</span>
+                <td key={key}><span style={{marginLeft: (dataRow.rowLevel + 1.25) + 'em'}}>
+                    <span className="iconPadding">{dataRow.data[dataField]}</span>
+                </span>
                 </td>);
         }
     }
