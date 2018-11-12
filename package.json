@@ -1,6 +1,6 @@
 {
-  "name": "bootstrap-react-treetable",
-  "version": "0.1.0",
+  "name": "simple-react-treetable",
+  "version": "0.2.0",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "files": [
@@ -9,9 +9,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/TrueDub/bootstrap-react-treetable"
+    "url": "https://github.com/TrueDub/simple-react-treetable"
   },
-  "homepage": "https://github.com/TrueDub/bootstrap-react-treetable#readme",
+  "homepage": "https://github.com/TrueDub/simple-react-treetable#readme",
   "license": "MIT",
   "scripts": {
     "clean": "node buildScript/deleteDistFolder.js",
