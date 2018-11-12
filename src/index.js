@@ -72,7 +72,7 @@ let tableData = [
     }
 ];
 let control = {
-    tableClasses: ["table"]
+    tableClasses: "table table-bordered"
 };
 
 const App = () => (

@@ -9,7 +9,6 @@ class TreeTable extends React.Component {
 
     constructor(props) {
         super(props);
-        this.rowExpandOrCollapse = this.rowExpandOrCollapse.bind(this);
         this.state = {enhancedTableData: this.generateStateTableData(this.props.tableData)};
     }
 
@@ -20,7 +19,7 @@ class TreeTable extends React.Component {
                 return Object.assign({}, node, {
                     rowID: rowID,
                     parentRowID: parent,
-                    visible: parent === 0 ? true : false,
+                    visible: parent === 0,
                     expanded: false,
                     children: recurse(node.children, rowID)
                 })
@@ -45,7 +44,7 @@ class TreeTable extends React.Component {
 
     generateTableBody(dataFields, tableData) {
         let tableBody = [];
-        tableData.forEach((dataRow, index) => {
+        tableData.forEach((dataRow) => {
                 let rowData = this.processDataRow(dataFields, dataRow);
                 let key = dataRow.parentRowID + "-" + dataRow.rowID;
                 let rowClass = dataRow.visible ? "shown" : "hidden";
@@ -120,7 +119,9 @@ TreeTable.propTypes = {
             data: PropTypes.object,
             children: PropTypes.arrayOf(PropTypes.object)
         })),
-    control: PropTypes.object
-}
+    control: PropTypes.shape({
+        tableClasses: PropTypes.string
+    })
+};
 
 export default TreeTable;
