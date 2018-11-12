@@ -113,9 +113,11 @@ describe('testing the TreeTable enhancedTableData setup', () => {
         expect(enhancedTableData[0].rowID).toBe(1);
         expect(enhancedTableData[0].expanded).toBe(false);
         expect(enhancedTableData[0].visible).toBe(true);
+        expect(enhancedTableData[0].rowLevel).toBe(1);
         expect(enhancedTableData[0].children[0].rowID).toBe(2);
         expect(enhancedTableData[0].children[0].expanded).toBe(false);
         expect(enhancedTableData[0].children[0].visible).toBe(false);
+        expect(enhancedTableData[0].children[0].rowLevel).toBe(2);
         expect(enhancedTableData[0].children[1].rowID).toBe(3);
         expect(enhancedTableData[0].children[1].expanded).toBe(false);
         expect(enhancedTableData[0].children[1].visible).toBe(false);
@@ -125,6 +127,7 @@ describe('testing the TreeTable enhancedTableData setup', () => {
         expect(enhancedTableData[0].children[2].children[0].rowID).toBe(5);
         expect(enhancedTableData[0].children[2].children[0].expanded).toBe(false);
         expect(enhancedTableData[0].children[2].children[0].visible).toBe(false);
+        expect(enhancedTableData[0].children[2].children[0].rowLevel).toBe(3);
         expect(enhancedTableData[1].rowID).toBe(6);
         expect(enhancedTableData[1].expanded).toBe(false);
         expect(enhancedTableData[1].visible).toBe(true);
@@ -160,6 +163,47 @@ describe('testing the TreeTable enhancedTableData setup', () => {
         expect(enhancedTableData[0].children[2].children[0].expanded).toBe(false);
         expect(enhancedTableData[0].children[2].children[0].visible).toBe(false);
     });
+    it('children of line 5 - sub-children - become hidden when collapse is clicked', () => {
+        const wrapper = shallow(<TreeTable columnHeadings={headings} dataFields={dataFields} tableData={tableData}
+                                           control={control}/>);
+        const instance = wrapper.instance();
+        let enhancedTableData = wrapper.state('enhancedTableData');
+        expect(enhancedTableData[0].expanded).toBe(false);
+        expect(enhancedTableData[0].visible).toBe(true);
+        expect(enhancedTableData[0].children[0].expanded).toBe(false);
+        expect(enhancedTableData[0].children[0].visible).toBe(false);
+        expect(enhancedTableData[0].children[1].expanded).toBe(false);
+        expect(enhancedTableData[0].children[1].visible).toBe(false);
+        expect(enhancedTableData[0].children[2].expanded).toBe(false);
+        expect(enhancedTableData[0].children[2].visible).toBe(false);
+        expect(enhancedTableData[0].children[2].children[0].expanded).toBe(false);
+        expect(enhancedTableData[0].children[2].children[0].visible).toBe(false);
+        instance.rowExpandOrCollapse(1); //expanded
+        enhancedTableData = wrapper.state('enhancedTableData');
+        expect(enhancedTableData[0].expanded).toBe(true);
+        expect(enhancedTableData[0].visible).toBe(true);
+        expect(enhancedTableData[0].children[0].expanded).toBe(false);
+        expect(enhancedTableData[0].children[0].visible).toBe(true);
+        expect(enhancedTableData[0].children[1].expanded).toBe(false);
+        expect(enhancedTableData[0].children[1].visible).toBe(true);
+        expect(enhancedTableData[0].children[2].expanded).toBe(false);
+        expect(enhancedTableData[0].children[2].visible).toBe(true);
+        expect(enhancedTableData[0].children[2].children[0].expanded).toBe(false);
+        expect(enhancedTableData[0].children[2].children[0].visible).toBe(false);
+        instance.rowExpandOrCollapse(5); //expanded
+        instance.rowExpandOrCollapse(1); //parent collapsed
+        enhancedTableData = wrapper.state('enhancedTableData');
+        expect(enhancedTableData[0].expanded).toBe(false);
+        expect(enhancedTableData[0].visible).toBe(true);
+        expect(enhancedTableData[0].children[0].expanded).toBe(false);
+        expect(enhancedTableData[0].children[0].visible).toBe(false);
+        expect(enhancedTableData[0].children[1].expanded).toBe(false);
+        expect(enhancedTableData[0].children[1].visible).toBe(false);
+        expect(enhancedTableData[0].children[2].expanded).toBe(false);
+        expect(enhancedTableData[0].children[2].visible).toBe(false);
+        expect(enhancedTableData[0].children[2].children[0].expanded).toBe(false);
+        expect(enhancedTableData[0].children[2].children[0].visible).toBe(false);
+    });
 });
 
 describe('testing the DataTable enhancedTableData setup', () => {
@@ -172,6 +216,7 @@ describe('testing the DataTable enhancedTableData setup', () => {
         expect(enhancedTableData[0].rowID).toBe(1);
         expect(enhancedTableData[0].expanded).toBe(false);
         expect(enhancedTableData[0].visible).toBe(true);
+        expect(enhancedTableData[0].rowLevel).toBe(1);
         expect(enhancedTableData[1].rowID).toBe(2);
         expect(enhancedTableData[1].expanded).toBe(false);
         expect(enhancedTableData[1].visible).toBe(true);

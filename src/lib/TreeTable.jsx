@@ -13,16 +13,17 @@ class TreeTable extends React.Component {
     }
 
     generateStateTableData(tree, n = 1) {
-        return (function recurse(children, parent = 0) {
+        return (function recurse(children, parent = 0, rowLevel = 1) {
             if (children) {
                 return children.map(node => {
                     let rowID = n++;
                     return Object.assign({}, node, {
                         rowID: rowID,
+                        rowLevel: rowLevel,
                         parentRowID: parent,
                         visible: parent === 0,
                         expanded: false,
-                        children: recurse(node.children, rowID)
+                        children: recurse(node.children, rowID, rowLevel + 1)
                     })
                 });
             }
@@ -30,19 +31,37 @@ class TreeTable extends React.Component {
     }
 
     rowExpandOrCollapse(selectedRowID) {
-        let newTree = (function recurse(children) {
+        let newTree = this.expandOrCollapseAll(this.state.enhancedTableData, selectedRowID, false, false);
+        this.setState({enhancedTableData: newTree});
+    };
+
+    expandOrCollapseAll(data, selectedRowID, expandAll, collapseAll) {
+        let newTree = (function recurse(children, expandBranch = expandAll, collapseBranch = collapseAll) {
             return children.map(node => {
                 let setExpanded = node.rowID === selectedRowID ? !node.expanded : node.expanded;
                 let setVisible = node.parentRowID === selectedRowID ? !node.visible : node.visible;
+                if (expandBranch) {
+                    setExpanded = true;
+                    setVisible = true;
+                }
+                if (collapseBranch) {
+                    setExpanded = false;
+                    setVisible = false;
+                }
+                //collapse and hide all below
+                if (node.parentRowID === selectedRowID && !setVisible) {
+                    collapseBranch = true;
+                }
                 return Object.assign({}, node, {
                     visible: setVisible,
                     expanded: setExpanded,
-                    children: recurse(node.children)
+                    children: recurse(node.children, expandBranch, collapseBranch)
                 })
             });
-        })(this.state.enhancedTableData);
-        this.setState({enhancedTableData: newTree});
+        })(data);
+        return newTree;
     };
+
 
     generateTableBody(dataFields, tableData) {
         let tableBody = [];
@@ -67,9 +86,14 @@ class TreeTable extends React.Component {
                 iconCell = <FontAwesomeIcon icon={faAngleDown}
                                             onClick={this.rowExpandOrCollapse.bind(this, dataRow.rowID)}/>;
             }
-            return (<td key={key}>{iconCell} <span className="expandCell">{dataRow.data[dataField]}</span></td>);
+            return (<td key={key}><span
+                    style={{marginLeft: dataRow.rowLevel + 'em'}}>{iconCell}<span
+                    className="iconPadding">{dataRow.data[dataField]}</span></span></td>
+            );
         } else {
-            return (<td key={key}><span className="expandCell">{dataRow.data[dataField]}</span></td>);
+            return (
+                <td key={key}><span style={{marginLeft: dataRow.rowLevel + 'em'}}>{dataRow.data[dataField]}</span>
+                </td>);
         }
     }
 

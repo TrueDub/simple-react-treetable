@@ -103,9 +103,9 @@ let control = {
 
 const App = () => (
     <div style={{width: 640, margin: "15px auto"}}>
-        <h1>Bootstrap React TreeTable Demo</h1>
+        <h1>Simple React TreeTable Demo</h1>
         <TreeTable columnHeadings={headings} dataFields={dataFields} tableData={tableData} control={control}/>
-        <h1>Bootstrap React TreeTable as DataTable</h1>
+        <h1>Simple React TreeTable as DataTable</h1>
         <TreeTable columnHeadings={headings} dataFields={dataFields} tableData={dataTableData} control={control}/>
     </div>
 );
