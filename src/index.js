@@ -71,6 +71,32 @@ let tableData = [
         children: []
     }
 ];
+let dataTableData = [
+    {
+        data: {
+            name: "name0",
+            dataType: "string0",
+            example: "ex0",
+            description: "desc0"
+        }
+    },
+    {
+        data: {
+            name: "name1",
+            dataType: "string1",
+            example: "ex1",
+            description: "desc1"
+        }
+    },
+    {
+        data: {
+            name: "name2",
+            dataType: "string2",
+            example: "ex2",
+            description: "desc2"
+        }
+    }
+];
 let control = {
     tableClasses: "table table-bordered"
 };
@@ -79,6 +105,8 @@ const App = () => (
     <div style={{width: 640, margin: "15px auto"}}>
         <h1>Bootstrap React TreeTable Demo</h1>
         <TreeTable columnHeadings={headings} dataFields={dataFields} tableData={tableData} control={control}/>
+        <h1>Bootstrap React TreeTable as DataTable</h1>
+        <TreeTable columnHeadings={headings} dataFields={dataFields} tableData={dataTableData} control={control}/>
     </div>
 );
 

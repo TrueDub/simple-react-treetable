@@ -73,11 +73,37 @@ let tableData = [
         children: []
     }
 ];
+let dataTableData = [
+    {
+        data: {
+            name: "name0",
+            dataType: "string0",
+            example: "ex0",
+            description: "desc0"
+        }
+    },
+    {
+        data: {
+            name: "name1",
+            dataType: "string1",
+            example: "ex1",
+            description: "desc1"
+        }
+    },
+    {
+        data: {
+            name: "name2",
+            dataType: "string2",
+            example: "ex2",
+            description: "desc2"
+        }
+    }
+];
 let control = {
     tableClasses: "table table-bordered"
 };
 
-describe('testing the enhancedTableData setup', () => {
+describe('testing the TreeTable enhancedTableData setup', () => {
     it('should start by adding row IDs correctly', () => {
         const wrapper = shallow(<TreeTable columnHeadings={headings} dataFields={dataFields} tableData={tableData}
                                            control={control}/>);
@@ -133,5 +159,24 @@ describe('testing the enhancedTableData setup', () => {
         expect(enhancedTableData[0].children[2].visible).toBe(true);
         expect(enhancedTableData[0].children[2].children[0].expanded).toBe(false);
         expect(enhancedTableData[0].children[2].children[0].visible).toBe(false);
+    });
+});
+
+describe('testing the DataTable enhancedTableData setup', () => {
+    it('should start by adding row IDs correctly', () => {
+        const wrapper = shallow(<TreeTable columnHeadings={headings} dataFields={dataFields} tableData={dataTableData}
+                                           control={control}/>);
+        const instance = wrapper.instance();
+        let enhancedTableData = wrapper.state('enhancedTableData');
+        expect(enhancedTableData.length).toBe(3);
+        expect(enhancedTableData[0].rowID).toBe(1);
+        expect(enhancedTableData[0].expanded).toBe(false);
+        expect(enhancedTableData[0].visible).toBe(true);
+        expect(enhancedTableData[1].rowID).toBe(2);
+        expect(enhancedTableData[1].expanded).toBe(false);
+        expect(enhancedTableData[1].visible).toBe(true);
+        expect(enhancedTableData[2].rowID).toBe(3);
+        expect(enhancedTableData[2].expanded).toBe(false);
+        expect(enhancedTableData[2].visible).toBe(true);
     });
 });

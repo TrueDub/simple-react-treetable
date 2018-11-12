@@ -14,16 +14,18 @@ class TreeTable extends React.Component {
 
     generateStateTableData(tree, n = 1) {
         return (function recurse(children, parent = 0) {
-            return children.map(node => {
-                let rowID = n++;
-                return Object.assign({}, node, {
-                    rowID: rowID,
-                    parentRowID: parent,
-                    visible: parent === 0,
-                    expanded: false,
-                    children: recurse(node.children, rowID)
-                })
-            });
+            if (children) {
+                return children.map(node => {
+                    let rowID = n++;
+                    return Object.assign({}, node, {
+                        rowID: rowID,
+                        parentRowID: parent,
+                        visible: parent === 0,
+                        expanded: false,
+                        children: recurse(node.children, rowID)
+                    })
+                });
+            }
         })(tree);
     }
 
@@ -58,7 +60,7 @@ class TreeTable extends React.Component {
     }
 
     generateExpandColumn(dataRow, key, dataField) {
-        if (dataRow.children.length > 0) {
+        if (dataRow.children && dataRow.children.length > 0) {
             let iconCell = <FontAwesomeIcon icon={faAngleRight}
                                             onClick={this.rowExpandOrCollapse.bind(this, dataRow.rowID)}/>;
             if (dataRow.expanded) {
