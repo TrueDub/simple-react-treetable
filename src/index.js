@@ -2,6 +2,8 @@ import React from 'react';
 import {render} from "react-dom";
 import TreeTable from "./lib/TreeTable";
 
+import 'bootstrap/dist/css/bootstrap.css';
+
 let headings = ["fred1", "fred2", "fred3", "fred4"];
 let dataFields = ["name", "dataType", "example", "description"];
 let tableData = [
@@ -69,11 +71,14 @@ let tableData = [
         children: []
     }
 ];
+let control = {
+    tableClasses: ["table"]
+};
 
 const App = () => (
     <div style={{width: 640, margin: "15px auto"}}>
         <h1>Bootstrap React TreeTable Demo</h1>
-        <TreeTable columnHeadings={headings} dataFields={dataFields} tableData={tableData}/>
+        <TreeTable columnHeadings={headings} dataFields={dataFields} tableData={tableData} control={control}/>
     </div>
 );
 

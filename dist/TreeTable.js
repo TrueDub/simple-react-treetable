@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleRight, faAngleDown } from '@fortawesome/free-solid-svg-icons';
-import "bootstrap/dist/css/bootstrap.css";
 import "./TreeTable.css";
 
 class TreeTable extends React.Component {
@@ -121,7 +120,7 @@ class TreeTable extends React.Component {
     let headingRows = this.generateHeaderRow();
     let tableBody = this.generateTableBody(this.props.dataFields, this.state.enhancedTableData);
     return React.createElement("table", {
-      className: "table"
+      className: this.props.control.tableClasses
     }, React.createElement("thead", null, React.createElement("tr", null, headingRows)), React.createElement("tbody", null, tableBody));
   }
 
@@ -133,6 +132,7 @@ TreeTable.propTypes = {
   tableData: PropTypes.arrayOf(PropTypes.shape({
     data: PropTypes.object,
     children: PropTypes.arrayOf(PropTypes.object)
-  }))
+  })),
+  control: PropTypes.object
 };
 export default TreeTable;

@@ -1,3 +1,3 @@
-import TreeTable from "./TreeTable.jsx";
+import TreeTable from "./TreeTable";
 
 export {TreeTable};
