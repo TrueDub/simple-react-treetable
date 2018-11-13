@@ -89,10 +89,27 @@ let dataTableData = [{
 let control = {
   tableClasses: "table table-bordered"
 };
+let columns = [{
+  heading: "fred1",
+  fixedWidth: true,
+  percentageWidth: 25
+}, {
+  heading: "fred2",
+  fixedWidth: true,
+  percentageWidth: 10
+}, {
+  heading: "fred3",
+  fixedWidth: true,
+  percentageWidth: 25
+}, {
+  heading: "fred4",
+  fixedWidth: true,
+  percentageWidth: 40
+}];
 describe('testing the SimpleTreeTable enhancedTableData setup', () => {
   it('each row has the correct row ID and setup', () => {
     const wrapper = shallow(React.createElement(SimpleTreeTable, {
-      columnHeadings: headings,
+      columns: columns,
       dataFields: dataFields,
       tableData: tableData,
       control: control
@@ -124,9 +141,101 @@ describe('testing the SimpleTreeTable enhancedTableData setup', () => {
     expect(enhancedTableData[2].expanded).toBe(false);
     expect(enhancedTableData[2].visible).toBe(true);
   });
+  it('undefined data fields are dealt with', () => {
+    let localTableData = [{
+      data: {
+        name: "name0",
+        dataType: "string0",
+        example: "ex0",
+        description: ""
+      },
+      children: [{
+        data: {
+          name: "name0-0",
+          dataType: "string0-0",
+          example: "ex0-0",
+          description: "desc0-0"
+        },
+        children: []
+      }, {
+        data: {
+          name: "name0-1",
+          dataType: "string0-1",
+          example: "ex0-1",
+          description: "desc0-1"
+        },
+        children: []
+      }, {
+        data: {
+          name: "name0-2",
+          dataType: "string0-2",
+          example: "ex0-2",
+          description: "desc0-2"
+        },
+        children: [{
+          data: {
+            name: "name0-2-1",
+            dataType: "string0-2-1",
+            example: "ex0-2-1",
+            description: "desc0-2-1"
+          },
+          children: []
+        }]
+      }]
+    }, {
+      data: {
+        name: "name1",
+        dataType: "string1",
+        example: "ex1"
+      },
+      children: []
+    }, {
+      data: {
+        name: "name2",
+        dataType: "string2",
+        example: "ex2",
+        description: "desc2"
+      },
+      children: []
+    }];
+    const wrapper = shallow(React.createElement(SimpleTreeTable, {
+      columns: columns,
+      dataFields: dataFields,
+      tableData: localTableData,
+      control: control
+    }));
+    let enhancedTableData = wrapper.state('enhancedTableData');
+    expect(enhancedTableData.length).toBe(3);
+    expect(enhancedTableData[0].rowID).toBe(1);
+    expect(enhancedTableData[0].expanded).toBe(false);
+    expect(enhancedTableData[0].visible).toBe(true);
+    expect(enhancedTableData[0].rowLevel).toBe(1);
+    expect(enhancedTableData[0].children[0].rowID).toBe(2);
+    expect(enhancedTableData[0].children[0].expanded).toBe(false);
+    expect(enhancedTableData[0].children[0].visible).toBe(false);
+    expect(enhancedTableData[0].children[0].rowLevel).toBe(2);
+    expect(enhancedTableData[0].children[1].rowID).toBe(3);
+    expect(enhancedTableData[0].children[1].expanded).toBe(false);
+    expect(enhancedTableData[0].children[1].visible).toBe(false);
+    expect(enhancedTableData[0].children[2].rowID).toBe(4);
+    expect(enhancedTableData[0].children[2].expanded).toBe(false);
+    expect(enhancedTableData[0].children[2].visible).toBe(false);
+    expect(enhancedTableData[0].children[2].children[0].rowID).toBe(5);
+    expect(enhancedTableData[0].children[2].children[0].expanded).toBe(false);
+    expect(enhancedTableData[0].children[2].children[0].visible).toBe(false);
+    expect(enhancedTableData[0].children[2].children[0].rowLevel).toBe(3);
+    expect(enhancedTableData[1].rowID).toBe(6);
+    expect(enhancedTableData[1].expanded).toBe(false);
+    expect(enhancedTableData[1].visible).toBe(true);
+    expect(enhancedTableData[2].rowID).toBe(7);
+    expect(enhancedTableData[2].expanded).toBe(false);
+    expect(enhancedTableData[2].visible).toBe(true);
+  });
+});
+describe('testing the expand and collapse functionality', () => {
   it('children of line 1 become visible when expand is clicked', () => {
     const wrapper = shallow(React.createElement(SimpleTreeTable, {
-      columnHeadings: headings,
+      columns: columns,
       dataFields: dataFields,
       tableData: tableData,
       control: control
@@ -158,7 +267,7 @@ describe('testing the SimpleTreeTable enhancedTableData setup', () => {
   });
   it('children of line 5 - sub-children - become hidden when collapse is clicked', () => {
     const wrapper = shallow(React.createElement(SimpleTreeTable, {
-      columnHeadings: headings,
+      columns: columns,
       dataFields: dataFields,
       tableData: tableData,
       control: control
@@ -206,7 +315,7 @@ describe('testing the SimpleTreeTable enhancedTableData setup', () => {
   });
   it('all lines are expanded when ExpandAll is performed', () => {
     const wrapper = shallow(React.createElement(SimpleTreeTable, {
-      columnHeadings: headings,
+      columns: columns,
       dataFields: dataFields,
       tableData: tableData,
       control: control
@@ -250,7 +359,7 @@ describe('testing the SimpleTreeTable enhancedTableData setup', () => {
 describe('testing the DataTable enhancedTableData setup', () => {
   it('should start by adding row IDs correctly', () => {
     const wrapper = shallow(React.createElement(SimpleTreeTable, {
-      columnHeadings: headings,
+      columns: columns,
       dataFields: dataFields,
       tableData: dataTableData,
       control: control

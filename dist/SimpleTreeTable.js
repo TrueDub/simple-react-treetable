@@ -122,10 +122,11 @@ class SimpleTreeTable extends React.Component {
         });
       }
 
-      if (this.props.control.fixedWidthColumns) {
+      if (this.props.columns[0].fixedWidth) {
         return React.createElement("td", {
           key: key,
-          width: this.props.control.columnWidths[0] + '%'
+          className: this.props.columns[0].styleClass,
+          width: this.props.columns[0].percentageWidth + '%'
         }, React.createElement("span", {
           style: {
             marginLeft: dataRow.rowLevel + 'em'
@@ -135,7 +136,8 @@ class SimpleTreeTable extends React.Component {
         }, dataRow.data[dataField])));
       } else {
         return React.createElement("td", {
-          key: key
+          key: key,
+          className: this.props.columns[0].styleClass
         }, React.createElement("span", {
           style: {
             marginLeft: dataRow.rowLevel + 'em'
@@ -145,10 +147,11 @@ class SimpleTreeTable extends React.Component {
         }, dataRow.data[dataField])));
       }
     } else {
-      if (this.props.control.fixedWidthColumns) {
+      if (this.props.columns[0].fixedWidth) {
         return React.createElement("td", {
           key: key,
-          width: this.props.control.columnWidths[0] + '%'
+          className: this.props.columns[0].styleClass,
+          width: this.props.columns[0].percentageWidth + '%'
         }, React.createElement("span", {
           style: {
             marginLeft: dataRow.rowLevel + 1.25 + 'em'
@@ -158,7 +161,8 @@ class SimpleTreeTable extends React.Component {
         }, dataRow.data[dataField])));
       } else {
         return React.createElement("td", {
-          key: key
+          key: key,
+          className: this.props.columns[0].styleClass
         }, React.createElement("span", {
           style: {
             marginLeft: dataRow.rowLevel + 1.25 + 'em'
@@ -174,19 +178,26 @@ class SimpleTreeTable extends React.Component {
     let rowBody = [];
     rowBody.push(dataFields.map((dataField, index) => {
       let key = dataRow.parentRowID + "-" + dataRow.rowID + '-' + index;
+      let output = dataRow.data[dataField];
+
+      if (this.props.columns[index].renderer) {
+        output = this.props.columns[index].renderer(dataRow, dataField);
+      }
 
       if (index === 0) {
         return this.generateExpandColumn(dataRow, key, dataField);
       } else {
-        if (this.props.control.fixedWidthColumns) {
+        if (this.props.columns[index].fixedWidth) {
           return React.createElement("td", {
             key: key,
-            width: this.props.control.columnWidths[index] + '%'
-          }, dataRow.data[dataField]);
+            className: this.props.columns[index].styleClass,
+            width: this.props.columns[index].percentageWidth + '%'
+          }, output);
         } else {
           return React.createElement("td", {
-            key: key
-          }, dataRow.data[dataField]);
+            key: key,
+            className: this.props.columns[index].styleClass
+          }, output);
         }
       }
     }));
@@ -196,14 +207,14 @@ class SimpleTreeTable extends React.Component {
   generateHeaderRow() {
     let headingRows = [];
 
-    if (this.props.columnHeadings) {
-      headingRows.push(this.props.columnHeadings.map(heading => React.createElement("th", {
-        key: heading
-      }, heading)));
+    if (this.props.columns) {
+      headingRows.push(this.props.columns.map(column => React.createElement("th", {
+        key: column.heading
+      }, column.heading)));
     } else {
-      headingRows.push(this.props.dataFields.map(heading => React.createElement("th", {
-        key: heading
-      }, heading)));
+      headingRows.push(this.props.dataFields.map(fieldName => React.createElement("th", {
+        key: fieldName
+      }, fieldName)));
     }
 
     return headingRows;
@@ -223,7 +234,6 @@ class SimpleTreeTable extends React.Component {
 }
 
 SimpleTreeTable.propTypes = {
-  columnHeadings: PropTypes.arrayOf(PropTypes.string),
   dataFields: PropTypes.arrayOf(PropTypes.string).isRequired,
   tableData: PropTypes.arrayOf(PropTypes.shape({
     data: PropTypes.object,
@@ -232,9 +242,14 @@ SimpleTreeTable.propTypes = {
   control: PropTypes.shape({
     tableClasses: PropTypes.string,
     buttonClasses: PropTypes.string,
-    showButton: PropTypes.bool,
-    fixedWidthColumns: PropTypes.bool,
-    columnWidths: PropTypes.arrayOf(PropTypes.number)
-  })
+    showButton: PropTypes.bool
+  }),
+  columns: PropTypes.arrayOf(PropTypes.shape({
+    heading: PropTypes.string,
+    fixedWidth: PropTypes.bool,
+    percentageWidth: PropTypes.number,
+    styleClass: PropTypes.string,
+    renderer: PropTypes.func
+  }))
 };
 export default SimpleTreeTable;
