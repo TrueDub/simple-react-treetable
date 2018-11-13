@@ -6,7 +6,6 @@ configure({
   adapter: new Adapter()
 });
 let headings = ["fred1", "fred2", "fred3", "fred4"];
-let dataFields = ["name", "dataType", "example", "description"];
 let tableData = [{
   data: {
     name: "name0",
@@ -90,18 +89,22 @@ let control = {
   tableClasses: "table table-bordered"
 };
 let columns = [{
+  dataField: "name",
   heading: "fred1",
   fixedWidth: true,
   percentageWidth: 25
 }, {
+  dataField: "dataType",
   heading: "fred2",
   fixedWidth: true,
   percentageWidth: 10
 }, {
+  dataField: "example",
   heading: "fred3",
   fixedWidth: true,
   percentageWidth: 25
 }, {
+  dataField: "description",
   heading: "fred4",
   fixedWidth: true,
   percentageWidth: 40
@@ -110,7 +113,6 @@ describe('testing the SimpleTreeTable enhancedTableData setup', () => {
   it('each row has the correct row ID and setup', () => {
     const wrapper = shallow(React.createElement(SimpleTreeTable, {
       columns: columns,
-      dataFields: dataFields,
       tableData: tableData,
       control: control
     }));
@@ -200,7 +202,6 @@ describe('testing the SimpleTreeTable enhancedTableData setup', () => {
     }];
     const wrapper = shallow(React.createElement(SimpleTreeTable, {
       columns: columns,
-      dataFields: dataFields,
       tableData: localTableData,
       control: control
     }));
@@ -236,7 +237,6 @@ describe('testing the expand and collapse functionality', () => {
   it('children of line 1 become visible when expand is clicked', () => {
     const wrapper = shallow(React.createElement(SimpleTreeTable, {
       columns: columns,
-      dataFields: dataFields,
       tableData: tableData,
       control: control
     }));
@@ -268,7 +268,6 @@ describe('testing the expand and collapse functionality', () => {
   it('children of line 5 - sub-children - become hidden when collapse is clicked', () => {
     const wrapper = shallow(React.createElement(SimpleTreeTable, {
       columns: columns,
-      dataFields: dataFields,
       tableData: tableData,
       control: control
     }));
@@ -316,7 +315,6 @@ describe('testing the expand and collapse functionality', () => {
   it('all lines are expanded when ExpandAll is performed', () => {
     const wrapper = shallow(React.createElement(SimpleTreeTable, {
       columns: columns,
-      dataFields: dataFields,
       tableData: tableData,
       control: control
     }));
@@ -360,7 +358,6 @@ describe('testing the DataTable enhancedTableData setup', () => {
   it('should start by adding row IDs correctly', () => {
     const wrapper = shallow(React.createElement(SimpleTreeTable, {
       columns: columns,
-      dataFields: dataFields,
       tableData: dataTableData,
       control: control
     }));

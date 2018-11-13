@@ -2,7 +2,6 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import SimpleTreeTable from "./SimpleTreeTable";
 
-let dataFields = ["name", "dataType", "example", "description"];
 let tableData = [
     {
         data: {
@@ -100,15 +99,15 @@ let controlWithButton = {
     showButton: true
 };
 let columns = [
-    {heading: "fred1", fixedWidth: true, percentageWidth: 25},
-    {heading: "fred2", fixedWidth: true, percentageWidth: 10},
-    {heading: "fred3", fixedWidth: true, percentageWidth: 25},
-    {heading: "fred4", fixedWidth: true, percentageWidth: 40}
+    {dataField: "name", heading: "fred1", fixedWidth: true, percentageWidth: 25},
+    {dataField: "dataType", heading: "fred2", fixedWidth: true, percentageWidth: 10},
+    {dataField: "example", heading: "fred3", fixedWidth: true, percentageWidth: 25},
+    {dataField: "description", heading: "fred4", fixedWidth: true, percentageWidth: 40}
 ];
 
 test('component renders as expected', () => {
     const component = renderer.create(
-        <SimpleTreeTable columns={columns} dataFields={dataFields} tableData={tableData} control={controlWithButton}/>,
+        <SimpleTreeTable columns={columns} tableData={tableData} control={controlWithButton}/>,
     );
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();

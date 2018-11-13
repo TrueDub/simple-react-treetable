@@ -8,10 +8,11 @@ let descriptionRenderer = function (dataRow, dataField) {
     return <span><span dangerouslySetInnerHTML={{__html: dataRow.data[dataField]}}></span></span>
 };
 let fixedColumns = [
-    {heading: "fred1", fixedWidth: true, percentageWidth: 25},
-    {heading: "fred2", fixedWidth: true, percentageWidth: 10},
-    {heading: "fred3", fixedWidth: true, percentageWidth: 25},
+    {dataField: "name", heading: "fred1", fixedWidth: true, percentageWidth: 25},
+    {dataField: "dataType", heading: "fred2", fixedWidth: true, percentageWidth: 10},
+    {dataField: "example", heading: "fred3", fixedWidth: true, percentageWidth: 25},
     {
+        dataField: "description",
         heading: "fred4",
         fixedWidth: true,
         percentageWidth: 40,
@@ -19,12 +20,11 @@ let fixedColumns = [
     }
 ];
 let unFixedColumns = [
-    {heading: "fred1", fixedWidth: false},
-    {heading: "fred2", fixedWidth: false},
-    {heading: "fred3", fixedWidth: false},
-    {heading: "fred4", fixedWidth: false}
+    {dataField: "name", heading: "fred1", fixedWidth: false},
+    {dataField: "dataType", heading: "fred2", fixedWidth: false},
+    {dataField: "example", heading: "fred3", fixedWidth: false},
+    {dataField: "description", heading: "fred4", fixedWidth: false}
 ];
-let dataFields = ["name", "dataType", "example", "description"];
 let tableData = [
     {
         data: {
@@ -130,11 +130,9 @@ let controlWithoutButton = {
 const App = () => (
     <div style={{width: 640, margin: "15px auto"}}>
         <h1>Simple React TreeTable Demo</h1>
-        <SimpleTreeTable columns={fixedColumns} dataFields={dataFields} tableData={tableData}
-                         control={controlWithButton}/>
+        <SimpleTreeTable columns={fixedColumns} tableData={tableData} control={controlWithButton}/>
         <h1>Simple React TreeTable as DataTable</h1>
-        <SimpleTreeTable columns={unFixedColumns} dataFields={dataFields} tableData={dataTableData}
-                         control={controlWithoutButton}/>
+        <SimpleTreeTable columns={unFixedColumns} tableData={dataTableData} control={controlWithoutButton}/>
     </div>
 );
 

@@ -88,10 +88,10 @@ class SimpleTreeTable extends React.Component {
     }(data);
   }
 
-  generateTableBody(dataFields, tableData) {
+  generateTableBody(tableData) {
     let tableBody = [];
     tableData.forEach(dataRow => {
-      let rowData = this.processDataRow(dataFields, dataRow);
+      let rowData = this.processDataRow(dataRow);
       let key = dataRow.parentRowID + "-" + dataRow.rowID;
       let rowClass = dataRow.visible ? "shown" : "hidden";
       tableBody.push(React.createElement("tr", {
@@ -100,7 +100,7 @@ class SimpleTreeTable extends React.Component {
       }, rowData));
 
       if (dataRow.children) {
-        tableBody.push(...this.generateTableBody(dataFields, dataRow.children));
+        tableBody.push(...this.generateTableBody(dataRow.children));
       }
     });
     return tableBody;
@@ -174,29 +174,29 @@ class SimpleTreeTable extends React.Component {
     }
   }
 
-  processDataRow(dataFields, dataRow) {
+  processDataRow(dataRow) {
     let rowBody = [];
-    rowBody.push(dataFields.map((dataField, index) => {
+    rowBody.push(this.props.columns.map((column, index) => {
       let key = dataRow.parentRowID + "-" + dataRow.rowID + '-' + index;
-      let output = dataRow.data[dataField];
+      let output = dataRow.data[column.dataField];
 
-      if (this.props.columns[index].renderer) {
-        output = this.props.columns[index].renderer(dataRow, dataField);
+      if (column.renderer) {
+        output = this.props.columns[index].renderer(dataRow, column.dataField);
       }
 
       if (index === 0) {
-        return this.generateExpandColumn(dataRow, key, dataField);
+        return this.generateExpandColumn(dataRow, key, column.dataField);
       } else {
-        if (this.props.columns[index].fixedWidth) {
+        if (column.fixedWidth) {
           return React.createElement("td", {
             key: key,
-            className: this.props.columns[index].styleClass,
-            width: this.props.columns[index].percentageWidth + '%'
+            className: column.styleClass,
+            width: column.percentageWidth + '%'
           }, output);
         } else {
           return React.createElement("td", {
             key: key,
-            className: this.props.columns[index].styleClass
+            className: column.styleClass
           }, output);
         }
       }
@@ -212,9 +212,9 @@ class SimpleTreeTable extends React.Component {
         key: column.heading
       }, column.heading)));
     } else {
-      headingRows.push(this.props.dataFields.map(fieldName => React.createElement("th", {
-        key: fieldName
-      }, fieldName)));
+      headingRows.push(this.props.columns.map(column => React.createElement("th", {
+        key: column.dataField
+      }, column.dataField)));
     }
 
     return headingRows;
@@ -222,7 +222,7 @@ class SimpleTreeTable extends React.Component {
 
   render() {
     let headingRows = this.generateHeaderRow();
-    let tableBody = this.generateTableBody(this.props.dataFields, this.state.enhancedTableData);
+    let tableBody = this.generateTableBody(this.state.enhancedTableData);
     return React.createElement("div", null, React.createElement("button", {
       onClick: this.expandOrCollapseAll.bind(this),
       className: this.props.control.showButton ? this.props.control.buttonClasses : "hidden"
@@ -234,7 +234,6 @@ class SimpleTreeTable extends React.Component {
 }
 
 SimpleTreeTable.propTypes = {
-  dataFields: PropTypes.arrayOf(PropTypes.string).isRequired,
   tableData: PropTypes.arrayOf(PropTypes.shape({
     data: PropTypes.object,
     children: PropTypes.arrayOf(PropTypes.object)
@@ -245,6 +244,7 @@ SimpleTreeTable.propTypes = {
     showButton: PropTypes.bool
   }),
   columns: PropTypes.arrayOf(PropTypes.shape({
+    dataField: PropTypes.string.isRequired,
     heading: PropTypes.string,
     fixedWidth: PropTypes.bool,
     percentageWidth: PropTypes.number,

@@ -1,7 +1,6 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 import SimpleTreeTable from "./SimpleTreeTable";
-let dataFields = ["name", "dataType", "example", "description"];
 let tableData = [{
   data: {
     name: "name0",
@@ -87,18 +86,22 @@ let controlWithButton = {
   showButton: true
 };
 let columns = [{
+  dataField: "name",
   heading: "fred1",
   fixedWidth: true,
   percentageWidth: 25
 }, {
+  dataField: "dataType",
   heading: "fred2",
   fixedWidth: true,
   percentageWidth: 10
 }, {
+  dataField: "example",
   heading: "fred3",
   fixedWidth: true,
   percentageWidth: 25
 }, {
+  dataField: "description",
   heading: "fred4",
   fixedWidth: true,
   percentageWidth: 40
@@ -106,7 +109,6 @@ let columns = [{
 test('component renders as expected', () => {
   const component = renderer.create(React.createElement(SimpleTreeTable, {
     columns: columns,
-    dataFields: dataFields,
     tableData: tableData,
     control: controlWithButton
   }));

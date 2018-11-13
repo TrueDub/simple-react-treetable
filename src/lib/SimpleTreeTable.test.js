@@ -6,7 +6,6 @@ import Adapter from 'enzyme-adapter-react-16';
 configure({adapter: new Adapter()});
 
 let headings = ["fred1", "fred2", "fred3", "fred4"];
-let dataFields = ["name", "dataType", "example", "description"];
 let tableData = [
     {
         data: {
@@ -102,15 +101,15 @@ let control = {
     tableClasses: "table table-bordered"
 };
 let columns = [
-    {heading: "fred1", fixedWidth: true, percentageWidth: 25},
-    {heading: "fred2", fixedWidth: true, percentageWidth: 10},
-    {heading: "fred3", fixedWidth: true, percentageWidth: 25},
-    {heading: "fred4", fixedWidth: true, percentageWidth: 40}
+    {dataField: "name", heading: "fred1", fixedWidth: true, percentageWidth: 25},
+    {dataField: "dataType", heading: "fred2", fixedWidth: true, percentageWidth: 10},
+    {dataField: "example", heading: "fred3", fixedWidth: true, percentageWidth: 25},
+    {dataField: "description", heading: "fred4", fixedWidth: true, percentageWidth: 40}
 ];
 
 describe('testing the SimpleTreeTable enhancedTableData setup', () => {
     it('each row has the correct row ID and setup', () => {
-        const wrapper = shallow(<SimpleTreeTable columns={columns} dataFields={dataFields} tableData={tableData}
+        const wrapper = shallow(<SimpleTreeTable columns={columns} tableData={tableData}
                                                  control={control}/>);
         let enhancedTableData = wrapper.state('enhancedTableData');
         expect(enhancedTableData.length).toBe(3);
@@ -204,7 +203,7 @@ describe('testing the SimpleTreeTable enhancedTableData setup', () => {
                 children: []
             }
         ];
-        const wrapper = shallow(<SimpleTreeTable columns={columns} dataFields={dataFields}
+        const wrapper = shallow(<SimpleTreeTable columns={columns}
                                                  tableData={localTableData}
                                                  control={control}/>);
         let enhancedTableData = wrapper.state('enhancedTableData');
@@ -238,7 +237,7 @@ describe('testing the SimpleTreeTable enhancedTableData setup', () => {
 
 describe('testing the expand and collapse functionality', () => {
     it('children of line 1 become visible when expand is clicked', () => {
-        const wrapper = shallow(<SimpleTreeTable columns={columns} dataFields={dataFields} tableData={tableData}
+        const wrapper = shallow(<SimpleTreeTable columns={columns} tableData={tableData}
                                                  control={control}/>);
         const instance = wrapper.instance();
         let enhancedTableData = wrapper.state('enhancedTableData');
@@ -266,7 +265,7 @@ describe('testing the expand and collapse functionality', () => {
         expect(enhancedTableData[0].children[2].children[0].visible).toBe(false);
     });
     it('children of line 5 - sub-children - become hidden when collapse is clicked', () => {
-        const wrapper = shallow(<SimpleTreeTable columns={columns} dataFields={dataFields} tableData={tableData}
+        const wrapper = shallow(<SimpleTreeTable columns={columns} tableData={tableData}
                                                  control={control}/>);
         const instance = wrapper.instance();
         let enhancedTableData = wrapper.state('enhancedTableData');
@@ -307,7 +306,7 @@ describe('testing the expand and collapse functionality', () => {
         expect(enhancedTableData[0].children[2].children[0].visible).toBe(false);
     });
     it('all lines are expanded when ExpandAll is performed', () => {
-        const wrapper = shallow(<SimpleTreeTable columns={columns} dataFields={dataFields} tableData={tableData}
+        const wrapper = shallow(<SimpleTreeTable columns={columns} tableData={tableData}
                                                  control={control}/>);
         const instance = wrapper.instance();
         let enhancedTableData = wrapper.state('enhancedTableData');
@@ -348,7 +347,7 @@ describe('testing the expand and collapse functionality', () => {
 
 describe('testing the DataTable enhancedTableData setup', () => {
     it('should start by adding row IDs correctly', () => {
-        const wrapper = shallow(<SimpleTreeTable columns={columns} dataFields={dataFields}
+        const wrapper = shallow(<SimpleTreeTable columns={columns}
                                                  tableData={dataTableData}
                                                  control={control}/>);
         let enhancedTableData = wrapper.state('enhancedTableData');
