@@ -1,10 +1,9 @@
 import React from 'react';
 import SimpleTreeTable from './SimpleTreeTable';
-import renderer from 'react-test-renderer';
 import {shallow, configure} from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16'
+import Adapter from 'enzyme-adapter-react-16';
 
-configure({adapter: new Adapter()})
+configure({adapter: new Adapter()});
 
 let headings = ["fred1", "fred2", "fred3", "fred4"];
 let dataFields = ["name", "dataType", "example", "description"];
@@ -107,7 +106,6 @@ describe('testing the SimpleTreeTable enhancedTableData setup', () => {
     it('each row has the correct row ID and setup', () => {
         const wrapper = shallow(<SimpleTreeTable columnHeadings={headings} dataFields={dataFields} tableData={tableData}
                                                  control={control}/>);
-        const instance = wrapper.instance();
         let enhancedTableData = wrapper.state('enhancedTableData');
         expect(enhancedTableData.length).toBe(3);
         expect(enhancedTableData[0].rowID).toBe(1);
@@ -249,7 +247,6 @@ describe('testing the DataTable enhancedTableData setup', () => {
         const wrapper = shallow(<SimpleTreeTable columnHeadings={headings} dataFields={dataFields}
                                                  tableData={dataTableData}
                                                  control={control}/>);
-        const instance = wrapper.instance();
         let enhancedTableData = wrapper.state('enhancedTableData');
         expect(enhancedTableData.length).toBe(3);
         expect(enhancedTableData[0].rowID).toBe(1);

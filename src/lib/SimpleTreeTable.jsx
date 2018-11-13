@@ -55,10 +55,9 @@ class SimpleTreeTable extends React.Component {
         let newTree = this.expandOrCollapseTree(this.state.enhancedTableData, selectedRowID, false, false);
         this.setState({enhancedTableData: newTree});
     }
-    ;
 
     expandOrCollapseTree(data, selectedRowID, expandAll, collapseAll) {
-        let newTree = (function recurse(children, expandBranch = expandAll, collapseBranch = collapseAll) {
+        return (function recurse(children, expandBranch = expandAll, collapseBranch = collapseAll) {
             return children.map(node => {
                 let setExpanded = node.rowID === selectedRowID ? !node.expanded : node.expanded;
                 let setVisible = node.parentRowID === selectedRowID ? !node.visible : node.visible;
@@ -81,10 +80,7 @@ class SimpleTreeTable extends React.Component {
                 })
             });
         })(data);
-        return newTree;
     }
-    ;
-
 
     generateTableBody(dataFields, tableData) {
         let tableBody = [];
@@ -109,16 +105,32 @@ class SimpleTreeTable extends React.Component {
                 iconCell = <FontAwesomeIcon icon={faAngleDown} fixedWidth
                                             onClick={this.rowExpandOrCollapse.bind(this, dataRow.rowID)}/>;
             }
-            return (<td key={key}><span
-                    style={{marginLeft: dataRow.rowLevel + 'em'}}>{iconCell}<span
-                    className="iconPadding">{dataRow.data[dataField]}</span></span></td>
-            );
+            if (this.props.control.fixedWidthColumns) {
+                return (<td key={key} width={this.props.control.columnWidths[0] + '%'}><span
+                        style={{marginLeft: dataRow.rowLevel + 'em'}}>{iconCell}<span
+                        className="iconPadding">{dataRow.data[dataField]}</span></span></td>
+                );
+            } else {
+                return (<td key={key}><span
+                        style={{marginLeft: dataRow.rowLevel + 'em'}}>{iconCell}<span
+                        className="iconPadding">{dataRow.data[dataField]}</span></span></td>
+                );
+            }
         } else {
-            return (
-                <td key={key}><span style={{marginLeft: (dataRow.rowLevel + 1.25) + 'em'}}>
+            if (this.props.control.fixedWidthColumns) {
+                return (
+                    <td key={key} width={this.props.control.columnWidths[0] + '%'}><span
+                        style={{marginLeft: (dataRow.rowLevel + 1.25) + 'em'}}>
                     <span className="iconPadding">{dataRow.data[dataField]}</span>
                 </span>
-                </td>);
+                    </td>);
+            } else {
+                return (
+                    <td key={key}><span style={{marginLeft: (dataRow.rowLevel + 1.25) + 'em'}}>
+                    <span className="iconPadding">{dataRow.data[dataField]}</span>
+                </span>
+                    </td>);
+            }
         }
     }
 
@@ -129,7 +141,12 @@ class SimpleTreeTable extends React.Component {
                 if (index === 0) {
                     return this.generateExpandColumn(dataRow, key, dataField);
                 } else {
-                    return (<td key={key}>{dataRow.data[dataField]}</td>)
+                    if (this.props.control.fixedWidthColumns) {
+                        return (<td key={key}
+                                    width={this.props.control.columnWidths[index] + '%'}>{dataRow.data[dataField]}</td>)
+                    } else {
+                        return (<td key={key}>{dataRow.data[dataField]}</td>)
+                    }
                 }
             }
         ));
@@ -138,9 +155,15 @@ class SimpleTreeTable extends React.Component {
 
     generateHeaderRow() {
         let headingRows = [];
-        headingRows.push(this.props.columnHeadings.map((heading) =>
-            <th key={heading}>{heading}</th>
-        ));
+        if (this.props.columnHeadings) {
+            headingRows.push(this.props.columnHeadings.map((heading) =>
+                <th key={heading}>{heading}</th>
+            ));
+        } else {
+            headingRows.push(this.props.dataFields.map((heading) =>
+                <th key={heading}>{heading}</th>
+            ));
+        }
         return headingRows;
     }
 
@@ -177,7 +200,9 @@ SimpleTreeTable.propTypes = {
     control: PropTypes.shape({
         tableClasses: PropTypes.string,
         buttonClasses: PropTypes.string,
-        showButton: PropTypes.bool
+        showButton: PropTypes.bool,
+        fixedWidthColumns: PropTypes.bool,
+        columnWidths: PropTypes.arrayOf(PropTypes.number)
     })
 };
 

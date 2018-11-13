@@ -100,7 +100,9 @@ let dataTableData = [
 let controlWithButton = {
     tableClasses: "table table-bordered",
     buttonClasses: "btn btn-default pull-right",
-    showButton: true
+    showButton: true,
+    fixedWidthColumns: true,
+    columnWidths: [25, 10, 25, 40]
 };
 let controlWithoutButton = {
     tableClasses: "table table-bordered",
