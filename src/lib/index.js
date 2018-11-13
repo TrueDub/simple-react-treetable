@@ -1,3 +1,3 @@
-import TreeTable from "./TreeTable";
+import SimpleTreeTable from "./SimpleTreeTable";
 
-export {TreeTable};
+export {SimpleTreeTable};

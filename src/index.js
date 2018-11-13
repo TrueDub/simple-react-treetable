@@ -1,6 +1,6 @@
 import React from 'react';
 import {render} from "react-dom";
-import TreeTable from "./lib/TreeTable";
+import SimpleTreeTable from "./lib/SimpleTreeTable";
 
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -97,16 +97,25 @@ let dataTableData = [
         }
     }
 ];
-let control = {
-    tableClasses: "table table-bordered"
+let controlWithButton = {
+    tableClasses: "table table-bordered",
+    buttonClasses: "btn btn-default pull-right",
+    showButton: true
+};
+let controlWithoutButton = {
+    tableClasses: "table table-bordered",
+    buttonClasses: "btn btn-default pull-right",
+    showButton: false
 };
 
 const App = () => (
     <div style={{width: 640, margin: "15px auto"}}>
         <h1>Simple React TreeTable Demo</h1>
-        <TreeTable columnHeadings={headings} dataFields={dataFields} tableData={tableData} control={control}/>
+        <SimpleTreeTable columnHeadings={headings} dataFields={dataFields} tableData={tableData}
+                         control={controlWithButton}/>
         <h1>Simple React TreeTable as DataTable</h1>
-        <TreeTable columnHeadings={headings} dataFields={dataFields} tableData={dataTableData} control={control}/>
+        <SimpleTreeTable columnHeadings={headings} dataFields={dataFields} tableData={dataTableData}
+                         control={controlWithoutButton}/>
     </div>
 );
 

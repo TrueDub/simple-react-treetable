@@ -1,5 +1,5 @@
 # bootstrap-react-treetable
-A React component that presents a TreeTable, styled with Bootstrap 4.
+A React component that presents a SimpleTreeTable, styled with Bootstrap 4.
 
 ## Installation
 Run the following command:

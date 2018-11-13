@@ -3,13 +3,16 @@ import PropTypes from 'prop-types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons'
 
-import "./TreeTable.css";
+import "./SimpleTreeTable.css";
 
-class TreeTable extends React.Component {
+class SimpleTreeTable extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {enhancedTableData: this.generateStateTableData(this.props.tableData)};
+        this.state = {
+            enhancedTableData: this.generateStateTableData(this.props.tableData),
+            expanded: false
+        };
     }
 
     generateStateTableData(tree, n = 1) {
@@ -30,12 +33,31 @@ class TreeTable extends React.Component {
         })(tree);
     }
 
-    rowExpandOrCollapse(selectedRowID) {
-        let newTree = this.expandOrCollapseAll(this.state.enhancedTableData, selectedRowID, false, false);
-        this.setState({enhancedTableData: newTree});
-    };
+    expandOrCollapseAll() {
+        let action = !this.state.expanded;
+        let newTree = (function recurse(children) {
+            return children.map(node => {
+                let visibleAction = node.rowLevel === 1 ? true : action;
+                return Object.assign({}, node, {
+                    visible: visibleAction,
+                    expanded: action,
+                    children: recurse(node.children)
+                })
+            });
+        })(this.state.enhancedTableData);
+        this.setState({
+            enhancedTableData: newTree,
+            expanded: action
+        });
+    }
 
-    expandOrCollapseAll(data, selectedRowID, expandAll, collapseAll) {
+    rowExpandOrCollapse(selectedRowID) {
+        let newTree = this.expandOrCollapseTree(this.state.enhancedTableData, selectedRowID, false, false);
+        this.setState({enhancedTableData: newTree});
+    }
+    ;
+
+    expandOrCollapseTree(data, selectedRowID, expandAll, collapseAll) {
         let newTree = (function recurse(children, expandBranch = expandAll, collapseBranch = collapseAll) {
             return children.map(node => {
                 let setExpanded = node.rowID === selectedRowID ? !node.expanded : node.expanded;
@@ -60,7 +82,8 @@ class TreeTable extends React.Component {
             });
         })(data);
         return newTree;
-    };
+    }
+    ;
 
 
     generateTableBody(dataFields, tableData) {
@@ -125,31 +148,37 @@ class TreeTable extends React.Component {
         let headingRows = this.generateHeaderRow();
         let tableBody = this.generateTableBody(this.props.dataFields, this.state.enhancedTableData);
         return (
-            <table className={this.props.control.tableClasses}>
-                <thead>
-                <tr>
-                    {headingRows}
-                </tr>
-                </thead>
-                <tbody>
-                {tableBody}
-                </tbody>
-            </table>
+            <div>
+                <button onClick={this.expandOrCollapseAll.bind(this)}
+                        className={this.props.control.showButton ? this.props.control.buttonClasses : "hidden"}>{this.state.expanded ? 'Collapse All' : 'Expand All'}</button>
+                <table className={this.props.control.tableClasses}>
+                    <thead>
+                    <tr>
+                        {headingRows}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {tableBody}
+                    </tbody>
+                </table>
+            </div>
         );
     }
 }
 
-TreeTable.propTypes = {
+SimpleTreeTable.propTypes = {
     columnHeadings: PropTypes.arrayOf(PropTypes.string),
-    dataFields: PropTypes.arrayOf(PropTypes.string),
+    dataFields: PropTypes.arrayOf(PropTypes.string).isRequired,
     tableData: PropTypes.arrayOf(
         PropTypes.shape({
             data: PropTypes.object,
             children: PropTypes.arrayOf(PropTypes.object)
-        })),
+        })).isRequired,
     control: PropTypes.shape({
-        tableClasses: PropTypes.string
+        tableClasses: PropTypes.string,
+        buttonClasses: PropTypes.string,
+        showButton: PropTypes.bool
     })
 };
 
-export default TreeTable;
+export default SimpleTreeTable;
