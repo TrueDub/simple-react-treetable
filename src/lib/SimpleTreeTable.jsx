@@ -105,28 +105,31 @@ class SimpleTreeTable extends React.Component {
                 iconCell = <FontAwesomeIcon icon={faAngleDown} fixedWidth
                                             onClick={this.rowExpandOrCollapse.bind(this, dataRow.rowID)}/>;
             }
-            if (this.props.control.fixedWidthColumns) {
-                return (<td key={key} width={this.props.control.columnWidths[0] + '%'}><span
+            if (this.props.columns[0].fixedWidth) {
+                return (<td key={key} className={this.props.columns[0].styleClass}
+                            width={this.props.columns[0].percentageWidth + '%'}><span
                         style={{marginLeft: dataRow.rowLevel + 'em'}}>{iconCell}<span
                         className="iconPadding">{dataRow.data[dataField]}</span></span></td>
                 );
             } else {
-                return (<td key={key}><span
+                return (<td key={key} className={this.props.columns[0].styleClass}><span
                         style={{marginLeft: dataRow.rowLevel + 'em'}}>{iconCell}<span
                         className="iconPadding">{dataRow.data[dataField]}</span></span></td>
                 );
             }
         } else {
-            if (this.props.control.fixedWidthColumns) {
+            if (this.props.columns[0].fixedWidth) {
                 return (
-                    <td key={key} width={this.props.control.columnWidths[0] + '%'}><span
+                    <td key={key} className={this.props.columns[0].styleClass}
+                        width={this.props.columns[0].percentageWidth + '%'}><span
                         style={{marginLeft: (dataRow.rowLevel + 1.25) + 'em'}}>
                     <span className="iconPadding">{dataRow.data[dataField]}</span>
                 </span>
                     </td>);
             } else {
                 return (
-                    <td key={key}><span style={{marginLeft: (dataRow.rowLevel + 1.25) + 'em'}}>
+                    <td key={key} className={this.props.columns[0].styleClass}><span
+                        style={{marginLeft: (dataRow.rowLevel + 1.25) + 'em'}}>
                     <span className="iconPadding">{dataRow.data[dataField]}</span>
                 </span>
                     </td>);
@@ -138,14 +141,19 @@ class SimpleTreeTable extends React.Component {
         let rowBody = [];
         rowBody.push(dataFields.map((dataField, index) => {
                 let key = dataRow.parentRowID + "-" + dataRow.rowID + '-' + index;
+                let output = dataRow.data[dataField];
+                if (this.props.columns[index].renderer) {
+                    output = this.props.columns[index].renderer(dataRow, dataField);
+                }
                 if (index === 0) {
                     return this.generateExpandColumn(dataRow, key, dataField);
                 } else {
-                    if (this.props.control.fixedWidthColumns) {
-                        return (<td key={key}
-                                    width={this.props.control.columnWidths[index] + '%'}>{dataRow.data[dataField]}</td>)
+                    if (this.props.columns[index].fixedWidth) {
+                        return (<td key={key} className={this.props.columns[index].styleClass}
+                                    width={this.props.columns[index].percentageWidth + '%'}>{output}</td>)
                     } else {
-                        return (<td key={key}>{dataRow.data[dataField]}</td>)
+                        return (
+                            <td key={key} className={this.props.columns[index].styleClass}>{output}</td>)
                     }
                 }
             }
@@ -155,13 +163,13 @@ class SimpleTreeTable extends React.Component {
 
     generateHeaderRow() {
         let headingRows = [];
-        if (this.props.columnHeadings) {
-            headingRows.push(this.props.columnHeadings.map((heading) =>
-                <th key={heading}>{heading}</th>
+        if (this.props.columns) {
+            headingRows.push(this.props.columns.map((column) =>
+                <th key={column.heading}>{column.heading}</th>
             ));
         } else {
-            headingRows.push(this.props.dataFields.map((heading) =>
-                <th key={heading}>{heading}</th>
+            headingRows.push(this.props.dataFields.map((fieldName) =>
+                <th key={fieldName}>{fieldName}</th>
             ));
         }
         return headingRows;
@@ -190,7 +198,6 @@ class SimpleTreeTable extends React.Component {
 }
 
 SimpleTreeTable.propTypes = {
-    columnHeadings: PropTypes.arrayOf(PropTypes.string),
     dataFields: PropTypes.arrayOf(PropTypes.string).isRequired,
     tableData: PropTypes.arrayOf(
         PropTypes.shape({
@@ -200,10 +207,15 @@ SimpleTreeTable.propTypes = {
     control: PropTypes.shape({
         tableClasses: PropTypes.string,
         buttonClasses: PropTypes.string,
-        showButton: PropTypes.bool,
-        fixedWidthColumns: PropTypes.bool,
-        columnWidths: PropTypes.arrayOf(PropTypes.number)
-    })
+        showButton: PropTypes.bool
+    }),
+    columns: PropTypes.arrayOf(PropTypes.shape({
+        heading: PropTypes.string,
+        fixedWidth: PropTypes.bool,
+        percentageWidth: PropTypes.number,
+        styleClass: PropTypes.string,
+        renderer: PropTypes.func
+    }))
 };
 
 export default SimpleTreeTable;

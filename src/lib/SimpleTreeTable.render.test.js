@@ -1,29 +1,7 @@
 import React from 'react';
-import {render} from "react-dom";
-import SimpleTreeTable from "./lib/SimpleTreeTable";
+import renderer from 'react-test-renderer';
+import SimpleTreeTable from "./SimpleTreeTable";
 
-import 'bootstrap/dist/css/bootstrap.css';
-
-let descriptionRenderer = function (dataRow, dataField) {
-    return <span><span dangerouslySetInnerHTML={{__html: dataRow.data[dataField]}}></span></span>
-};
-let fixedColumns = [
-    {heading: "fred1", fixedWidth: true, percentageWidth: 25},
-    {heading: "fred2", fixedWidth: true, percentageWidth: 10},
-    {heading: "fred3", fixedWidth: true, percentageWidth: 25},
-    {
-        heading: "fred4",
-        fixedWidth: true,
-        percentageWidth: 40,
-        renderer: descriptionRenderer
-    }
-];
-let unFixedColumns = [
-    {heading: "fred1", fixedWidth: false},
-    {heading: "fred2", fixedWidth: false},
-    {heading: "fred3", fixedWidth: false},
-    {heading: "fred4", fixedWidth: false}
-];
 let dataFields = ["name", "dataType", "example", "description"];
 let tableData = [
     {
@@ -76,7 +54,7 @@ let tableData = [
             name: "name1",
             dataType: "string1",
             example: "ex1",
-            description: "desc1 &euro; &euro;"
+            description: "desc1"
         },
         children: []
     },
@@ -85,7 +63,7 @@ let tableData = [
             name: "name2",
             dataType: "string2",
             example: "ex2",
-            description: "desc2 &euro; &euro; &euro; &euro;"
+            description: "desc2"
         },
         children: []
     }
@@ -121,21 +99,17 @@ let controlWithButton = {
     buttonClasses: "btn btn-default pull-right",
     showButton: true
 };
-let controlWithoutButton = {
-    tableClasses: "table table-bordered",
-    buttonClasses: "btn btn-default pull-right",
-    showButton: false
-};
+let columns = [
+    {heading: "fred1", fixedWidth: true, percentageWidth: 25},
+    {heading: "fred2", fixedWidth: true, percentageWidth: 10},
+    {heading: "fred3", fixedWidth: true, percentageWidth: 25},
+    {heading: "fred4", fixedWidth: true, percentageWidth: 40}
+];
 
-const App = () => (
-    <div style={{width: 640, margin: "15px auto"}}>
-        <h1>Simple React TreeTable Demo</h1>
-        <SimpleTreeTable columns={fixedColumns} dataFields={dataFields} tableData={tableData}
-                         control={controlWithButton}/>
-        <h1>Simple React TreeTable as DataTable</h1>
-        <SimpleTreeTable columns={unFixedColumns} dataFields={dataFields} tableData={dataTableData}
-                         control={controlWithoutButton}/>
-    </div>
-);
-
-render(<App/>, document.getElementById("root"));
+test('component renders as expected', () => {
+    const component = renderer.create(
+        <SimpleTreeTable columns={columns} dataFields={dataFields} tableData={tableData} control={controlWithButton}/>,
+    );
+    let tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+});
