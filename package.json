@@ -9,9 +9,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/TrueDub/simple-react-treetable"
+    "url": "https://github.com/truedub/simple-react-treetable.git"
   },
-  "homepage": "https://github.com/TrueDub/simple-react-treetable#readme",
+  "homepage": "https://github.com/truedub/simple-react-treetable",
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist",
