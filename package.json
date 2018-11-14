@@ -14,11 +14,14 @@
   "homepage": "https://github.com/TrueDub/simple-react-treetable#readme",
   "license": "MIT",
   "scripts": {
-    "clean": "node buildScript/deleteDistFolder.js",
+    "clean": "rimraf dist",
     "start": "react-scripts start",
     "build": "npm run clean && babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "clean:demo": "rimraf build",
+    "build:demo": "npm run clean:demo && webpack --config webpack.config.demo.js -p --bail",
+    "deploy:demo": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -37,10 +40,13 @@
     "del": "^3.0.0",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.7.0",
-    "react": "^16.6.1",
-    "react-dom": "^16.6.1",
-    "react-scripts": "2.1.1",
-    "react-test-renderer": "^16.6.3"
+    "gh-pages": "^2.0.1",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-scripts": "^2.1.1",
+    "react-test-renderer": "^16.6.3",
+    "rimraf": "^2.6.2",
+    "webpack-cli": "^3.1.2"
   },
   "peerDependencies": {
     "react": "^16.6.1",

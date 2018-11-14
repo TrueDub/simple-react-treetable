@@ -1,8 +1,8 @@
 import React from 'react';
 import {render} from "react-dom";
-import SimpleTreeTable from "./lib/SimpleTreeTable";
+import SimpleTreeTable from "./lib/SimpleTreeTable.jsx";
 
-import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 let descriptionRenderer = function (dataRow, dataField) {
     return <span><span dangerouslySetInnerHTML={{__html: dataRow.data[dataField]}}></span></span>
