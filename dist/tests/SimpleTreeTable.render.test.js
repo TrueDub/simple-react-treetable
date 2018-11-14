@@ -1,6 +1,6 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import SimpleTreeTable from "./SimpleTreeTable";
+import SimpleTreeTable from "../SimpleTreeTable";
 let tableData = [{
   data: {
     name: "name0",

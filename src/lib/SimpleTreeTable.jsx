@@ -164,13 +164,14 @@ class SimpleTreeTable extends React.Component {
     generateHeaderRow() {
         let headingRows = [];
         if (this.props.columns) {
-            headingRows.push(this.props.columns.map((column) =>
-                <th key={column.heading}>{column.heading}</th>
-            ));
-        } else {
-            headingRows.push(this.props.columns.map((column) =>
-                <th key={column.dataField}>{column.dataField}</th>
-            ));
+            headingRows.push(this.props.columns.map((column) => {
+                    if (column.heading) {
+                        return <th key={column.heading}>{column.heading}</th>;
+                    } else {
+                        return <th key={column.dataField}>{column.dataField}</th>;
+                    }
+                }
+            ))
         }
         return headingRows;
     }
