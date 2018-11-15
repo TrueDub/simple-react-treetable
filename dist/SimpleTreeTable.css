@@ -1,0 +1,11 @@
+.shown {
+
+}
+
+.hidden {
+    display: none;
+}
+
+.iconPadding {
+    padding-left: 0.5em;
+}

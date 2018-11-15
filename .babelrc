@@ -3,6 +3,6 @@
     "@babel/preset-react"
   ],
   "ignore": [
-    "**/*.test.js"
+    "src/lib/tests/**/*"
   ]
 }
