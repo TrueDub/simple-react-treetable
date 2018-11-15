@@ -121,8 +121,8 @@ A function can be provided on a per-column basis to control the display of the d
 
 This function should accept 2 parameters:
 
-dataRow - the entire row of data being operated on
-dataField - the name of the field within that row to be displayed
+1. dataRow - the entire row of data being operated on
+2. dataField - the name of the field within that row to be displayed
 
 Thus the actual data for the column will be provided as `dataRow.data[dataField]`
 
@@ -130,13 +130,13 @@ The function should return HTML - see the example below:
 
 ````javascript
 let descriptionRenderer = function (dataRow, dataField) {
-    return <span><span dangerouslySetInnerHTML={{__html: dataRow.data[dataField]}}></span></span>
+    return <span dangerouslySetInnerHTML={{__html: dataRow.data[dataField]}}></span>
 };
 ````
 
 #### Styling options
 
-The table is by default entirely unstyled. To style it, simply provide a string of class names (separated by a space) in the `control.tableClasses` prop.
+The table is by default entirely unstyled. To style it, simply provide a string of class names (separated by spaces) in the `control.tableClasses` prop.
 
 For example, to use Bootstrap styling, you can pass "table table-bordered" to the prop, and assuming the Bootstrap CSS is available, the relevant styling will be applied.
 
@@ -152,4 +152,5 @@ To use this component as a simple datatable (i.e. no expandable capabilities), s
 | ------- | ----------- | ------------ |
 |  0.2.0  | Pre-release effort | Nov 12 2018 |
 |  0.3.0  | Another pre-release candidate | Nov 13 2018 |
+|  0.9.0  | Final pre-release candidate | Nov 15 2018 |
 |  1.0.0  | Initial launch | TBD |
