@@ -17,6 +17,8 @@ Then include it in your components as follows:
 
 `<SimpleTreeTable tableData={this.props.tableData} columns={columns} control={control}/>`
 
+See our [Demo page](https://truedub.github.io/simple-react-treetable/index.html) to see the component in action.
+
 SimpleTreeTable expects data in the following format:
 
 ```javascript
