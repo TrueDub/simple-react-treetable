@@ -1,11 +1,6 @@
 # simple-react-treetable
 A React component that presents a simple TreeTable, allowing the user to supply styling and rendering options.
 
-## Not ready for Prime Time
-This component is still under development and will change extensively over the next while.
-
-Do not use this component until the 1.0.0 release!
-
 ## Installation
 Run the following command:
 `npm install simple-react-treetable --save`
@@ -150,7 +145,8 @@ To use this component as a simple datatable (i.e. no expandable capabilities), s
 
 | Release | Description | Release date |
 | ------- | ----------- | ------------ |
-|  0.2.0  | Pre-release effort | Nov 12 2018 |
-|  0.3.0  | Another pre-release candidate | Nov 13 2018 |
+|  1.0.0  | Initial launch | Nov 15 2018 |
+|  0.9.1  | Second final pre-release candidate! | Nov 15 2018 |
 |  0.9.0  | Final pre-release candidate | Nov 15 2018 |
-|  1.0.0  | Initial launch | TBD |
+|  0.3.0  | Another pre-release candidate | Nov 13 2018 |
+|  0.2.0  | Pre-release effort | Nov 12 2018 |
