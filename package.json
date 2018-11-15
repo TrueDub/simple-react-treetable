@@ -16,7 +16,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "start": "react-scripts start",
-    "build": "npm run clean && babel src/lib --out-dir dist --ignore **.*.test.js",
+    "build": "npm run clean && babel src/lib --out-dir dist",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "clean:demo": "rimraf build",
