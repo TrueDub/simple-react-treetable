@@ -1,9 +1,10 @@
-import React from "react";
+import React from 'react';
+import "babel-polyfill";
 import PropTypes from 'prop-types';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';
 
-import "./SimpleTreeTable.css";
+import './SimpleTreeTable.css';
 
 class SimpleTreeTable extends React.Component {
 
@@ -86,8 +87,8 @@ class SimpleTreeTable extends React.Component {
         let tableBody = [];
         tableData.forEach((dataRow) => {
                 let rowData = this.processDataRow(dataRow);
-                let key = dataRow.parentRowID + "-" + dataRow.rowID;
-                let rowClass = dataRow.visible ? "shown" : "hidden";
+                let key = dataRow.parentRowID + '-' + dataRow.rowID;
+                let rowClass = dataRow.visible ? 'shown' : 'hidden';
                 tableBody.push(<tr className={rowClass} key={key}>{rowData}</tr>);
                 if (dataRow.children) {
                     tableBody.push(...this.generateTableBody(dataRow.children));
@@ -140,7 +141,7 @@ class SimpleTreeTable extends React.Component {
     processDataRow(dataRow) {
         let rowBody = [];
         rowBody.push(this.props.columns.map((column, index) => {
-                let key = dataRow.parentRowID + "-" + dataRow.rowID + '-' + index;
+                let key = dataRow.parentRowID + '-' + dataRow.rowID + '-' + index;
                 let output = dataRow.data[column.dataField];
                 if (column.renderer) {
                     output = this.props.columns[index].renderer(dataRow, column.dataField);
@@ -182,7 +183,7 @@ class SimpleTreeTable extends React.Component {
         return (
             <div>
                 <button onClick={this.expandOrCollapseAll.bind(this)}
-                        className={this.props.control.showButton ? this.props.control.buttonClasses : "hidden"}>{this.state.expanded ? 'Collapse All' : 'Expand All'}</button>
+                        className={this.props.control.showButton ? this.props.control.buttonClasses : 'hidden'}>{this.state.expanded ? 'Collapse All' : 'Expand All'}</button>
                 <table className={this.props.control.tableClasses}>
                     <thead>
                     <tr>

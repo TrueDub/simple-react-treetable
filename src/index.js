@@ -152,14 +152,17 @@ const App = () => (
                     <h3>TreeTable</h3>
                     <SimpleTreeTable columns={fixedColumns} tableData={tableData} control={controlWithButton}/>
                     <table className="table table-bordered">
+                        <tbody>
                         <tr>
                             <td>Component declaration</td>
                             <td><Highlight language="javascript">
                                 {"<SimpleTreeTable columns={fixedColumns} tableData={tableData} control={controlWithButton}/>"}
                             </Highlight></td>
                         </tr>
+                        </tbody>
                     </table>
                     <table className="table table-bordered">
+                        <tbody>
                         <tr>
                             <th width="10%">Prop Name</th>
                             <th>Value</th>
@@ -291,20 +294,24 @@ const App = () => (
                             "    return <span dangerouslySetInnerHTML={{__html: dataRow.data[dataField]}}></span>;\n" +
                             "};"}</Highlight></td>
                         </tr>
+                        </tbody>
                     </table>
                 </div>
                 <div>
                     <h3>DataTable</h3>
                     <SimpleTreeTable columns={unFixedColumns} tableData={dataTableData} control={controlWithoutButton}/>
                     <table className="table table-bordered">
+                        <tbody>
                         <tr>
                             <td>Component declaration</td>
                             <td><Highlight language="javascript">
                                 {"<SimpleTreeTable columns={unFixedColumns} tableData={dataTableData} control={controlWithoutButton}/>"}
                             </Highlight></td>
                         </tr>
+                        </tbody>
                     </table>
                     <table className="table table-bordered">
+                        <tbody>
                         <tr>
                             <th width="10%">Prop Name</th>
                             <th>Value</th>
@@ -366,6 +373,7 @@ const App = () => (
                                 "]"}
                             </Highlight></td>
                         </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>

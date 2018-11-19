@@ -1,6 +1,6 @@
 {
   "name": "simple-react-treetable",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "files": [
@@ -29,6 +29,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.8",
     "@fortawesome/free-solid-svg-icons": "^5.5.0",
     "@fortawesome/react-fontawesome": "^0.1.3",
+    "babel-polyfill": "^6.26.0",
     "prop-types": "^15.6.2"
   },
   "devDependencies": {
