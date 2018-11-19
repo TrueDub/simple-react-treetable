@@ -1,5 +1,5 @@
 import React from 'react';
-import "babel-polyfill";
+import '@babel/polyfill';
 import PropTypes from 'prop-types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';

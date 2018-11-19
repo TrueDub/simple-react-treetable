@@ -1,11 +1,11 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const path = require('path')
-const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
     devtool: 'source-map',
     entry: {
-        demo: './src/index'
+        demo: ['@babel/polyfill', './src/index']
     },
     output: {
         path: path.join(__dirname, 'build'),
