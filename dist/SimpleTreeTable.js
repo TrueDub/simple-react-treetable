@@ -1,8 +1,9 @@
-import React from "react";
+import React from 'react';
+import "babel-polyfill";
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleRight, faAngleDown } from '@fortawesome/free-solid-svg-icons';
-import "./SimpleTreeTable.css";
+import './SimpleTreeTable.css';
 
 class SimpleTreeTable extends React.Component {
   constructor(props) {
@@ -92,8 +93,8 @@ class SimpleTreeTable extends React.Component {
     let tableBody = [];
     tableData.forEach(dataRow => {
       let rowData = this.processDataRow(dataRow);
-      let key = dataRow.parentRowID + "-" + dataRow.rowID;
-      let rowClass = dataRow.visible ? "shown" : "hidden";
+      let key = dataRow.parentRowID + '-' + dataRow.rowID;
+      let rowClass = dataRow.visible ? 'shown' : 'hidden';
       tableBody.push(React.createElement("tr", {
         className: rowClass,
         key: key
@@ -177,7 +178,7 @@ class SimpleTreeTable extends React.Component {
   processDataRow(dataRow) {
     let rowBody = [];
     rowBody.push(this.props.columns.map((column, index) => {
-      let key = dataRow.parentRowID + "-" + dataRow.rowID + '-' + index;
+      let key = dataRow.parentRowID + '-' + dataRow.rowID + '-' + index;
       let output = dataRow.data[column.dataField];
 
       if (column.renderer) {
@@ -229,7 +230,7 @@ class SimpleTreeTable extends React.Component {
     let tableBody = this.generateTableBody(this.state.enhancedTableData);
     return React.createElement("div", null, React.createElement("button", {
       onClick: this.expandOrCollapseAll.bind(this),
-      className: this.props.control.showButton ? this.props.control.buttonClasses : "hidden"
+      className: this.props.control.showButton ? this.props.control.buttonClasses : 'hidden'
     }, this.state.expanded ? 'Collapse All' : 'Expand All'), React.createElement("table", {
       className: this.props.control.tableClasses
     }, React.createElement("thead", null, React.createElement("tr", null, headingRows)), React.createElement("tbody", null, tableBody)));
