@@ -147,6 +147,9 @@ To use this component as a simple datatable (i.e. no expandable capabilities), s
 
 | Release | Description | Release date |
 | ------- | ----------- | ------------ |
+|  1.0.3  | Corrected the configuration | Nov 19 2018 |
+|  1.0.2  | Changed Babel setup to the correct dependency | Nov 19 2018 |
+|  1.0.1  | IE11 compatibility | Nov 19 2018 |
 |  1.0.0  | Initial launch | Nov 15 2018 |
 |  0.9.1  | Second final pre-release candidate! | Nov 15 2018 |
 |  0.9.0  | Final pre-release candidate | Nov 15 2018 |
