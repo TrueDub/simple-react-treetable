@@ -219,4 +219,21 @@ SimpleTreeTable.propTypes = {
     }))
 };
 
+SimpleTreeTable.defaultProps = {
+    tableData: [],
+    control: {
+        tableClasses: '',
+        buttonClasses: '',
+        showButton: false
+    },
+    columns: [{
+        dataField: '',
+        heading: '',
+        fixedWidth: false,
+        percentageWidth: 0,
+        styleClass: '',
+        renderer: null
+    }]
+};
+
 export default SimpleTreeTable;
