@@ -13,28 +13,37 @@ let descriptionRenderer = function (dataRow, dataField) {
 let fixedColumns = [
     {
         dataField: "name",
-        heading: "fred1",
+        heading: "Name",
         fixedWidth: true,
-        percentageWidth: 25
+        percentageWidth: 20
     },
     {
         dataField: "dataType",
-        heading: "fred2",
+        heading: "Data Type",
         fixedWidth: true,
-        percentageWidth: 10
+        percentageWidth: 20,
+        sortable: false
     },
     {
         dataField: "example",
-        heading: "fred3",
+        heading: "Example",
         fixedWidth: true,
-        percentageWidth: 25
+        percentageWidth: 20
     },
     {
         dataField: "description",
-        heading: "fred4",
+        heading: "Description",
         fixedWidth: true,
-        percentageWidth: 40,
+        percentageWidth: 25,
         renderer: descriptionRenderer
+    },
+    {
+        dataField: "order",
+        heading: "Order",
+        fixedWidth: true,
+        percentageWidth: 15,
+        sortable: true,
+        sorted: "asc"
     }
 ];
 let unFixedColumns = [
@@ -46,40 +55,44 @@ let unFixedColumns = [
 let tableData = [
     {
         data: {
-            name: "name0",
-            dataType: "string0",
-            example: "ex0",
-            description: "desc0"
+            name: "name0g",
+            dataType: "string",
+            example: "ex0gb",
+            description: "desc0g7",
+            order: 17
         },
         children: [
             {
                 data: {
-                    name: "name0-0",
-                    dataType: "string0-0",
+                    name: "name0-z",
+                    dataType: "string",
                     example: "ex0-0",
-                    description: "desc0-0"
+                    description: "desc0-0",
+                    order: 373
                 },
                 children: []
             }, {
                 data: {
-                    name: "name0-1",
-                    dataType: "string0-1",
+                    name: "name0-q",
+                    dataType: "string",
                     example: "ex0-1",
-                    description: "desc0-1"
+                    description: "desc0-1",
+                    order: 2
                 },
                 children: []
             }, {
                 data: {
-                    name: "name0-2",
-                    dataType: "string0-2",
+                    name: "name0-b",
+                    dataType: "string",
                     example: "ex0-2",
-                    description: "desc0-2"
+                    description: "desc0-2",
+                    order: 111
                 },
                 children: [
                     {
                         data: {
                             name: "name0-2-1",
-                            dataType: "string0-2-1",
+                            dataType: "string",
                             example: "ex0-2-1",
                             description: "desc0-2-1"
                         },
@@ -91,19 +104,31 @@ let tableData = [
     },
     {
         data: {
-            name: "name1",
-            dataType: "string1",
+            name: "name0x",
+            dataType: "string",
             example: "ex1",
-            description: "desc1 &euro; &euro;"
+            description: "desc1 &euro; &euro;",
+            order: 6
         },
         children: []
     },
     {
         data: {
-            name: "name2",
-            dataType: "string2",
+            name: "name0a",
+            dataType: "string",
             example: "ex2",
-            description: "desc2 &euro; &euro; &euro; &euro;"
+            description: "desc2 &euro; &euro; &euro; &euro;",
+            order: 9
+        },
+        children: []
+    },
+    {
+        data: {
+            name: "name0a",
+            dataType: "Number",
+            example: "1",
+            description: "number blah",
+            order: 3
         },
         children: []
     }

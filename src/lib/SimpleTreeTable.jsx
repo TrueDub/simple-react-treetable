@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faAngleRight, faAngleDown} from '@fortawesome/free-solid-svg-icons';
+import {faAngleRight, faAngleDown, faAngleUp} from '@fortawesome/free-solid-svg-icons';
 
 import './SimpleTreeTable.css';
 
@@ -11,7 +11,8 @@ class SimpleTreeTable extends React.Component {
         super(props);
         this.state = {
             enhancedTableData: this.generateStateTableData(this.props.tableData),
-            expanded: false
+            expanded: false,
+            enhancedColumns: this.generateColumnState(this.props.columns)
         };
     }
 
@@ -32,6 +33,18 @@ class SimpleTreeTable extends React.Component {
             }
         })(tree);
     }
+
+    generateColumnState(initialColumns) {
+        return initialColumns.map(node => {
+            let orderPresent = node.hasOwnProperty('sortable');
+            let sortOrder = node.hasOwnProperty('sorted') ? node.sorted : 'none';
+            return Object.assign({}, node, {
+                sortable: orderPresent ? node.sortable : true,
+                sortOrder: sortOrder
+            })
+        });
+    }
+
 
     expandOrCollapseAll() {
         let action = !this.state.expanded;
@@ -82,6 +95,51 @@ class SimpleTreeTable extends React.Component {
         })(data);
     }
 
+    sortByField(fieldName) {
+        let sortStatus = this.getSortStatus(fieldName);
+        let sortOrder = 'asc';
+        if (sortStatus === 'asc') {
+            sortOrder = 'desc';
+        }
+        let newTree = this.sortBy(this.state.enhancedTableData, fieldName, sortOrder);
+        let newColumns = this.state.enhancedColumns.map(node => {
+            let newSortOrder = 'none';
+            if (node.dataField === fieldName) {
+                newSortOrder = sortOrder;
+            }
+            return Object.assign({}, node, {
+                sortOrder: newSortOrder
+            })
+        });
+        this.setState({
+            enhancedTableData: newTree,
+            enhancedColumns: newColumns
+        });
+    }
+
+    sortBy(data, fieldName, direction) {
+        if (direction === 'asc') {
+            return data.sort((a, b) => {
+                return a.data[fieldName] < b.data[fieldName] ? -1 : a.data[fieldName] > b.data[fieldName] ? 1 : 0;
+            });
+        } else {
+            return data.sort((b, a) => {
+                return a.data[fieldName] < b.data[fieldName] ? -1 : a.data[fieldName] > b.data[fieldName] ? 1 : 0;
+            });
+        }
+    };
+
+
+    getSortStatus(fieldName) {
+        for (let i = 0; i < this.state.enhancedColumns.length; i++) {
+            if (this.state.enhancedColumns[i].dataField === fieldName) {
+                return this.state.enhancedColumns[i].sortOrder;
+            }
+        }
+    }
+
+//from here down the functions deal with rendering
+
     generateTableBody(tableData) {
         let tableBody = [];
         tableData.forEach((dataRow) => {
@@ -105,30 +163,30 @@ class SimpleTreeTable extends React.Component {
                 iconCell = <FontAwesomeIcon icon={faAngleDown} fixedWidth
                                             onClick={this.rowExpandOrCollapse.bind(this, dataRow.rowID)}/>;
             }
-            if (this.props.columns[0].fixedWidth) {
-                return (<td key={key} className={this.props.columns[0].styleClass}
-                            width={this.props.columns[0].percentageWidth + '%'}><span
+            if (this.state.enhancedColumns[0].fixedWidth) {
+                return (<td key={key} className={this.state.enhancedColumns[0].styleClass}
+                            width={this.state.enhancedColumns[0].percentageWidth + '%'}><span
                         style={{marginLeft: dataRow.rowLevel + 'em'}}>{iconCell}<span
                         className="iconPadding">{dataRow.data[dataField]}</span></span></td>
                 );
             } else {
-                return (<td key={key} className={this.props.columns[0].styleClass}><span
+                return (<td key={key} className={this.state.enhancedColumns[0].styleClass}><span
                         style={{marginLeft: dataRow.rowLevel + 'em'}}>{iconCell}<span
                         className="iconPadding">{dataRow.data[dataField]}</span></span></td>
                 );
             }
         } else {
-            if (this.props.columns[0].fixedWidth) {
+            if (this.state.enhancedColumns[0].fixedWidth) {
                 return (
-                    <td key={key} className={this.props.columns[0].styleClass}
-                        width={this.props.columns[0].percentageWidth + '%'}><span
+                    <td key={key} className={this.state.enhancedColumns[0].styleClass}
+                        width={this.state.enhancedColumns[0].percentageWidth + '%'}><span
                         style={{marginLeft: (dataRow.rowLevel + 1.25) + 'em'}}>
                     <span className="iconPadding">{dataRow.data[dataField]}</span>
                 </span>
                     </td>);
             } else {
                 return (
-                    <td key={key} className={this.props.columns[0].styleClass}><span
+                    <td key={key} className={this.state.enhancedColumns[0].styleClass}><span
                         style={{marginLeft: (dataRow.rowLevel + 1.25) + 'em'}}>
                     <span className="iconPadding">{dataRow.data[dataField]}</span>
                 </span>
@@ -139,11 +197,11 @@ class SimpleTreeTable extends React.Component {
 
     processDataRow(dataRow) {
         let rowBody = [];
-        rowBody.push(this.props.columns.map((column, index) => {
+        rowBody.push(this.state.enhancedColumns.map((column, index) => {
                 let key = dataRow.parentRowID + '-' + dataRow.rowID + '-' + index;
                 let output = dataRow.data[column.dataField];
                 if (column.renderer) {
-                    output = this.props.columns[index].renderer(dataRow, column.dataField);
+                    output = this.state.enhancedColumns[index].renderer(dataRow, column.dataField);
                 }
                 if (index === 0) {
                     return this.generateExpandColumn(dataRow, key, column.dataField);
@@ -163,12 +221,22 @@ class SimpleTreeTable extends React.Component {
 
     generateHeaderRow() {
         let headingRows = [];
-        if (this.props.columns) {
-            headingRows.push(this.props.columns.map((column) => {
-                    if (column.heading) {
-                        return <th key={column.heading}>{column.heading}</th>;
+        if (this.state.enhancedColumns) {
+            headingRows.push(this.state.enhancedColumns.map((column) => {
+                    let fieldTitle = column.heading ? column.heading : column.dataField;
+                    let sortIcon = null;
+                    if (column.sortOrder === 'asc') {
+                        sortIcon = <FontAwesomeIcon icon={faAngleUp} fixedWidth pull="right"/>;
+                    } else if (column.sortOrder === 'desc') {
+                        sortIcon = <FontAwesomeIcon icon={faAngleDown} fixedWidth pull="right"/>;
                     } else {
-                        return <th key={column.dataField}>{column.dataField}</th>;
+                        sortIcon = null;
+                    }
+                    if (column.sortable) {
+                        return <th key={fieldTitle}
+                                   onClick={this.sortByField.bind(this, column.dataField)}>{sortIcon}{fieldTitle}</th>;
+                    } else {
+                        return <th key={fieldTitle}>{fieldTitle}</th>;
                     }
                 }
             ))
@@ -232,7 +300,8 @@ SimpleTreeTable.defaultProps = {
         fixedWidth: false,
         percentageWidth: 0,
         styleClass: '',
-        renderer: null
+        renderer: null,
+        sortable: true
     }]
 };
 
