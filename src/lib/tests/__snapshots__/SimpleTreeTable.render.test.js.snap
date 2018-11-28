@@ -3,26 +3,40 @@
 exports[`component renders as expected 1`] = `
 <div>
   <button
-    className="btn btn-default pull-right"
+    className="hidden"
     onClick={[Function]}
   >
     Expand All
+  </button>
+  <button
+    className="hidden"
+    onClick={[Function]}
+  >
+    Reset Sorting
   </button>
   <table
     className="table table-bordered"
   >
     <thead>
       <tr>
-        <th>
+        <th
+          onClick={[Function]}
+        >
           fred1
         </th>
-        <th>
+        <th
+          onClick={[Function]}
+        >
           fred2
         </th>
-        <th>
+        <th
+          onClick={[Function]}
+        >
           fred3
         </th>
-        <th>
+        <th
+          onClick={[Function]}
+        >
           fred4
         </th>
       </tr>

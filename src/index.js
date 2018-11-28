@@ -21,8 +21,7 @@ let fixedColumns = [
         dataField: "dataType",
         heading: "Data Type",
         fixedWidth: true,
-        percentageWidth: 20,
-        sortable: false
+        percentageWidth: 20
     },
     {
         dataField: "example",
@@ -41,9 +40,7 @@ let fixedColumns = [
         dataField: "order",
         heading: "Order",
         fixedWidth: true,
-        percentageWidth: 15,
-        sortable: true,
-        sorted: "asc"
+        percentageWidth: 15
     }
 ];
 let unFixedColumns = [
@@ -124,7 +121,7 @@ let tableData = [
     },
     {
         data: {
-            name: "name0a",
+            name: "name0m",
             dataType: "Number",
             example: "1",
             description: "number blah",
@@ -162,11 +159,15 @@ let dataTableData = [
 let controlWithButton = {
     tableClasses: "table table-bordered",
     buttonClasses: "btn btn-default",
-    showButton: true
+    showExpandCollapseButton: true,
+    expandCollapseButtonClasses: "btn btn-default float-left",
+    showResetSortingButton: true,
+    resetSortingButtonClasses: "btn btn-default float-right"
 };
 let controlWithoutButton = {
     tableClasses: "table table-bordered",
-    buttonClasses: "btn btn-default"
+    showResetSortingButton: true,
+    resetSortingButtonClasses: "btn btn-default float-right"
 };
 
 const App = () => (
@@ -175,6 +176,9 @@ const App = () => (
             <div style={{width: 800, margin: "15px auto"}}>
                 <div>
                     <h3>TreeTable</h3>
+                    Clicking any column heading will sort that column in ascending order - a second click will reverse the
+                    sort order. The "Reset Sorting" button will appear when a sort is applied, and will be present if an
+                    initial sort is applied via the <code>columns</code> prop.
                     <SimpleTreeTable columns={fixedColumns} tableData={tableData} control={controlWithButton}/>
                     <table className="table table-bordered">
                         <tbody>
@@ -200,28 +204,34 @@ const App = () => (
                                 {"[\n" +
                                 "    {\n" +
                                 "        dataField: \"name\",\n" +
-                                "        heading: \"fred1\",\n" +
+                                "        heading: \"Name\",\n" +
                                 "        fixedWidth: true,\n" +
-                                "        percentageWidth: 25\n" +
+                                "        percentageWidth: 20\n" +
                                 "    },\n" +
                                 "    {\n" +
                                 "        dataField: \"dataType\",\n" +
-                                "        heading: \"fred2\",\n" +
+                                "        heading: \"Data Type\",\n" +
                                 "        fixedWidth: true,\n" +
-                                "        percentageWidth: 10\n" +
+                                "        percentageWidth: 20\n" +
                                 "    },\n" +
                                 "    {\n" +
                                 "        dataField: \"example\",\n" +
-                                "        heading: \"fred3\",\n" +
+                                "        heading: \"Example\",\n" +
                                 "        fixedWidth: true,\n" +
-                                "        percentageWidth: 25\n" +
+                                "        percentageWidth: 20\n" +
                                 "    },\n" +
                                 "    {\n" +
                                 "        dataField: \"description\",\n" +
-                                "        heading: \"fred4\",\n" +
+                                "        heading: \"Description\",\n" +
                                 "        fixedWidth: true,\n" +
-                                "        percentageWidth: 40,\n" +
+                                "        percentageWidth: 25,\n" +
                                 "        renderer: descriptionRenderer\n" +
+                                "    },\n" +
+                                "    {\n" +
+                                "        dataField: \"order\",\n" +
+                                "        heading: \"Order\",\n" +
+                                "        fixedWidth: true,\n" +
+                                "        percentageWidth: 15\n" +
                                 "    }\n" +
                                 "]"}
                             </Highlight></td>
@@ -234,7 +244,10 @@ const App = () => (
                                 <Highlight language="javascript">{"{\n" +
                                 "    tableClasses: \"table table-bordered\",\n" +
                                 "    buttonClasses: \"btn btn-default\",\n" +
-                                "    showButton: true\n" +
+                                "    showExpandCollapseButton: true,\n" +
+                                "    expandCollapseButtonClasses: \"btn btn-default float-left\",\n" +
+                                "    showResetSortingButton: true,\n" +
+                                "    resetSortingButtonClasses: \"btn btn-default float-right\"\n" +
                                 "}"}</Highlight>
                             </td>
                         </tr>
@@ -246,40 +259,44 @@ const App = () => (
                                 {"[\n" +
                                 "    {\n" +
                                 "        data: {\n" +
-                                "            name: \"name0\",\n" +
-                                "            dataType: \"string0\",\n" +
-                                "            example: \"ex0\",\n" +
-                                "            description: \"desc0\"\n" +
+                                "            name: \"name0g\",\n" +
+                                "            dataType: \"string\",\n" +
+                                "            example: \"ex0gb\",\n" +
+                                "            description: \"desc0g7\",\n" +
+                                "            order: 17\n" +
                                 "        },\n" +
                                 "        children: [\n" +
                                 "            {\n" +
                                 "                data: {\n" +
-                                "                    name: \"name0-0\",\n" +
-                                "                    dataType: \"string0-0\",\n" +
+                                "                    name: \"name0-z\",\n" +
+                                "                    dataType: \"string\",\n" +
                                 "                    example: \"ex0-0\",\n" +
-                                "                    description: \"desc0-0\"\n" +
+                                "                    description: \"desc0-0\",\n" +
+                                "                    order: 373\n" +
                                 "                },\n" +
                                 "                children: []\n" +
                                 "            }, {\n" +
                                 "                data: {\n" +
-                                "                    name: \"name0-1\",\n" +
-                                "                    dataType: \"string0-1\",\n" +
+                                "                    name: \"name0-q\",\n" +
+                                "                    dataType: \"string\",\n" +
                                 "                    example: \"ex0-1\",\n" +
-                                "                    description: \"desc0-1\"\n" +
+                                "                    description: \"desc0-1\",\n" +
+                                "                    order: 2\n" +
                                 "                },\n" +
                                 "                children: []\n" +
                                 "            }, {\n" +
                                 "                data: {\n" +
-                                "                    name: \"name0-2\",\n" +
-                                "                    dataType: \"string0-2\",\n" +
+                                "                    name: \"name0-b\",\n" +
+                                "                    dataType: \"string\",\n" +
                                 "                    example: \"ex0-2\",\n" +
-                                "                    description: \"desc0-2\"\n" +
+                                "                    description: \"desc0-2\",\n" +
+                                "                    order: 111\n" +
                                 "                },\n" +
                                 "                children: [\n" +
                                 "                    {\n" +
                                 "                        data: {\n" +
                                 "                            name: \"name0-2-1\",\n" +
-                                "                            dataType: \"string0-2-1\",\n" +
+                                "                            dataType: \"string\",\n" +
                                 "                            example: \"ex0-2-1\",\n" +
                                 "                            description: \"desc0-2-1\"\n" +
                                 "                        },\n" +
@@ -291,19 +308,31 @@ const App = () => (
                                 "    },\n" +
                                 "    {\n" +
                                 "        data: {\n" +
-                                "            name: \"name1\",\n" +
-                                "            dataType: \"string1\",\n" +
+                                "            name: \"name0x\",\n" +
+                                "            dataType: \"string\",\n" +
                                 "            example: \"ex1\",\n" +
-                                "            description: \"desc1 &euro; &euro;\"\n" +
+                                "            description: \"desc1 &euro; &euro;\",\n" +
+                                "            order: 6\n" +
                                 "        },\n" +
                                 "        children: []\n" +
                                 "    },\n" +
                                 "    {\n" +
                                 "        data: {\n" +
-                                "            name: \"name2\",\n" +
-                                "            dataType: \"string2\",\n" +
+                                "            name: \"name0a\",\n" +
+                                "            dataType: \"string\",\n" +
                                 "            example: \"ex2\",\n" +
-                                "            description: \"desc2 &euro; &euro; &euro; &euro;\"\n" +
+                                "            description: \"desc2 &euro; &euro; &euro; &euro;\",\n" +
+                                "            order: 9\n" +
+                                "        },\n" +
+                                "        children: []\n" +
+                                "    },\n" +
+                                "    {\n" +
+                                "        data: {\n" +
+                                "            name: \"name0m\",\n" +
+                                "            dataType: \"Number\",\n" +
+                                "            example: \"1\",\n" +
+                                "            description: \"number blah\",\n" +
+                                "            order: 3\n" +
                                 "        },\n" +
                                 "        children: []\n" +
                                 "    }\n" +
@@ -324,6 +353,9 @@ const App = () => (
                 </div>
                 <div>
                     <h3>DataTable</h3>
+                    Clicking any column heading will sort that column in ascending order - a second click will reverse the
+                    sort order. The "Reset Sorting" button will appear when a sort is applied, and will be present if an
+                    initial sort is applied via the <code>columns</code> prop.
                     <SimpleTreeTable columns={unFixedColumns} tableData={dataTableData} control={controlWithoutButton}/>
                     <table className="table table-bordered">
                         <tbody>
@@ -361,7 +393,8 @@ const App = () => (
                             <td>
                                 <Highlight language="javascript">{"{\n" +
                                 "    tableClasses: \"table table-bordered\",\n" +
-                                "    buttonClasses: \"btn btn-default\",\n" +
+                                "    showResetSortingButton: true,\n" +
+                                "    resetSortingButtonClasses: \"btn btn-default float-right\"\n" +
                                 "}"}</Highlight>
                             </td>
                         </tr>

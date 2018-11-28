@@ -103,14 +103,18 @@ Obviously, the tableData prop is required. There is one other required prop:
 | percentageWidth | Number | The percentage width this column will be allocated, should fixedWidth be true | 25 | No |
 | styleClass     | String | A CSS class to be applied to the TD element for this field | whatever | No |
 | renderer       | function | A function to be applied to the data - see further detail below | whatever | No |
+| sortable       | Boolean | Is this field sortable? Default is yes | false | No |
+| sortOrder      | String | Indicates that the table should be sorted by this field in this order - values are 'asc' or 'desc' | asc | No |
 
 Further control of how the table is displayed can be provided using the **control** prop.
 
 | Attribute Name | Type | Description | Example | Required |
 | -------------- | ---- | ----------- | ------- | -------- |
 | tableClasses   | String | CSS class(es) to be applied to the table. See the styling section for more information. | | No |
-| showButton     | Boolean | Should the Expand All/Collapse All button be displayed? | False | No | 
-| buttonClasses  | String | CSS classes to be applied to the button, if displayed | | No |
+| showExpandCollapseButton     | Boolean | Should the Expand All/Collapse All button be displayed? | False | No | 
+| expandCollapseButtonClasses  | String | CSS classes to be applied to the button, if displayed | | No |
+| showResetSortingButton     | Boolean | Should the Reset Sorting button be displayed, when appropriate? | False | No | 
+| resetSortingButtonClasses  | String | CSS classes to be applied to the button, if displayed | | No |
         
 #### Rendering option
 
@@ -139,6 +143,13 @@ For example, to use Bootstrap styling, you can pass "table table-bordered" to th
 
 Note that Bootstrap table striping won't work on a table where rows are expandable, as the striping is applied once at render time and doesn't adjust to the display changing.
 
+### Sorting
+The table can be sorted by default, simply set the `sortOrder` attribute of the relevant column.
+
+Clicking the header of any column will sort by that column, in ascending order. Clicking again will sort in descending order. Appropriate icons are used to indicate the sort order.
+
+You can prevent sorting of a specific column by simply setting the `sortable` attribute of the relevant column to false.
+
 ### Use as a simple DataTable
 
 To use this component as a simple datatable (i.e. no expandable capabilities), simply provide a `tableData` prop with no `children` attributes.  
@@ -147,6 +158,7 @@ To use this component as a simple datatable (i.e. no expandable capabilities), s
 
 | Release | Description | Release date |
 | ------- | ----------- | ------------ |
+|  2.0.0  | Added sorting | TBD |
 |  1.0.3  | Corrected the configuration | Nov 19 2018 |
 |  1.0.2  | Changed Babel setup to the correct dependency | Nov 19 2018 |
 |  1.0.1  | IE11 compatibility | Nov 19 2018 |

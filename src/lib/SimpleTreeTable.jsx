@@ -9,10 +9,35 @@ class SimpleTreeTable extends React.Component {
 
     constructor(props) {
         super(props);
+        let initialState = this.generateInitialState();
         this.state = {
-            enhancedTableData: this.generateStateTableData(this.props.tableData),
+            enhancedTableData: initialState.enhancedTableData,
             expanded: false,
-            enhancedColumns: this.generateColumnState(this.props.columns)
+            enhancedColumns: initialState.enhancedColumns,
+            showResetSortingButton: initialState.showResetSortingButton
+        };
+    }
+
+    generateInitialState() {
+        let enhancedTableData = this.generateStateTableData(this.props.tableData);
+        let enhancedColumns = this.generateColumnState(this.props.columns);
+        let initialSortField = null;
+        let initialSortOrder = null;
+        let showResetSortingButton = false;
+        enhancedColumns.forEach(column => {
+            if (column.sortOrder !== 'none') {
+                initialSortField = column.dataField;
+                initialSortOrder = column.sortOrder;
+                showResetSortingButton = true;
+            }
+        });
+        if (initialSortField !== null) {
+            enhancedTableData = this.sortBy(enhancedTableData, initialSortField, initialSortOrder);
+        }
+        return {
+            enhancedTableData: enhancedTableData,
+            enhancedColumns: enhancedColumns,
+            showResetSortingButton: showResetSortingButton
         };
     }
 
@@ -36,15 +61,13 @@ class SimpleTreeTable extends React.Component {
 
     generateColumnState(initialColumns) {
         return initialColumns.map(node => {
-            let orderPresent = node.hasOwnProperty('sortable');
-            let sortOrder = node.hasOwnProperty('sorted') ? node.sorted : 'none';
+            let sortOrder = node.hasOwnProperty('sortOrder') ? node.sorted : 'none';
             return Object.assign({}, node, {
-                sortable: orderPresent ? node.sortable : true,
+                sortable: node.hasOwnProperty('sortable') ? node.sortable : true,
                 sortOrder: sortOrder
             })
         });
     }
-
 
     expandOrCollapseAll() {
         let action = !this.state.expanded;
@@ -113,11 +136,17 @@ class SimpleTreeTable extends React.Component {
         });
         this.setState({
             enhancedTableData: newTree,
-            enhancedColumns: newColumns
+            enhancedColumns: newColumns,
+            showResetSortingButton: true
         });
     }
 
     sortBy(data, fieldName, direction) {
+        data.forEach(entry => {
+            if (entry.children && entry.children.length > 0) {
+                entry.children = this.sortBy(entry.children, fieldName, direction);
+            }
+        });
         if (direction === 'asc') {
             return data.sort((a, b) => {
                 return a.data[fieldName] < b.data[fieldName] ? -1 : a.data[fieldName] > b.data[fieldName] ? 1 : 0;
@@ -129,13 +158,21 @@ class SimpleTreeTable extends React.Component {
         }
     };
 
-
     getSortStatus(fieldName) {
         for (let i = 0; i < this.state.enhancedColumns.length; i++) {
             if (this.state.enhancedColumns[i].dataField === fieldName) {
                 return this.state.enhancedColumns[i].sortOrder;
             }
         }
+    }
+
+    resetSorting() {
+        let initialState = this.generateInitialState();
+        this.setState({
+            enhancedTableData: initialState.enhancedTableData,
+            enhancedColumns: initialState.enhancedColumns,
+            showResetSortingButton: initialState.showResetSortingButton
+        });
     }
 
 //from here down the functions deal with rendering
@@ -250,7 +287,13 @@ class SimpleTreeTable extends React.Component {
         return (
             <div>
                 <button onClick={this.expandOrCollapseAll.bind(this)}
-                        className={this.props.control.showButton ? this.props.control.buttonClasses : 'hidden'}>{this.state.expanded ? 'Collapse All' : 'Expand All'}</button>
+                        className={this.props.control.showExpandCollapseButton ? this.props.control.expandCollapseButtonClasses : 'hidden'}>
+                    {this.state.expanded ? 'Collapse All' : 'Expand All'}
+                </button>
+                <button onClick={this.resetSorting.bind(this)}
+                        className={this.state.showResetSortingButton ? this.props.control.resetSortingButtonClasses : 'hidden'}>
+                    Reset Sorting
+                </button>
                 <table className={this.props.control.tableClasses}>
                     <thead>
                     <tr>
@@ -274,8 +317,10 @@ SimpleTreeTable.propTypes = {
         })).isRequired,
     control: PropTypes.shape({
         tableClasses: PropTypes.string,
-        buttonClasses: PropTypes.string,
-        showButton: PropTypes.bool
+        showExpandCollapseButton: PropTypes.bool,
+        expandCollapseButtonClasses: PropTypes.string,
+        showResetSortingButton: PropTypes.bool,
+        resetSortingButtonClasses: PropTypes.string
     }),
     columns: PropTypes.arrayOf(PropTypes.shape({
         dataField: PropTypes.string.isRequired,
@@ -283,7 +328,9 @@ SimpleTreeTable.propTypes = {
         fixedWidth: PropTypes.bool,
         percentageWidth: PropTypes.number,
         styleClass: PropTypes.string,
-        renderer: PropTypes.func
+        renderer: PropTypes.func,
+        sortable: PropTypes.bool,
+        sortOrder: PropTypes.string
     }))
 };
 
@@ -291,8 +338,10 @@ SimpleTreeTable.defaultProps = {
     tableData: [],
     control: {
         tableClasses: '',
-        buttonClasses: '',
-        showButton: false
+        showExpandCollapseButton: false,
+        expandCollapseButtonClasses: '',
+        showResetSortingButton: false,
+        resetSortingButtonClasses: ''
     },
     columns: [{
         dataField: '',

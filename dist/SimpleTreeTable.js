@@ -17,9 +17,11 @@ require("core-js/modules/es6.symbol");
 
 require("core-js/modules/es6.object.set-prototype-of");
 
-require("core-js/modules/web.dom.iterable");
+require("core-js/modules/es6.array.sort");
 
 require("core-js/modules/es6.object.assign");
+
+require("core-js/modules/web.dom.iterable");
 
 var _react = _interopRequireDefault(require("react"));
 
@@ -70,14 +72,45 @@ function (_React$Component) {
     _classCallCheck(this, SimpleTreeTable);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(SimpleTreeTable).call(this, props));
+
+    var initialState = _this.generateInitialState();
+
     _this.state = {
-      enhancedTableData: _this.generateStateTableData(_this.props.tableData),
-      expanded: false
+      enhancedTableData: initialState.enhancedTableData,
+      expanded: false,
+      enhancedColumns: initialState.enhancedColumns,
+      showResetSortingButton: initialState.showResetSortingButton
     };
     return _this;
   }
 
   _createClass(SimpleTreeTable, [{
+    key: "generateInitialState",
+    value: function generateInitialState() {
+      var enhancedTableData = this.generateStateTableData(this.props.tableData);
+      var enhancedColumns = this.generateColumnState(this.props.columns);
+      var initialSortField = null;
+      var initialSortOrder = null;
+      var showResetSortingButton = false;
+      enhancedColumns.forEach(function (column) {
+        if (column.sortOrder !== 'none') {
+          initialSortField = column.dataField;
+          initialSortOrder = column.sortOrder;
+          showResetSortingButton = true;
+        }
+      });
+
+      if (initialSortField !== null) {
+        enhancedTableData = this.sortBy(enhancedTableData, initialSortField, initialSortOrder);
+      }
+
+      return {
+        enhancedTableData: enhancedTableData,
+        enhancedColumns: enhancedColumns,
+        showResetSortingButton: showResetSortingButton
+      };
+    }
+  }, {
     key: "generateStateTableData",
     value: function generateStateTableData(tree) {
       var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
@@ -99,6 +132,17 @@ function (_React$Component) {
           });
         }
       }(tree);
+    }
+  }, {
+    key: "generateColumnState",
+    value: function generateColumnState(initialColumns) {
+      return initialColumns.map(function (node) {
+        var sortOrder = node.hasOwnProperty('sortOrder') ? node.sorted : 'none';
+        return Object.assign({}, node, {
+          sortable: node.hasOwnProperty('sortable') ? node.sortable : true,
+          sortOrder: sortOrder
+        });
+      });
     }
   }, {
     key: "expandOrCollapseAll",
@@ -163,13 +207,82 @@ function (_React$Component) {
       }(data);
     }
   }, {
+    key: "sortByField",
+    value: function sortByField(fieldName) {
+      var sortStatus = this.getSortStatus(fieldName);
+      var sortOrder = 'asc';
+
+      if (sortStatus === 'asc') {
+        sortOrder = 'desc';
+      }
+
+      var newTree = this.sortBy(this.state.enhancedTableData, fieldName, sortOrder);
+      var newColumns = this.state.enhancedColumns.map(function (node) {
+        var newSortOrder = 'none';
+
+        if (node.dataField === fieldName) {
+          newSortOrder = sortOrder;
+        }
+
+        return Object.assign({}, node, {
+          sortOrder: newSortOrder
+        });
+      });
+      this.setState({
+        enhancedTableData: newTree,
+        enhancedColumns: newColumns,
+        showResetSortingButton: true
+      });
+    }
+  }, {
+    key: "sortBy",
+    value: function sortBy(data, fieldName, direction) {
+      var _this2 = this;
+
+      data.forEach(function (entry) {
+        if (entry.children && entry.children.length > 0) {
+          entry.children = _this2.sortBy(entry.children, fieldName, direction);
+        }
+      });
+
+      if (direction === 'asc') {
+        return data.sort(function (a, b) {
+          return a.data[fieldName] < b.data[fieldName] ? -1 : a.data[fieldName] > b.data[fieldName] ? 1 : 0;
+        });
+      } else {
+        return data.sort(function (b, a) {
+          return a.data[fieldName] < b.data[fieldName] ? -1 : a.data[fieldName] > b.data[fieldName] ? 1 : 0;
+        });
+      }
+    }
+  }, {
+    key: "getSortStatus",
+    value: function getSortStatus(fieldName) {
+      for (var i = 0; i < this.state.enhancedColumns.length; i++) {
+        if (this.state.enhancedColumns[i].dataField === fieldName) {
+          return this.state.enhancedColumns[i].sortOrder;
+        }
+      }
+    }
+  }, {
+    key: "resetSorting",
+    value: function resetSorting() {
+      var initialState = this.generateInitialState();
+      this.setState({
+        enhancedTableData: initialState.enhancedTableData,
+        enhancedColumns: initialState.enhancedColumns,
+        showResetSortingButton: initialState.showResetSortingButton
+      });
+    } //from here down the functions deal with rendering
+
+  }, {
     key: "generateTableBody",
     value: function generateTableBody(tableData) {
-      var _this2 = this;
+      var _this3 = this;
 
       var tableBody = [];
       tableData.forEach(function (dataRow) {
-        var rowData = _this2.processDataRow(dataRow);
+        var rowData = _this3.processDataRow(dataRow);
 
         var key = dataRow.parentRowID + '-' + dataRow.rowID;
         var rowClass = dataRow.visible ? 'shown' : 'hidden';
@@ -179,7 +292,7 @@ function (_React$Component) {
         }, rowData));
 
         if (dataRow.children) {
-          tableBody.push.apply(tableBody, _toConsumableArray(_this2.generateTableBody(dataRow.children)));
+          tableBody.push.apply(tableBody, _toConsumableArray(_this3.generateTableBody(dataRow.children)));
         }
       });
       return tableBody;
@@ -202,11 +315,11 @@ function (_React$Component) {
           });
         }
 
-        if (this.props.columns[0].fixedWidth) {
+        if (this.state.enhancedColumns[0].fixedWidth) {
           return _react.default.createElement("td", {
             key: key,
-            className: this.props.columns[0].styleClass,
-            width: this.props.columns[0].percentageWidth + '%'
+            className: this.state.enhancedColumns[0].styleClass,
+            width: this.state.enhancedColumns[0].percentageWidth + '%'
           }, _react.default.createElement("span", {
             style: {
               marginLeft: dataRow.rowLevel + 'em'
@@ -217,7 +330,7 @@ function (_React$Component) {
         } else {
           return _react.default.createElement("td", {
             key: key,
-            className: this.props.columns[0].styleClass
+            className: this.state.enhancedColumns[0].styleClass
           }, _react.default.createElement("span", {
             style: {
               marginLeft: dataRow.rowLevel + 'em'
@@ -227,11 +340,11 @@ function (_React$Component) {
           }, dataRow.data[dataField])));
         }
       } else {
-        if (this.props.columns[0].fixedWidth) {
+        if (this.state.enhancedColumns[0].fixedWidth) {
           return _react.default.createElement("td", {
             key: key,
-            className: this.props.columns[0].styleClass,
-            width: this.props.columns[0].percentageWidth + '%'
+            className: this.state.enhancedColumns[0].styleClass,
+            width: this.state.enhancedColumns[0].percentageWidth + '%'
           }, _react.default.createElement("span", {
             style: {
               marginLeft: dataRow.rowLevel + 1.25 + 'em'
@@ -242,7 +355,7 @@ function (_React$Component) {
         } else {
           return _react.default.createElement("td", {
             key: key,
-            className: this.props.columns[0].styleClass
+            className: this.state.enhancedColumns[0].styleClass
           }, _react.default.createElement("span", {
             style: {
               marginLeft: dataRow.rowLevel + 1.25 + 'em'
@@ -256,19 +369,19 @@ function (_React$Component) {
   }, {
     key: "processDataRow",
     value: function processDataRow(dataRow) {
-      var _this3 = this;
+      var _this4 = this;
 
       var rowBody = [];
-      rowBody.push(this.props.columns.map(function (column, index) {
+      rowBody.push(this.state.enhancedColumns.map(function (column, index) {
         var key = dataRow.parentRowID + '-' + dataRow.rowID + '-' + index;
         var output = dataRow.data[column.dataField];
 
         if (column.renderer) {
-          output = _this3.props.columns[index].renderer(dataRow, column.dataField);
+          output = _this4.state.enhancedColumns[index].renderer(dataRow, column.dataField);
         }
 
         if (index === 0) {
-          return _this3.generateExpandColumn(dataRow, key, column.dataField);
+          return _this4.generateExpandColumn(dataRow, key, column.dataField);
         } else {
           if (column.fixedWidth) {
             return _react.default.createElement("td", {
@@ -289,18 +402,40 @@ function (_React$Component) {
   }, {
     key: "generateHeaderRow",
     value: function generateHeaderRow() {
+      var _this5 = this;
+
       var headingRows = [];
 
-      if (this.props.columns) {
-        headingRows.push(this.props.columns.map(function (column) {
-          if (column.heading) {
+      if (this.state.enhancedColumns) {
+        headingRows.push(this.state.enhancedColumns.map(function (column) {
+          var fieldTitle = column.heading ? column.heading : column.dataField;
+          var sortIcon = null;
+
+          if (column.sortOrder === 'asc') {
+            sortIcon = _react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
+              icon: _freeSolidSvgIcons.faAngleUp,
+              fixedWidth: true,
+              pull: "right"
+            });
+          } else if (column.sortOrder === 'desc') {
+            sortIcon = _react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
+              icon: _freeSolidSvgIcons.faAngleDown,
+              fixedWidth: true,
+              pull: "right"
+            });
+          } else {
+            sortIcon = null;
+          }
+
+          if (column.sortable) {
             return _react.default.createElement("th", {
-              key: column.heading
-            }, column.heading);
+              key: fieldTitle,
+              onClick: _this5.sortByField.bind(_this5, column.dataField)
+            }, sortIcon, fieldTitle);
           } else {
             return _react.default.createElement("th", {
-              key: column.dataField
-            }, column.dataField);
+              key: fieldTitle
+            }, fieldTitle);
           }
         }));
       }
@@ -314,8 +449,11 @@ function (_React$Component) {
       var tableBody = this.generateTableBody(this.state.enhancedTableData);
       return _react.default.createElement("div", null, _react.default.createElement("button", {
         onClick: this.expandOrCollapseAll.bind(this),
-        className: this.props.control.showButton ? this.props.control.buttonClasses : 'hidden'
-      }, this.state.expanded ? 'Collapse All' : 'Expand All'), _react.default.createElement("table", {
+        className: this.props.control.showExpandCollapseButton ? this.props.control.expandCollapseButtonClasses : 'hidden'
+      }, this.state.expanded ? 'Collapse All' : 'Expand All'), _react.default.createElement("button", {
+        onClick: this.resetSorting.bind(this),
+        className: this.state.showResetSortingButton ? this.props.control.resetSortingButtonClasses : 'hidden'
+      }, "Reset Sorting"), _react.default.createElement("table", {
         className: this.props.control.tableClasses
       }, _react.default.createElement("thead", null, _react.default.createElement("tr", null, headingRows)), _react.default.createElement("tbody", null, tableBody)));
     }
@@ -331,8 +469,10 @@ SimpleTreeTable.propTypes = {
   })).isRequired,
   control: _propTypes.default.shape({
     tableClasses: _propTypes.default.string,
-    buttonClasses: _propTypes.default.string,
-    showButton: _propTypes.default.bool
+    showExpandCollapseButton: _propTypes.default.bool,
+    expandCollapseButtonClasses: _propTypes.default.string,
+    showResetSortingButton: _propTypes.default.bool,
+    resetSortingButtonClasses: _propTypes.default.string
   }),
   columns: _propTypes.default.arrayOf(_propTypes.default.shape({
     dataField: _propTypes.default.string.isRequired,
@@ -340,8 +480,29 @@ SimpleTreeTable.propTypes = {
     fixedWidth: _propTypes.default.bool,
     percentageWidth: _propTypes.default.number,
     styleClass: _propTypes.default.string,
-    renderer: _propTypes.default.func
+    renderer: _propTypes.default.func,
+    sortable: _propTypes.default.bool,
+    sortOrder: _propTypes.default.string
   }))
+};
+SimpleTreeTable.defaultProps = {
+  tableData: [],
+  control: {
+    tableClasses: '',
+    showExpandCollapseButton: false,
+    expandCollapseButtonClasses: '',
+    showResetSortingButton: false,
+    resetSortingButtonClasses: ''
+  },
+  columns: [{
+    dataField: '',
+    heading: '',
+    fixedWidth: false,
+    percentageWidth: 0,
+    styleClass: '',
+    renderer: null,
+    sortable: true
+  }]
 };
 var _default = SimpleTreeTable;
 exports.default = _default;
