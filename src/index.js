@@ -157,6 +157,7 @@ let dataTableData = [
     }
 ];
 let controlWithButton = {
+    visibleRows: 2,
     tableClasses: "table table-bordered",
     buttonClasses: "btn btn-default",
     showExpandCollapseButton: true,
@@ -242,6 +243,7 @@ const App = () => (
                             </td>
                             <td>
                                 <Highlight language="javascript">{"{\n" +
+                                "    visibleRows: 2,\n" +
                                 "    tableClasses: \"table table-bordered\",\n" +
                                 "    buttonClasses: \"btn btn-default\",\n" +
                                 "    showExpandCollapseButton: true,\n" +

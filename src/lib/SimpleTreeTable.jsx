@@ -19,7 +19,8 @@ class SimpleTreeTable extends React.Component {
     }
 
     generateInitialState() {
-        let enhancedTableData = this.generateStateTableData(this.props.tableData);
+        let visibleRows = this.props.control.hasOwnProperty('visibleRows') ? this.props.control.visibleRows : 1;
+        let enhancedTableData = this.generateStateTableData(this.props.tableData, visibleRows);
         let enhancedColumns = this.generateColumnState(this.props.columns);
         let initialSortField = null;
         let initialSortOrder = null;
@@ -41,7 +42,8 @@ class SimpleTreeTable extends React.Component {
         };
     }
 
-    generateStateTableData(tree, n = 1) {
+    generateStateTableData(tree, visibleRows) {
+        let n = 1;
         return (function recurse(children, parent = 0, rowLevel = 1) {
             if (children) {
                 return children.map(node => {
@@ -50,8 +52,8 @@ class SimpleTreeTable extends React.Component {
                         rowID: rowID,
                         rowLevel: rowLevel,
                         parentRowID: parent,
-                        visible: parent === 0,
-                        expanded: false,
+                        visible: rowLevel <= visibleRows,
+                        expanded: rowLevel < visibleRows,
                         children: recurse(node.children, rowID, rowLevel + 1)
                     })
                 });
@@ -316,6 +318,7 @@ SimpleTreeTable.propTypes = {
             children: PropTypes.arrayOf(PropTypes.object)
         })).isRequired,
     control: PropTypes.shape({
+        visibleRows: PropTypes.number,
         tableClasses: PropTypes.string,
         showExpandCollapseButton: PropTypes.bool,
         expandCollapseButtonClasses: PropTypes.string,
@@ -337,6 +340,7 @@ SimpleTreeTable.propTypes = {
 SimpleTreeTable.defaultProps = {
     tableData: [],
     control: {
+        visibleRows: 1,
         tableClasses: '',
         showExpandCollapseButton: false,
         expandCollapseButtonClasses: '',

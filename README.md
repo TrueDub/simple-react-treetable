@@ -110,6 +110,7 @@ Further control of how the table is displayed can be provided using the **contro
 
 | Attribute Name | Type | Description | Example | Required |
 | -------------- | ---- | ----------- | ------- | -------- |
+| visibleRows    | Number | Number of levels to display automatically - default is 1 | 2 | No |
 | tableClasses   | String | CSS class(es) to be applied to the table. See the styling section for more information. | | No |
 | showExpandCollapseButton     | Boolean | Should the Expand All/Collapse All button be displayed? | False | No | 
 | expandCollapseButtonClasses  | String | CSS classes to be applied to the button, if displayed | | No |
