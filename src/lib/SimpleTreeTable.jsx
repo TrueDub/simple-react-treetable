@@ -14,7 +14,8 @@ class SimpleTreeTable extends React.Component {
             enhancedTableData: initialState.enhancedTableData,
             expanded: false,
             enhancedColumns: initialState.enhancedColumns,
-            showResetSortingButton: initialState.showResetSortingButton
+            showResetSortingButton: initialState.showResetSortingButton,
+            childrenPresent: initialState.childrenPresent
         };
     }
 
@@ -32,13 +33,20 @@ class SimpleTreeTable extends React.Component {
                 showResetSortingButton = true;
             }
         });
+        let childrenPresent = false;
+        for (const entry of enhancedTableData) {
+            if (entry.children && entry.children.length > 0) {
+                childrenPresent = true;
+            }
+        }
         if (initialSortField !== null) {
             enhancedTableData = this.sortBy(enhancedTableData, initialSortField, initialSortOrder);
         }
         return {
             enhancedTableData: enhancedTableData,
             enhancedColumns: enhancedColumns,
-            showResetSortingButton: showResetSortingButton
+            showResetSortingButton: showResetSortingButton,
+            childrenPresent: childrenPresent
         };
     }
 
@@ -195,6 +203,21 @@ class SimpleTreeTable extends React.Component {
     }
 
     generateExpandColumn(dataRow, key, dataField) {
+        if (!this.state.childrenPresent) {
+            //no expander required
+            if (this.state.enhancedColumns[0].fixedWidth) {
+                return (
+                    <td key={key} className={this.state.enhancedColumns[0].styleClass}
+                        width={this.state.enhancedColumns[0].percentageWidth + '%'}>
+                        {dataRow.data[dataField]}
+                    </td>);
+            } else {
+                return (
+                    <td key={key} className={this.state.enhancedColumns[0].styleClass}>
+                        {dataRow.data[dataField]}
+                    </td>);
+            }
+        }
         if (dataRow.children && dataRow.children.length > 0) {
             let iconCell = <FontAwesomeIcon icon={faAngleRight} fixedWidth
                                             onClick={this.rowExpandOrCollapse.bind(this, dataRow.rowID)}/>;

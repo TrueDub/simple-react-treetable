@@ -166,7 +166,7 @@ let controlWithButton = {
     resetSortingButtonClasses: "btn btn-default float-right"
 };
 let controlWithoutButton = {
-    tableClasses: "table table-bordered",
+    tableClasses: "table table-bordered table-striped",
     showResetSortingButton: true,
     resetSortingButtonClasses: "btn btn-default float-right"
 };
@@ -394,7 +394,7 @@ const App = () => (
                             </td>
                             <td>
                                 <Highlight language="javascript">{"{\n" +
-                                "    tableClasses: \"table table-bordered\",\n" +
+                                "    tableClasses: \"table table-bordered table-striped\",\n" +
                                 "    showResetSortingButton: true,\n" +
                                 "    resetSortingButtonClasses: \"btn btn-default float-right\"\n" +
                                 "}"}</Highlight>
