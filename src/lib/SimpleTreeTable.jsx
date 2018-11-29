@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faAngleRight, faAngleDown, faAngleUp} from '@fortawesome/free-solid-svg-icons';
 
+import Paginator from './Paginator.jsx';
 import './SimpleTreeTable.css';
 
 class SimpleTreeTable extends React.Component {
@@ -16,6 +17,7 @@ class SimpleTreeTable extends React.Component {
         } else {
             endRow = initialState.enhancedTableData.length - 1;
         }
+        this.moveToSpecificPage = this.moveToSpecificPage.bind(this);
         this.state = {
             enhancedTableData: initialState.enhancedTableData,
             expanded: false,
@@ -23,7 +25,8 @@ class SimpleTreeTable extends React.Component {
             showResetSortingButton: initialState.showResetSortingButton,
             childrenPresent: initialState.childrenPresent,
             startRow: 0,
-            endRow: endRow
+            endRow: endRow,
+            currentPage: 1
         };
     }
 
@@ -199,21 +202,16 @@ class SimpleTreeTable extends React.Component {
     }
 
     //pagination
-    nextPage() {
-        let newStartRow = this.state.endRow + 1;
-        let newEndRow = this.state.endRow + this.props.control.initialRowsPerPage;
+    moveToSpecificPage(page) {
+        console.log(page);
+        let newStartRow = (page - 1) * this.props.control.initialRowsPerPage;
+        let newEndRow = newStartRow + this.props.control.initialRowsPerPage - 1;
+        console.log(newStartRow);
+        console.log(newEndRow);
         this.setState({
             startRow: newStartRow,
-            endRow: newEndRow
-        });
-    }
-
-    previousPage() {
-        let newStartRow = this.state.startRow - this.props.control.initialRowsPerPage;
-        let newEndRow = this.state.startRow - 1;
-        this.setState({
-            startRow: newStartRow,
-            endRow: newEndRow
+            endRow: newEndRow,
+            currentPage: page
         });
     }
 
@@ -227,20 +225,20 @@ class SimpleTreeTable extends React.Component {
         return entry.rowID;
     }
 
-    getFirstRowID(tree, length) {
-        return tree[length].rowID;
-    }
-
-    getNextRowID(tree, length) {
-        let entry = tree[length];
-        if (entry.children && entry.children.length > 0) {
-            return this.getMaxRowID(entry.children);
+    getNextRowID(tree, position) {
+        let entry = tree[position];
+        if (entry) {
+            if (entry.children && entry.children.length > 0) {
+                return this.getMaxRowID(entry.children);
+            }
+            return entry.rowID;
         }
-        return entry.rowID;
+        //if no entry at that position, return the last element
+        return tree[tree.length - 1].rowID;
     }
 
     generateTableBody(tableData, startRow, endRow) {
-        let startRowID = this.getFirstRowID(tableData, startRow);
+        let startRowID = tableData[startRow].rowID;
         let endRowID = this.getNextRowID(tableData, endRow);
         return this.generateTableBodyRows(tableData, startRowID, endRowID);
     }
@@ -366,6 +364,16 @@ class SimpleTreeTable extends React.Component {
         return headingRows;
     }
 
+    generatePaginatorRow() {
+        if (this.props.control.showPagination) {
+            return (<Paginator currentPage={this.state.currentPage} tableLength={this.state.enhancedTableData.length}
+                               rowsPerPage={this.props.control.initialRowsPerPage}
+                               rowMover={this.moveToSpecificPage}
+                               paginationClasses={this.props.control.paginationClasses}/>);
+        }
+        return <div>a</div>;
+    }
+
     render() {
         let headingRows = this.generateHeaderRow();
         let tableBody = this.generateTableBody(this.state.enhancedTableData, this.state.startRow, this.state.endRow);
@@ -389,8 +397,7 @@ class SimpleTreeTable extends React.Component {
                     {tableBody}
                     </tbody>
                 </table>
-                <button onClick={this.previousPage.bind(this)}>Previous Page</button>
-                <button onClick={this.nextPage.bind(this)}>Next Page</button>
+                {this.generatePaginatorRow()}
             </div>
         );
     }
@@ -410,7 +417,12 @@ SimpleTreeTable.propTypes = {
         showResetSortingButton: PropTypes.bool,
         resetSortingButtonClasses: PropTypes.string,
         showPagination: PropTypes.bool,
-        initialRowsPerPage: PropTypes.number
+        initialRowsPerPage: PropTypes.number,
+        paginationClasses: PropTypes.shape({
+            listClasses: PropTypes.string,
+            listItemClasses: PropTypes.string,
+            linkClasses: PropTypes.string,
+        })
     }),
     columns: PropTypes.arrayOf(PropTypes.shape({
         dataField: PropTypes.string.isRequired,
