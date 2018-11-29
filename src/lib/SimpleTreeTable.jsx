@@ -10,12 +10,20 @@ class SimpleTreeTable extends React.Component {
     constructor(props) {
         super(props);
         let initialState = this.generateInitialState();
+        let endRow = 0;
+        if (this.props.control.showPagination) {
+            endRow = this.props.control.initialRowsPerPage > initialState.enhancedTableData.length ? initialState.enhancedTableData.length - 1 : this.props.control.initialRowsPerPage - 1;
+        } else {
+            endRow = initialState.enhancedTableData.length - 1;
+        }
         this.state = {
             enhancedTableData: initialState.enhancedTableData,
             expanded: false,
             enhancedColumns: initialState.enhancedColumns,
             showResetSortingButton: initialState.showResetSortingButton,
-            childrenPresent: initialState.childrenPresent
+            childrenPresent: initialState.childrenPresent,
+            startRow: 0,
+            endRow: endRow
         };
     }
 
@@ -79,6 +87,9 @@ class SimpleTreeTable extends React.Component {
         });
     }
 
+    // state-changing functions below here
+
+    //expand/collapse
     expandOrCollapseAll() {
         let action = !this.state.expanded;
         let newTree = (function recurse(children) {
@@ -127,6 +138,8 @@ class SimpleTreeTable extends React.Component {
             });
         })(data);
     }
+
+    //sorting
 
     sortByField(fieldName) {
         let sortStatus = this.getSortStatus(fieldName);
@@ -185,17 +198,64 @@ class SimpleTreeTable extends React.Component {
         });
     }
 
-//from here down the functions deal with rendering
+    //pagination
+    nextPage() {
+        let newStartRow = this.state.endRow + 1;
+        let newEndRow = this.state.endRow + this.props.control.initialRowsPerPage;
+        this.setState({
+            startRow: newStartRow,
+            endRow: newEndRow
+        });
+    }
 
-    generateTableBody(tableData) {
+    previousPage() {
+        let newStartRow = this.state.startRow - this.props.control.initialRowsPerPage;
+        let newEndRow = this.state.startRow - 1;
+        this.setState({
+            startRow: newStartRow,
+            endRow: newEndRow
+        });
+    }
+
+    //from here down the functions deal with rendering
+
+    getMaxRowID(tree) {
+        let entry = tree[tree.length - 1];
+        if (entry.children && entry.children.length > 0) {
+            return this.getMaxRowID(entry.children);
+        }
+        return entry.rowID;
+    }
+
+    getFirstRowID(tree, length) {
+        return tree[length].rowID;
+    }
+
+    getNextRowID(tree, length) {
+        let entry = tree[length];
+        if (entry.children && entry.children.length > 0) {
+            return this.getMaxRowID(entry.children);
+        }
+        return entry.rowID;
+    }
+
+    generateTableBody(tableData, startRow, endRow) {
+        let startRowID = this.getFirstRowID(tableData, startRow);
+        let endRowID = this.getNextRowID(tableData, endRow);
+        return this.generateTableBodyRows(tableData, startRowID, endRowID);
+    }
+
+    generateTableBodyRows(tableData, startRow, endRow) {
         let tableBody = [];
         tableData.forEach((dataRow) => {
-                let rowData = this.processDataRow(dataRow);
-                let key = dataRow.parentRowID + '-' + dataRow.rowID;
-                let rowClass = dataRow.visible ? 'shown' : 'hidden';
-                tableBody.push(<tr className={rowClass} key={key}>{rowData}</tr>);
-                if (dataRow.children) {
-                    tableBody.push(...this.generateTableBody(dataRow.children));
+                if (dataRow.rowID >= startRow && dataRow.rowID <= endRow) {
+                    let rowData = this.processDataRow(dataRow);
+                    let key = dataRow.parentRowID + '-' + dataRow.rowID;
+                    let rowClass = dataRow.visible ? 'shown' : 'hidden';
+                    tableBody.push(<tr className={rowClass} key={key}>{rowData}</tr>);
+                    if (dataRow.children) {
+                        tableBody.push(...this.generateTableBodyRows(dataRow.children, startRow, endRow));
+                    }
                 }
             }
         );
@@ -308,7 +368,7 @@ class SimpleTreeTable extends React.Component {
 
     render() {
         let headingRows = this.generateHeaderRow();
-        let tableBody = this.generateTableBody(this.state.enhancedTableData);
+        let tableBody = this.generateTableBody(this.state.enhancedTableData, this.state.startRow, this.state.endRow);
         return (
             <div>
                 <button onClick={this.expandOrCollapseAll.bind(this)}
@@ -329,6 +389,8 @@ class SimpleTreeTable extends React.Component {
                     {tableBody}
                     </tbody>
                 </table>
+                <button onClick={this.previousPage.bind(this)}>Previous Page</button>
+                <button onClick={this.nextPage.bind(this)}>Next Page</button>
             </div>
         );
     }
@@ -346,7 +408,9 @@ SimpleTreeTable.propTypes = {
         showExpandCollapseButton: PropTypes.bool,
         expandCollapseButtonClasses: PropTypes.string,
         showResetSortingButton: PropTypes.bool,
-        resetSortingButtonClasses: PropTypes.string
+        resetSortingButtonClasses: PropTypes.string,
+        showPagination: PropTypes.bool,
+        initialRowsPerPage: PropTypes.number
     }),
     columns: PropTypes.arrayOf(PropTypes.shape({
         dataField: PropTypes.string.isRequired,
@@ -368,7 +432,9 @@ SimpleTreeTable.defaultProps = {
         showExpandCollapseButton: false,
         expandCollapseButtonClasses: '',
         showResetSortingButton: false,
-        resetSortingButtonClasses: ''
+        resetSortingButtonClasses: '',
+        showPagination: false,
+        initialRowsPerPage: 0
     },
     columns: [{
         dataField: '',

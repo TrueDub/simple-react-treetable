@@ -7,6 +7,7 @@ import SimpleTreeTable from "./lib/SimpleTreeTable.jsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'highlight.js/styles/rainbow.css';
 
+
 let descriptionRenderer = function (dataRow, dataField) {
     return <span dangerouslySetInnerHTML={{__html: dataRow.data[dataField]}}></span>;
 };
@@ -157,18 +158,22 @@ let dataTableData = [
     }
 ];
 let controlWithButton = {
-    visibleRows: 2,
+    visibleRows: 1,
     tableClasses: "table table-bordered",
     buttonClasses: "btn btn-default",
     showExpandCollapseButton: true,
     expandCollapseButtonClasses: "btn btn-default float-left",
     showResetSortingButton: true,
-    resetSortingButtonClasses: "btn btn-default float-right"
+    resetSortingButtonClasses: "btn btn-default float-right",
+    showPagination: true,
+    initialRowsPerPage: 2
 };
 let controlWithoutButton = {
     tableClasses: "table table-bordered table-striped",
     showResetSortingButton: true,
-    resetSortingButtonClasses: "btn btn-default float-right"
+    resetSortingButtonClasses: "btn btn-default float-right",
+    showPagination: true,
+    initialRowsPerPage: 2
 };
 
 const App = () => (
@@ -444,3 +449,4 @@ const App = () => (
 render(
     <App/>
     , document.getElementById("root"));
+
