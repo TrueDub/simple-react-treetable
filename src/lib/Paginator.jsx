@@ -5,31 +5,63 @@ class Paginator extends React.Component {
 
     constructor(props) {
         super(props);
+        let data = this.performCalcs(this.props.currentPage);
+        this.state = {
+            pos1Value: data.pos1Value,
+            pos2Value: data.pos2Value,
+            pos3Value: data.pos3Value,
+            pos4Value: data.pos4Value,
+            pos5Value: data.pos5Value,
+            totalNumberOfPages: data.totalNumberOfPages,
+            currentPage: data.currentPage,
+            listClasses: data.listClasses,
+            listItemClasses: data.listItemClasses,
+            linkClasses: data.linkClasses
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        let data = this.performCalcs(nextProps.currentPage);
+        this.setState({
+            pos1Value: data.pos1Value,
+            pos2Value: data.pos2Value,
+            pos3Value: data.pos3Value,
+            pos4Value: data.pos4Value,
+            pos5Value: data.pos5Value,
+            totalNumberOfPages: data.totalNumberOfPages,
+            currentPage: data.currentPage,
+            listClasses: data.listClasses,
+            listItemClasses: data.listItemClasses,
+            linkClasses: data.linkClasses
+        });
+    }
+
+    performCalcs(currentPage) {
         let pos1Value = 1;
         let pos2Value = 2;
         let pos3Value = 3;
         let pos4Value = 4;
         let pos5Value = 5;
-        if (this.props.currentPage > 3) {
-            pos1Value = this.props.currentPage - 2;
-            pos2Value = this.props.currentPage - 1;
-            pos3Value = this.props.currentPage;
-            pos4Value = this.props.currentPage + 1;
-            pos5Value = this.props.currentPage + 2;
+        if (currentPage > 3) {
+            pos1Value = currentPage - 2;
+            pos2Value = currentPage - 1;
+            pos3Value = currentPage;
+            pos4Value = currentPage + 1;
+            pos5Value = currentPage + 2;
         }
         let totalNumberOfPages = Math.ceil(this.props.tableLength / this.props.rowsPerPage);
-        if (totalNumberOfPages - this.props.currentPage === 0) {
-            pos1Value = this.props.currentPage - 4;
-            pos2Value = this.props.currentPage - 3;
-            pos3Value = this.props.currentPage - 2;
-            pos4Value = this.props.currentPage - 1;
-            pos5Value = this.props.currentPage;
-        } else if (totalNumberOfPages - this.props.currentPage === 1) {
-            pos1Value = this.props.currentPage - 3;
-            pos2Value = this.props.currentPage - 2;
-            pos3Value = this.props.currentPage - 1;
-            pos4Value = this.props.currentPage;
-            pos5Value = this.props.currentPage + 1;
+        if (totalNumberOfPages - currentPage === 0) {
+            pos1Value = currentPage - 4;
+            pos2Value = currentPage - 3;
+            pos3Value = currentPage - 2;
+            pos4Value = currentPage - 1;
+            pos5Value = currentPage;
+        } else if (totalNumberOfPages - currentPage === 1) {
+            pos1Value = currentPage - 3;
+            pos2Value = currentPage - 2;
+            pos3Value = currentPage - 1;
+            pos4Value = currentPage;
+            pos5Value = currentPage + 1;
         }
         let listClasses = '';
         if (this.props.paginationClasses && this.props.paginationClasses.listClasses) {
@@ -43,14 +75,14 @@ class Paginator extends React.Component {
         if (this.props.paginationClasses && this.props.paginationClasses.linkClasses) {
             linkClasses += this.props.paginationClasses.linkClasses;
         }
-        this.state = {
+        return {
             pos1Value: pos1Value,
             pos2Value: pos2Value,
             pos3Value: pos3Value,
             pos4Value: pos4Value,
             pos5Value: pos5Value,
             totalNumberOfPages: totalNumberOfPages,
-            currentPage: this.props.currentPage,
+            currentPage: currentPage,
             listClasses: listClasses,
             listItemClasses: listItemClasses,
             linkClasses: linkClasses

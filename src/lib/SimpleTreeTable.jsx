@@ -203,11 +203,8 @@ class SimpleTreeTable extends React.Component {
 
     //pagination
     moveToSpecificPage(page) {
-        console.log(page);
         let newStartRow = (page - 1) * this.props.control.initialRowsPerPage;
         let newEndRow = newStartRow + this.props.control.initialRowsPerPage - 1;
-        console.log(newStartRow);
-        console.log(newEndRow);
         this.setState({
             startRow: newStartRow,
             endRow: newEndRow,
@@ -371,7 +368,7 @@ class SimpleTreeTable extends React.Component {
                                rowMover={this.moveToSpecificPage}
                                paginationClasses={this.props.control.paginationClasses}/>);
         }
-        return <div>a</div>;
+        return <div></div>;
     }
 
     render() {
