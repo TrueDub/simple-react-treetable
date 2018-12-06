@@ -100,4 +100,56 @@ describe('testing the Paginator page calculations', () => {
         const totalNumberOfPages = wrapper.state('totalNumberOfPages');
         expect(totalNumberOfPages).toBe(63);
     });
+    it('displays correctly for Page 1 of 4', () => {
+        let currentPage = 1;
+        let tableLength = 35;
+        let rowsPerPage = 10;
+        const wrapper = shallow(<Paginator currentPage={currentPage}
+                                           tableLength={tableLength}
+                                           rowsPerPage={rowsPerPage}
+                                           rowMover={function () {
+                                           }}
+                                           paginationClasses={paginationClasses}/>);
+        expect(wrapper.find('.list')).toBeDefined();
+        const list = wrapper.find('.list li');
+        expect(list.length).toBe(9);
+        const pos1Value = wrapper.state('pos1Value');
+        expect(pos1Value).toBe(1);
+        const pos1Display = wrapper.state('pos1Display');
+        expect(pos1Display).toBe(true);
+        const pos5Value = wrapper.state('pos5Value');
+        expect(pos5Value).toBe(5);
+        const pos5Display = wrapper.state('pos5Display');
+        expect(pos5Display).toBe(false);
+        const propsCurrentPage = wrapper.state('currentPage');
+        expect(propsCurrentPage).toBe(1);
+        const totalNumberOfPages = wrapper.state('totalNumberOfPages');
+        expect(totalNumberOfPages).toBe(4);
+    });
+    it('displays correctly for Page 4 of 4', () => {
+        let currentPage = 4;
+        let tableLength = 35;
+        let rowsPerPage = 10;
+        const wrapper = shallow(<Paginator currentPage={currentPage}
+                                           tableLength={tableLength}
+                                           rowsPerPage={rowsPerPage}
+                                           rowMover={function () {
+                                           }}
+                                           paginationClasses={paginationClasses}/>);
+        expect(wrapper.find('.list')).toBeDefined();
+        const list = wrapper.find('.list li');
+        expect(list.length).toBe(9);
+        const pos1Value = wrapper.state('pos1Value');
+        expect(pos1Value).toBe(0);
+        const pos1Display = wrapper.state('pos1Display');
+        expect(pos1Display).toBe(false);
+        const pos5Value = wrapper.state('pos5Value');
+        expect(pos5Value).toBe(4);
+        const pos5Display = wrapper.state('pos5Display');
+        expect(pos5Display).toBe(true);
+        const propsCurrentPage = wrapper.state('currentPage');
+        expect(propsCurrentPage).toBe(4);
+        const totalNumberOfPages = wrapper.state('totalNumberOfPages');
+        expect(totalNumberOfPages).toBe(4);
+    });
 });

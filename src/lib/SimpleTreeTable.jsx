@@ -363,10 +363,18 @@ class SimpleTreeTable extends React.Component {
 
     generatePaginatorRow() {
         if (this.props.control.showPagination) {
-            return (<Paginator currentPage={this.state.currentPage} tableLength={this.state.enhancedTableData.length}
-                               rowsPerPage={this.props.control.initialRowsPerPage}
-                               rowMover={this.moveToSpecificPage}
-                               paginationClasses={this.props.control.paginationClasses}/>);
+            return (
+                <div>
+                    <div>
+                        <Paginator currentPage={this.state.currentPage}
+                                   tableLength={this.state.enhancedTableData.length}
+                                   rowsPerPage={this.props.control.initialRowsPerPage}
+                                   rowMover={this.moveToSpecificPage}
+                                   paginationClasses={this.props.control.paginationClasses}/>
+                    </div>
+                    <div>{this.state.startRow + 1} to {this.state.endRow + 1} of {this.state.enhancedTableData.length - 1}</div>
+                </div>
+            );
         }
         return <div></div>;
     }

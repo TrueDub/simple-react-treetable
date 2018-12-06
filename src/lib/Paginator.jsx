@@ -12,6 +12,11 @@ class Paginator extends React.Component {
             pos3Value: data.pos3Value,
             pos4Value: data.pos4Value,
             pos5Value: data.pos5Value,
+            pos1Display: data.pos1Display,
+            pos2Display: data.pos2Display,
+            pos3Display: data.pos3Display,
+            pos4Display: data.pos4Display,
+            pos5Display: data.pos5Display,
             totalNumberOfPages: data.totalNumberOfPages,
             currentPage: data.currentPage,
             listClasses: data.listClasses,
@@ -32,7 +37,12 @@ class Paginator extends React.Component {
             currentPage: data.currentPage,
             listClasses: data.listClasses,
             listItemClasses: data.listItemClasses,
-            linkClasses: data.linkClasses
+            linkClasses: data.linkClasses,
+            pos1Display: this.displayPageNumber(data.pos1Value, data.currentPage, data.totalNumberOfPages),
+            pos2Display: this.displayPageNumber(data.pos2Value, data.currentPage, data.totalNumberOfPages),
+            pos3Display: this.displayPageNumber(data.pos3Value, data.currentPage, data.totalNumberOfPages),
+            pos4Display: this.displayPageNumber(data.pos4Value, data.currentPage, data.totalNumberOfPages),
+            pos5Display: this.displayPageNumber(data.pos5Value, data.currentPage, data.totalNumberOfPages)
         });
     }
 
@@ -77,10 +87,15 @@ class Paginator extends React.Component {
         }
         return {
             pos1Value: pos1Value,
+            pos1Display: this.displayPageNumber(pos1Value, currentPage, totalNumberOfPages),
             pos2Value: pos2Value,
+            pos2Display: this.displayPageNumber(pos2Value, currentPage, totalNumberOfPages),
             pos3Value: pos3Value,
+            pos3Display: this.displayPageNumber(pos3Value, currentPage, totalNumberOfPages),
             pos4Value: pos4Value,
+            pos4Display: this.displayPageNumber(pos4Value, currentPage, totalNumberOfPages),
             pos5Value: pos5Value,
+            pos5Display: this.displayPageNumber(pos5Value, currentPage, totalNumberOfPages),
             totalNumberOfPages: totalNumberOfPages,
             currentPage: currentPage,
             listClasses: listClasses,
@@ -89,52 +104,64 @@ class Paginator extends React.Component {
         }
     }
 
+    displayPageNumber(posValue, currentPage, totalNumberOfPages) {
+        if (posValue <= 0) {
+            return false;
+        }
+        if (posValue > totalNumberOfPages) {
+            return false;
+        }
+        return true;
+    }
+
+
     render() {
-        return (<div>
-            <ul className={this.state.listClasses}>
-                <li className={this.state.listItemClasses}>
-                    <button className={this.state.linkClasses}
-                            onClick={this.props.rowMover.bind(null, 1)}>First
-                    </button>
-                </li>
-                <li className={this.state.listItemClasses}>
-                    <button className={this.state.linkClasses}
-                            onClick={this.props.rowMover.bind(null, this.state.currentPage - 1)}>Previous
-                    </button>
-                </li>
-                <li className={this.state.listItemClasses}>
-                    <button className={this.state.linkClasses}
-                            onClick={this.props.rowMover.bind(null, this.state.pos1Value)}>{this.state.pos1Value}</button>
-                </li>
-                <li className={this.state.listItemClasses}>
-                    <button className={this.state.linkClasses}
-                            onClick={this.props.rowMover.bind(null, this.state.pos2Value)}>{this.state.pos2Value}</button>
-                </li>
-                <li className={this.state.listItemClasses}>
-                    <button className={this.state.linkClasses}
-                            onClick={this.props.rowMover.bind(null, this.state.pos3Value)}>{this.state.pos3Value}</button>
-                </li>
-                <li className={this.state.listItemClasses}>
-                    <button className={this.state.linkClasses}
-                            onClick={this.props.rowMover.bind(null, this.state.pos4Value)}>{this.state.pos4Value}</button>
-                </li>
-                <li className={this.state.listItemClasses}>
-                    <button className={this.state.linkClasses}
-                            onClick={this.props.rowMover.bind(null, this.state.pos5Value)}>{this.state.pos5Value}</button>
-                </li>
-                <li className={this.state.listItemClasses}>
-                    <button className={this.state.linkClasses}
-                            onClick={this.props.rowMover.bind(null, this.state.currentPage + 1)}>Next
-                    </button>
-                </li>
-                <li className={this.state.listItemClasses}>
-                    <button className={this.state.linkClasses}
-                            onClick={this.props.rowMover.bind(null, this.state.totalNumberOfPages)}>Last
-                    </button>
-                </li>
-            </ul>
-            )
-        </div>);
+        return (
+            <div>
+                <ul className={this.state.listClasses}>
+                    <li className={this.state.listItemClasses}>
+                        <button className={this.state.linkClasses}
+                                onClick={this.props.rowMover.bind(null, 1)}>First
+                        </button>
+                    </li>
+                    <li className={this.state.listItemClasses}>
+                        <button className={this.state.linkClasses}
+                                onClick={this.props.rowMover.bind(null, this.state.currentPage - 1)}>Previous
+                        </button>
+                    </li>
+                    <li className={this.state.pos1Display ? this.state.listItemClasses : 'hidden'}>
+                        <button className={this.state.linkClasses}
+                                onClick={this.props.rowMover.bind(null, this.state.pos1Value)}>{this.state.pos1Value}</button>
+                    </li>
+                    <li className={this.state.pos2Display ? this.state.listItemClasses : 'hidden'}>
+                        <button className={this.state.linkClasses}
+                                onClick={this.props.rowMover.bind(null, this.state.pos2Value)}>{this.state.pos2Value}</button>
+                    </li>
+                    <li className={this.state.pos3Display ? this.state.listItemClasses : 'hidden'}>
+                        <button className={this.state.linkClasses}
+                                onClick={this.props.rowMover.bind(null, this.state.pos3Value)}>{this.state.pos3Value}</button>
+                    </li>
+                    <li className={this.state.pos4Display ? this.state.listItemClasses : 'hidden'}>
+                        <button className={this.state.linkClasses}
+                                onClick={this.props.rowMover.bind(null, this.state.pos4Value)}>{this.state.pos4Value}</button>
+                    </li>
+                    <li className={this.state.pos5Display ? this.state.listItemClasses : 'hidden'}>
+                        <button className={this.state.linkClasses}
+                                onClick={this.props.rowMover.bind(null, this.state.pos5Value)}>{this.state.pos5Value}</button>
+                    </li>
+                    <li className={this.state.listItemClasses}>
+                        <button className={this.state.linkClasses}
+                                onClick={this.props.rowMover.bind(null, this.state.currentPage + 1)}>Next
+                        </button>
+                    </li>
+                    <li className={this.state.listItemClasses}>
+                        <button className={this.state.linkClasses}
+                                onClick={this.props.rowMover.bind(null, this.state.totalNumberOfPages)}>Last
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        );
     }
 }
 
