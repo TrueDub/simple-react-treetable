@@ -69,6 +69,7 @@ class SimpleTreeTable extends React.Component {
                     let rowID = n++;
                     return Object.assign({}, node, {
                         rowID: rowID,
+                        rowOrder: rowID,
                         rowLevel: rowLevel,
                         parentRowID: parent,
                         visible: rowLevel <= visibleRows,
@@ -151,6 +152,17 @@ class SimpleTreeTable extends React.Component {
             sortOrder = 'desc';
         }
         let newTree = this.sortBy(this.state.enhancedTableData, fieldName, sortOrder);
+        let n = 0;
+        let orderedNewTree = (function recurse(children) {
+            if (children) {
+                return children.map(node => {
+                    return Object.assign({}, node, {
+                        rowOrder: n++,
+                        children: recurse(node.children)
+                    })
+                });
+            }
+        })(newTree);
         let newColumns = this.state.enhancedColumns.map(node => {
             let newSortOrder = 'none';
             if (node.dataField === fieldName) {
@@ -161,7 +173,7 @@ class SimpleTreeTable extends React.Component {
             })
         });
         this.setState({
-            enhancedTableData: newTree,
+            enhancedTableData: orderedNewTree,
             enhancedColumns: newColumns,
             showResetSortingButton: true
         });
@@ -219,7 +231,7 @@ class SimpleTreeTable extends React.Component {
         if (entry.children && entry.children.length > 0) {
             return this.getMaxRowID(entry.children);
         }
-        return entry.rowID;
+        return entry.rowOrder;
     }
 
     getNextRowID(tree, position) {
@@ -228,14 +240,14 @@ class SimpleTreeTable extends React.Component {
             if (entry.children && entry.children.length > 0) {
                 return this.getMaxRowID(entry.children);
             }
-            return entry.rowID;
+            return entry.rowOrder;
         }
         //if no entry at that position, return the last element
-        return tree[tree.length - 1].rowID;
+        return tree[tree.length - 1].rowOrder;
     }
 
     generateTableBody(tableData, startRow, endRow) {
-        let startRowID = tableData[startRow].rowID;
+        let startRowID = tableData[startRow].rowOrder;
         let endRowID = this.getNextRowID(tableData, endRow);
         return this.generateTableBodyRows(tableData, startRowID, endRowID);
     }
@@ -243,7 +255,7 @@ class SimpleTreeTable extends React.Component {
     generateTableBodyRows(tableData, startRow, endRow) {
         let tableBody = [];
         tableData.forEach((dataRow) => {
-                if (dataRow.rowID >= startRow && dataRow.rowID <= endRow) {
+                if (dataRow.rowOrder >= startRow && dataRow.rowOrder <= endRow) {
                     let rowData = this.processDataRow(dataRow);
                     let key = dataRow.parentRowID + '-' + dataRow.rowID;
                     let rowClass = dataRow.visible ? 'shown' : 'hidden';
@@ -365,14 +377,11 @@ class SimpleTreeTable extends React.Component {
         if (this.props.control.showPagination) {
             return (
                 <div>
-                    <div>
-                        <Paginator currentPage={this.state.currentPage}
-                                   tableLength={this.state.enhancedTableData.length}
-                                   rowsPerPage={this.props.control.initialRowsPerPage}
-                                   rowMover={this.moveToSpecificPage}
-                                   paginationClasses={this.props.control.paginationClasses}/>
-                    </div>
-                    <div>{this.state.startRow + 1} to {this.state.endRow + 1} of {this.state.enhancedTableData.length - 1}</div>
+                    <Paginator currentPage={this.state.currentPage}
+                               tableLength={this.state.enhancedTableData.length}
+                               rowsPerPage={this.props.control.initialRowsPerPage}
+                               rowMover={this.moveToSpecificPage}
+                               paginationClasses={this.props.control.paginationClasses}/>
                 </div>
             );
         }
@@ -427,6 +436,7 @@ SimpleTreeTable.propTypes = {
             listClasses: PropTypes.string,
             listItemClasses: PropTypes.string,
             linkClasses: PropTypes.string,
+            activePageClasses: PropTypes.string
         })
     }),
     columns: PropTypes.arrayOf(PropTypes.shape({

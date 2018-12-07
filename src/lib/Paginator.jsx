@@ -12,16 +12,18 @@ class Paginator extends React.Component {
             pos3Value: data.pos3Value,
             pos4Value: data.pos4Value,
             pos5Value: data.pos5Value,
-            pos1Display: data.pos1Display,
-            pos2Display: data.pos2Display,
-            pos3Display: data.pos3Display,
-            pos4Display: data.pos4Display,
-            pos5Display: data.pos5Display,
+            pos1Classes: data.pos1Classes,
+            pos2Classes: data.pos2Classes,
+            pos3Classes: data.pos3Classes,
+            pos4Classes: data.pos4Classes,
+            pos5Classes: data.pos5Classes,
             totalNumberOfPages: data.totalNumberOfPages,
             currentPage: data.currentPage,
             listClasses: data.listClasses,
             listItemClasses: data.listItemClasses,
-            linkClasses: data.linkClasses
+            linkClasses: data.linkClasses,
+            activePageClasses: data.activePageClasses
+
         }
     }
 
@@ -38,11 +40,11 @@ class Paginator extends React.Component {
             listClasses: data.listClasses,
             listItemClasses: data.listItemClasses,
             linkClasses: data.linkClasses,
-            pos1Display: this.displayPageNumber(data.pos1Value, data.currentPage, data.totalNumberOfPages),
-            pos2Display: this.displayPageNumber(data.pos2Value, data.currentPage, data.totalNumberOfPages),
-            pos3Display: this.displayPageNumber(data.pos3Value, data.currentPage, data.totalNumberOfPages),
-            pos4Display: this.displayPageNumber(data.pos4Value, data.currentPage, data.totalNumberOfPages),
-            pos5Display: this.displayPageNumber(data.pos5Value, data.currentPage, data.totalNumberOfPages)
+            pos1Classes: this.defineListItemClasses(data.pos1Value, data.currentPage, data.totalNumberOfPages),
+            pos2Classes: this.defineListItemClasses(data.pos2Value, data.currentPage, data.totalNumberOfPages),
+            pos3Classes: this.defineListItemClasses(data.pos3Value, data.currentPage, data.totalNumberOfPages),
+            pos4Classes: this.defineListItemClasses(data.pos4Value, data.currentPage, data.totalNumberOfPages),
+            pos5Classes: this.defineListItemClasses(data.pos5Value, data.currentPage, data.totalNumberOfPages)
         });
     }
 
@@ -85,22 +87,27 @@ class Paginator extends React.Component {
         if (this.props.paginationClasses && this.props.paginationClasses.linkClasses) {
             linkClasses += this.props.paginationClasses.linkClasses;
         }
+        let activePageClasses = '';
+        if (this.props.paginationClasses && this.props.paginationClasses.activePageClasses) {
+            activePageClasses += this.props.paginationClasses.activePageClasses;
+        }
         return {
             pos1Value: pos1Value,
-            pos1Display: this.displayPageNumber(pos1Value, currentPage, totalNumberOfPages),
+            pos1Classes: this.defineListItemClasses(pos1Value, currentPage, totalNumberOfPages),
             pos2Value: pos2Value,
-            pos2Display: this.displayPageNumber(pos2Value, currentPage, totalNumberOfPages),
+            pos2Classes: this.defineListItemClasses(pos2Value, currentPage, totalNumberOfPages),
             pos3Value: pos3Value,
-            pos3Display: this.displayPageNumber(pos3Value, currentPage, totalNumberOfPages),
+            pos3Classes: this.defineListItemClasses(pos3Value, currentPage, totalNumberOfPages),
             pos4Value: pos4Value,
-            pos4Display: this.displayPageNumber(pos4Value, currentPage, totalNumberOfPages),
+            pos4Classes: this.defineListItemClasses(pos4Value, currentPage, totalNumberOfPages),
             pos5Value: pos5Value,
-            pos5Display: this.displayPageNumber(pos5Value, currentPage, totalNumberOfPages),
+            pos5Classes: this.defineListItemClasses(pos5Value, currentPage, totalNumberOfPages),
             totalNumberOfPages: totalNumberOfPages,
             currentPage: currentPage,
             listClasses: listClasses,
             listItemClasses: listItemClasses,
-            linkClasses: linkClasses
+            linkClasses: linkClasses,
+            activePageClasses: activePageClasses
         }
     }
 
@@ -112,6 +119,17 @@ class Paginator extends React.Component {
             return false;
         }
         return true;
+    }
+
+    defineListItemClasses(posValue, currentPage, totalNumberOfPages) {
+        if (posValue <= 0 || posValue > totalNumberOfPages) {
+            return 'hidden';
+        }
+        let classes = this.props.paginationClasses.listItemClasses;
+        if (posValue === currentPage) {
+            classes += (' ' + this.props.paginationClasses.activePageClasses);
+        }
+        return classes;
     }
 
 
@@ -129,23 +147,23 @@ class Paginator extends React.Component {
                                 onClick={this.props.rowMover.bind(null, this.state.currentPage - 1)}>Previous
                         </button>
                     </li>
-                    <li className={this.state.pos1Display ? this.state.listItemClasses : 'hidden'}>
+                    <li className={this.state.pos1Classes}>
                         <button className={this.state.linkClasses}
                                 onClick={this.props.rowMover.bind(null, this.state.pos1Value)}>{this.state.pos1Value}</button>
                     </li>
-                    <li className={this.state.pos2Display ? this.state.listItemClasses : 'hidden'}>
+                    <li className={this.state.pos2Classes}>
                         <button className={this.state.linkClasses}
                                 onClick={this.props.rowMover.bind(null, this.state.pos2Value)}>{this.state.pos2Value}</button>
                     </li>
-                    <li className={this.state.pos3Display ? this.state.listItemClasses : 'hidden'}>
+                    <li className={this.state.pos3Classes}>
                         <button className={this.state.linkClasses}
                                 onClick={this.props.rowMover.bind(null, this.state.pos3Value)}>{this.state.pos3Value}</button>
                     </li>
-                    <li className={this.state.pos4Display ? this.state.listItemClasses : 'hidden'}>
+                    <li className={this.state.pos4Classes}>
                         <button className={this.state.linkClasses}
                                 onClick={this.props.rowMover.bind(null, this.state.pos4Value)}>{this.state.pos4Value}</button>
                     </li>
-                    <li className={this.state.pos5Display ? this.state.listItemClasses : 'hidden'}>
+                    <li className={this.state.pos5Classes}>
                         <button className={this.state.linkClasses}
                                 onClick={this.props.rowMover.bind(null, this.state.pos5Value)}>{this.state.pos5Value}</button>
                     </li>
@@ -174,6 +192,7 @@ Paginator.propTypes = {
         listClasses: PropTypes.string,
         listItemClasses: PropTypes.string,
         linkClasses: PropTypes.string,
+        activePageClasses: PropTypes.string
     })
 };
 

@@ -201,6 +201,7 @@ let dataTableControls = {
         listClasses: "pagination justify-content-center",
         listItemClasses: 'page-item',
         linkClasses: 'page-link',
+        activePageClasses: 'active'
     }
 };
 
