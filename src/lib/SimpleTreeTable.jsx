@@ -26,7 +26,8 @@ class SimpleTreeTable extends React.Component {
             childrenPresent: initialState.childrenPresent,
             startRow: 0,
             endRow: endRow,
-            currentPage: 1
+            currentPage: 1,
+            filterValue: ''
         };
     }
 
@@ -224,6 +225,42 @@ class SimpleTreeTable extends React.Component {
         });
     }
 
+    //filtering
+    applyFilter(event) {
+        let filterValue = event.target.value;
+        let columns = this.props.columns;
+        //is the list already filtered? If so, discard
+
+        //apply filter
+        let filteredNewTree = (function recurse(children) {
+            if (children) {
+                return children.map(node => {
+                    let include = false;
+                    columns.forEach(column => {
+                        let filter = column.hasOwnProperty("filterable") ? column.filterable : true;
+                        if (filter) {
+                            let columnValue = node.data[column.dataField];
+                            console.log(String(columnValue) + " - " + String(filterValue));
+                            if (String(columnValue).includes(String(filterValue))) {
+                                console.log("include");
+                                include = true;
+                            }
+                        }
+                    });
+                    return Object.assign({}, node, {
+                        visible: node.visible === true ? include : node.visible,
+                        children: recurse(node.children)
+                    })
+                });
+            }
+        })(this.state.enhancedTableData);
+        console.log("geo1");
+        this.setState({
+            enhancedTableData: filteredNewTree,
+            filterValue: filterValue
+        });
+    }
+
     //from here down the functions deal with rendering
 
     getMaxRowID(tree) {
@@ -393,6 +430,7 @@ class SimpleTreeTable extends React.Component {
         let tableBody = this.generateTableBody(this.state.enhancedTableData, this.state.startRow, this.state.endRow);
         return (
             <div>
+                <input type="text" value={this.state.filterValue} onChange={this.applyFilter.bind(this)}/>
                 <button onClick={this.expandOrCollapseAll.bind(this)}
                         className={this.props.control.showExpandCollapseButton ? this.props.control.expandCollapseButtonClasses : 'hidden'}>
                     {this.state.expanded ? 'Collapse All' : 'Expand All'}
@@ -447,7 +485,8 @@ SimpleTreeTable.propTypes = {
         styleClass: PropTypes.string,
         renderer: PropTypes.func,
         sortable: PropTypes.bool,
-        sortOrder: PropTypes.string
+        sortOrder: PropTypes.string,
+        filterable: PropTypes.bool
     }))
 };
 
@@ -470,7 +509,8 @@ SimpleTreeTable.defaultProps = {
         percentageWidth: 0,
         styleClass: '',
         renderer: null,
-        sortable: true
+        sortable: true,
+        filterable: true
     }]
 };
 
