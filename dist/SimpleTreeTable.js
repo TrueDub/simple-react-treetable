@@ -609,7 +609,7 @@ function (_React$Component) {
             sortIcon = null;
           }
 
-          if (column.sortable) {
+          if (_this5.props.control.allowSorting && column.sortable) {
             return _react.default.createElement("th", {
               key: fieldTitle,
               onClick: _this5.sortByField.bind(_this5, column.dataField)
@@ -680,6 +680,7 @@ SimpleTreeTable.propTypes = {
     tableClasses: _propTypes.default.string,
     showExpandCollapseButton: _propTypes.default.bool,
     expandCollapseButtonClasses: _propTypes.default.string,
+    allowSorting: _propTypes.default.bool,
     showResetSortingButton: _propTypes.default.bool,
     resetSortingButtonClasses: _propTypes.default.string,
     showFilterInput: _propTypes.default.bool,
@@ -692,8 +693,7 @@ SimpleTreeTable.propTypes = {
       listItemClasses: _propTypes.default.string,
       linkClasses: _propTypes.default.string,
       activePageClasses: _propTypes.default.string
-    }),
-    bootstrapStyling: _propTypes.default.bool
+    })
   }),
   columns: _propTypes.default.arrayOf(_propTypes.default.shape({
     dataField: _propTypes.default.string.isRequired,
@@ -714,6 +714,7 @@ SimpleTreeTable.defaultProps = {
     tableClasses: '',
     showExpandCollapseButton: false,
     expandCollapseButtonClasses: '',
+    allowSorting: true,
     showResetSortingButton: false,
     resetSortingButtonClasses: '',
     showFilterInput: false,

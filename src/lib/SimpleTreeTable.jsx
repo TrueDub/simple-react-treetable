@@ -407,7 +407,7 @@ class SimpleTreeTable extends React.Component {
                     } else {
                         sortIcon = null;
                     }
-                    if (column.sortable) {
+                    if (this.props.control.allowSorting && column.sortable) {
                         return <th key={fieldTitle}
                                    onClick={this.sortByField.bind(this, column.dataField)}>{sortIcon}{fieldTitle}</th>;
                     } else {
@@ -481,6 +481,7 @@ SimpleTreeTable.propTypes = {
         tableClasses: PropTypes.string,
         showExpandCollapseButton: PropTypes.bool,
         expandCollapseButtonClasses: PropTypes.string,
+        allowSorting: PropTypes.bool,
         showResetSortingButton: PropTypes.bool,
         resetSortingButtonClasses: PropTypes.string,
         showFilterInput: PropTypes.bool,
@@ -493,8 +494,7 @@ SimpleTreeTable.propTypes = {
             listItemClasses: PropTypes.string,
             linkClasses: PropTypes.string,
             activePageClasses: PropTypes.string
-        }),
-        bootstrapStyling: PropTypes.bool
+        })
     }),
     columns: PropTypes.arrayOf(PropTypes.shape({
         dataField: PropTypes.string.isRequired,
@@ -516,6 +516,7 @@ SimpleTreeTable.defaultProps = {
         tableClasses: '',
         showExpandCollapseButton: false,
         expandCollapseButtonClasses: '',
+        allowSorting: false,
         showResetSortingButton: false,
         resetSortingButtonClasses: '',
         showFilterInput: false,

@@ -127,6 +127,7 @@ let tableData = [
 let controlWithButton = {
     visibleRows: 1,
     tableClasses: "table table-bordered",
+    allowSorting: true,
     showExpandCollapseButton: true,
     expandCollapseButtonClasses: "btn btn-default float-left",
     showResetSortingButton: true,
@@ -192,12 +193,13 @@ let dataTableData = [
 ];
 let dataTableControls = {
     tableClasses: "table table-bordered",
+    allowSorting: false,
     showResetSortingButton: true,
     resetSortingButtonClasses: "btn btn-default float-right",
     showPagination: true,
     initialRowsPerPage: 10,
     showFilterInput: true,
-   // filterInputClasses: "form-control form-control-sm float-left",
+    // filterInputClasses: "form-control form-control-sm float-left",
     filterInputPlaceholderText: 'fred',
     paginationClasses: {
         listClasses: "pagination justify-content-center",
@@ -273,9 +275,7 @@ const App = () => (
                 </div>
                 <div>
                     <h3>DataTable with Pagination</h3>
-                    Clicking any column heading will sort that column in ascending order - a second click will reverse the
-                    sort order. The "Reset Sorting" button will appear when a sort is applied, and will be present if an
-                    initial sort is applied via the <code>columns</code> prop.
+                    Sorting is switched off on this table.
                     <SimpleTreeTable columns={dataTableColumns} tableData={dataTableData} control={dataTableControls}/>
                     <table className="table table-bordered">
                         <tbody>
