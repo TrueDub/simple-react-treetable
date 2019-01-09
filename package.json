@@ -1,6 +1,6 @@
 {
   "name": "simple-react-treetable",
-  "version": "2.0.0-prerelease.0",
+  "version": "2.0.0-prerelease.1",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "files": [

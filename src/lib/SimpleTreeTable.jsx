@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faAngleRight, faAngleDown, faAngleUp, faSearch} from '@fortawesome/free-solid-svg-icons';
 
-import Paginator from './Paginator.jsx';
+import Paginator from './Paginator';
 import './SimpleTreeTable.css';
 
 class SimpleTreeTable extends React.Component {
