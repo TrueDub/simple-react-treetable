@@ -75,6 +75,7 @@ class SimpleTreeTable extends React.Component {
                         parentRowID: parent,
                         visible: rowLevel <= visibleRows,
                         expanded: rowLevel < visibleRows,
+                        filtered: false,
                         children: recurse(node.children, rowID, rowLevel + 1)
                     })
                 });
@@ -235,20 +236,26 @@ class SimpleTreeTable extends React.Component {
         let filteredNewTree = (function recurse(children) {
             if (children) {
                 return children.map(node => {
-                    let include = false;
-                    columns.forEach(column => {
+                    let filtered = false;
+                    for (let i = 0; i < columns.length; i++) {
+                        let column = columns[i];
                         let filter = column.hasOwnProperty("filterable") ? column.filterable : true;
                         if (filter) {
                             let columnValue = node.data[column.dataField];
-                            console.log(String(columnValue) + " - " + String(filterValue));
-                            if (String(columnValue).includes(String(filterValue))) {
-                                console.log("include");
-                                include = true;
+                            if (filterValue === '') {
+                                filtered = false;
+                            } else {
+                                if (String(columnValue).includes(String(filterValue))) {
+                                    filtered = false;
+                                    break;
+                                } else {
+                                    filtered = true;
+                                }
                             }
                         }
-                    });
+                    }
                     return Object.assign({}, node, {
-                        visible: node.visible === true ? include : node.visible,
+                        filtered: filtered,
                         children: recurse(node.children)
                     })
                 });
@@ -296,6 +303,9 @@ class SimpleTreeTable extends React.Component {
                     let rowData = this.processDataRow(dataRow);
                     let key = dataRow.parentRowID + '-' + dataRow.rowID;
                     let rowClass = dataRow.visible ? 'shown' : 'hidden';
+                    if (dataRow.filtered) {
+                        rowClass = 'hidden';
+                    }
                     tableBody.push(<tr className={rowClass} key={key}>{rowData}</tr>);
                     if (dataRow.children) {
                         tableBody.push(...this.generateTableBodyRows(dataRow.children, startRow, endRow));
