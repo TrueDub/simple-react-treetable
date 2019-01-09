@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faAngleRight, faAngleDown, faAngleUp} from '@fortawesome/free-solid-svg-icons';
+import {faAngleRight, faAngleDown, faAngleUp, faSearch} from '@fortawesome/free-solid-svg-icons';
 
 import Paginator from './Paginator.jsx';
 import './SimpleTreeTable.css';
@@ -261,7 +261,6 @@ class SimpleTreeTable extends React.Component {
                 });
             }
         })(this.state.enhancedTableData);
-        console.log("geo1");
         this.setState({
             enhancedTableData: filteredNewTree,
             filterValue: filterValue
@@ -440,7 +439,13 @@ class SimpleTreeTable extends React.Component {
         let tableBody = this.generateTableBody(this.state.enhancedTableData, this.state.startRow, this.state.endRow);
         return (
             <div>
-                <input type="text" value={this.state.filterValue} onChange={this.applyFilter.bind(this)}/>
+                <span
+                    className={this.props.control.showFilterInput ? '' : 'hidden'}>
+                    <FontAwesomeIcon icon={faSearch} pull="left"/>
+                    <input type="text" value={this.state.filterValue} onChange={this.applyFilter.bind(this)}
+                           placeholder={this.props.control.filterInputPlaceholderText}
+                           className={this.props.control.filterInputClasses}/>
+                </span>
                 <button onClick={this.expandOrCollapseAll.bind(this)}
                         className={this.props.control.showExpandCollapseButton ? this.props.control.expandCollapseButtonClasses : 'hidden'}>
                     {this.state.expanded ? 'Collapse All' : 'Expand All'}
@@ -478,6 +483,9 @@ SimpleTreeTable.propTypes = {
         expandCollapseButtonClasses: PropTypes.string,
         showResetSortingButton: PropTypes.bool,
         resetSortingButtonClasses: PropTypes.string,
+        showFilterInput: PropTypes.bool,
+        filterInputClasses: PropTypes.string,
+        filterInputPlaceholderText: PropTypes.string,
         showPagination: PropTypes.bool,
         initialRowsPerPage: PropTypes.number,
         paginationClasses: PropTypes.shape({
@@ -485,7 +493,8 @@ SimpleTreeTable.propTypes = {
             listItemClasses: PropTypes.string,
             linkClasses: PropTypes.string,
             activePageClasses: PropTypes.string
-        })
+        }),
+        bootstrapStyling: PropTypes.bool
     }),
     columns: PropTypes.arrayOf(PropTypes.shape({
         dataField: PropTypes.string.isRequired,
@@ -509,8 +518,11 @@ SimpleTreeTable.defaultProps = {
         expandCollapseButtonClasses: '',
         showResetSortingButton: false,
         resetSortingButtonClasses: '',
+        showFilterInput: false,
+        filterInputPlaceholderText: "filter",
         showPagination: false,
-        initialRowsPerPage: 0
+        initialRowsPerPage: 0,
+        bootstrapStyling: false
     },
     columns: [{
         dataField: '',

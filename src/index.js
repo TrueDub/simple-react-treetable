@@ -127,7 +127,6 @@ let tableData = [
 let controlWithButton = {
     visibleRows: 1,
     tableClasses: "table table-bordered",
-    buttonClasses: "btn btn-default",
     showExpandCollapseButton: true,
     expandCollapseButtonClasses: "btn btn-default float-left",
     showResetSortingButton: true,
@@ -197,6 +196,9 @@ let dataTableControls = {
     resetSortingButtonClasses: "btn btn-default float-right",
     showPagination: true,
     initialRowsPerPage: 10,
+    showFilterInput: true,
+   // filterInputClasses: "form-control form-control-sm float-left",
+    filterInputPlaceholderText: 'fred',
     paginationClasses: {
         listClasses: "pagination justify-content-center",
         listItemClasses: 'page-item',
