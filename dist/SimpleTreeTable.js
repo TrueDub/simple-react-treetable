@@ -714,7 +714,7 @@ SimpleTreeTable.defaultProps = {
     tableClasses: '',
     showExpandCollapseButton: false,
     expandCollapseButtonClasses: '',
-    allowSorting: true,
+    allowSorting: false,
     showResetSortingButton: false,
     resetSortingButtonClasses: '',
     showFilterInput: false,

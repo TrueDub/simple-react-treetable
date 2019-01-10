@@ -138,44 +138,40 @@ class Paginator extends React.Component {
             <div>
                 <ul className={this.state.listClasses}>
                     <li className={this.state.listItemClasses}>
-                        <button className={this.state.linkClasses}
-                                onClick={this.props.rowMover.bind(null, 1)}>First
-                        </button>
+                        <a href="#!" className={this.state.linkClasses}
+                           onClick={this.props.rowMover.bind(null, 1)}> First </a>
                     </li>
                     <li className={this.state.listItemClasses}>
-                        <button className={this.state.linkClasses}
-                                onClick={this.props.rowMover.bind(null, this.state.currentPage - 1)}>Previous
-                        </button>
+                        <a href="#!" className={this.state.linkClasses}
+                           onClick={this.props.rowMover.bind(null, this.state.currentPage - 1)}>Previous </a>
                     </li>
                     <li className={this.state.pos1Classes}>
-                        <button className={this.state.linkClasses}
-                                onClick={this.props.rowMover.bind(null, this.state.pos1Value)}>{this.state.pos1Value}</button>
+                        <a href="#!" className={this.state.linkClasses}
+                           onClick={this.props.rowMover.bind(null, this.state.pos1Value)}>{this.state.pos1Value}</a>
                     </li>
                     <li className={this.state.pos2Classes}>
-                        <button className={this.state.linkClasses}
-                                onClick={this.props.rowMover.bind(null, this.state.pos2Value)}>{this.state.pos2Value}</button>
+                        <a href="#!" className={this.state.linkClasses}
+                           onClick={this.props.rowMover.bind(null, this.state.pos2Value)}>{this.state.pos2Value}</a>
                     </li>
                     <li className={this.state.pos3Classes}>
-                        <button className={this.state.linkClasses}
-                                onClick={this.props.rowMover.bind(null, this.state.pos3Value)}>{this.state.pos3Value}</button>
+                        <a href="#!" className={this.state.linkClasses}
+                           onClick={this.props.rowMover.bind(null, this.state.pos3Value)}>{this.state.pos3Value}</a>
                     </li>
                     <li className={this.state.pos4Classes}>
-                        <button className={this.state.linkClasses}
-                                onClick={this.props.rowMover.bind(null, this.state.pos4Value)}>{this.state.pos4Value}</button>
+                        <a href="#!" className={this.state.linkClasses}
+                           onClick={this.props.rowMover.bind(null, this.state.pos4Value)}>{this.state.pos4Value}</a>
                     </li>
                     <li className={this.state.pos5Classes}>
-                        <button className={this.state.linkClasses}
-                                onClick={this.props.rowMover.bind(null, this.state.pos5Value)}>{this.state.pos5Value}</button>
+                        <a href="#!" className={this.state.linkClasses}
+                           onClick={this.props.rowMover.bind(null, this.state.pos5Value)}>{this.state.pos5Value}</a>
                     </li>
                     <li className={this.state.listItemClasses}>
-                        <button className={this.state.linkClasses}
-                                onClick={this.props.rowMover.bind(null, this.state.currentPage + 1)}>Next
-                        </button>
+                        <a href="#!" className={this.state.linkClasses}
+                           onClick={this.props.rowMover.bind(null, this.state.currentPage + 1)}>Next </a>
                     </li>
                     <li className={this.state.listItemClasses}>
-                        <button className={this.state.linkClasses}
-                                onClick={this.props.rowMover.bind(null, this.state.totalNumberOfPages)}>Last
-                        </button>
+                        <a href="#!" className={this.state.linkClasses}
+                           onClick={this.props.rowMover.bind(null, this.state.totalNumberOfPages)}>Last </a>
                     </li>
                 </ul>
             </div>
