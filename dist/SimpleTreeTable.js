@@ -13,10 +13,6 @@ require("core-js/modules/es6.regexp.to-string");
 
 require("core-js/modules/es6.object.set-prototype-of");
 
-require("core-js/modules/es7.array.includes");
-
-require("core-js/modules/es6.string.includes");
-
 require("core-js/modules/es6.array.sort");
 
 require("core-js/modules/es6.object.assign");
@@ -322,7 +318,6 @@ function (_React$Component) {
             bValue = renderer(b, fieldName);
           }
 
-          console.log('sorting ' + aValue + ' against ' + bValue);
           return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
         });
       } else {
@@ -335,7 +330,6 @@ function (_React$Component) {
             bValue = renderer(b, fieldName);
           }
 
-          console.log('sorting ' + aValue + ' against ' + bValue);
           return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
         });
       }
@@ -367,96 +361,83 @@ function (_React$Component) {
       var filteredData = arguments.length > 2 ? arguments[2] : undefined;
       var newStartRow = (page - 1) * this.props.control.initialRowsPerPage;
       var newEndRow = newStartRow + this.props.control.initialRowsPerPage - 1;
-
-      if (filtered) {
-        //need to count from newStartRow forward to get the right number of visible rows
-        console.log('newStartRow: ' + newStartRow);
-        console.log('this.props.control.initialRowsPerPage: ' + this.props.control.initialRowsPerPage);
-        console.log('old newEndRow: ' + newEndRow);
-        console.log(' ');
-        var visibleRows = 0;
-        var checkRow = newStartRow;
-
-        while (visibleRows < this.props.control.initialRowsPerPage) {
-          console.log('checkRow: ' + checkRow + ' ' + filteredData.enhancedTableData[checkRow].filtered);
-
-          if (!filteredData.enhancedTableData[checkRow].filtered) {
-            console.log('visible');
-            visibleRows++;
+      /*if (filtered) {
+          //need to count from newStartRow forward to get the right number of visible rows
+          console.log('newStartRow: ' + newStartRow);
+          console.log('this.props.control.initialRowsPerPage: ' + this.props.control.initialRowsPerPage);
+          console.log('old newEndRow: ' + newEndRow);
+          console.log(' ');
+          let visibleRows = 0;
+          let checkRow = newStartRow;
+          while (visibleRows < this.props.control.initialRowsPerPage) {
+              console.log('checkRow: ' + checkRow + ' ' + filteredData.enhancedTableData[checkRow].filtered);
+              if (!filteredData.enhancedTableData[checkRow].filtered) {
+                  console.log('visible');
+                  visibleRows++;
+              }
+              if (visibleRows === this.props.control.initialRowsPerPage - 1 || checkRow === filteredData.enhancedTableData.length - 1) {
+                  newEndRow = checkRow;
+                  break;
+              } else {
+                  checkRow++;
+              }
           }
+          console.log('new newEndRow: ' + newEndRow);
+          this.setState({
+              startRow: newStartRow,
+              endRow: newEndRow,
+              currentPage: page,
+              enhancedTableData: filteredData.enhancedTableData,
+              filterValue: filteredData.filterValue
+          })
+      } else {*/
 
-          if (visibleRows === this.props.control.initialRowsPerPage - 1 || checkRow === filteredData.enhancedTableData.length - 1) {
-            newEndRow = checkRow;
-            break;
-          } else {
-            checkRow++;
-          }
-        }
-
-        console.log('new newEndRow: ' + newEndRow);
-        this.setState({
-          startRow: newStartRow,
-          endRow: newEndRow,
-          currentPage: page,
-          enhancedTableData: filteredData.enhancedTableData,
-          filterValue: filteredData.filterValue
-        });
-      } else {
-        this.setState({
-          startRow: newStartRow,
-          endRow: newEndRow,
-          currentPage: page
-        });
-      }
-
+      this.setState({
+        startRow: newStartRow,
+        endRow: newEndRow,
+        currentPage: page
+      }) //}
       ;
     } //filtering
 
-  }, {
-    key: "applyFilter",
-    value: function applyFilter(event) {
-      var filterValue = event.target.value;
-      var columns = this.props.columns;
-
-      var filteredNewTree = function recurse(children) {
-        if (children) {
-          return children.map(function (node) {
-            var filtered = false;
-
-            for (var i = 0; i < columns.length; i++) {
-              var column = columns[i];
-              var filter = column.hasOwnProperty("filterable") ? column.filterable : true;
-
-              if (filter) {
-                var columnValue = node.data[column.dataField];
-
-                if (filterValue === '') {
-                  filtered = false;
-                } else {
-                  if (String(columnValue).includes(String(filterValue))) {
-                    filtered = false;
-                    break;
-                  } else {
-                    filtered = true;
-                  }
-                }
-              }
+    /*applyFilter(event) {
+        let filterValue = event.target.value;
+        let columns = this.props.columns;
+        let filteredNewTree = (function recurse(children) {
+            if (children) {
+                return children.map(node => {
+                    let filtered = false;
+                    for (let i = 0; i < columns.length; i++) {
+                        let column = columns[i];
+                        let filter = column.hasOwnProperty("filterable") ? column.filterable : true;
+                        if (filter) {
+                            let columnValue = node.data[column.dataField];
+                            if (filterValue === '') {
+                                filtered = false;
+                            } else {
+                                if (String(columnValue).includes(String(filterValue))) {
+                                    filtered = false;
+                                    break;
+                                } else {
+                                    filtered = true;
+                                }
+                            }
+                        }
+                    }
+                    return Object.assign({}, node, {
+                        filtered: filtered,
+                        children: recurse(node.children)
+                    })
+                });
             }
-
-            return Object.assign({}, node, {
-              filtered: filtered,
-              children: recurse(node.children)
-            });
-          });
-        }
-      }(this.state.enhancedTableData);
-
-      var outputData = {
-        enhancedTableData: filteredNewTree,
-        filterValue: filterValue
-      };
-      this.moveToSpecificPage(this.state.currentPage, true, outputData);
-    } //from here down the functions deal with rendering
+        })(this.state.enhancedTableData);
+        let outputData = {
+            enhancedTableData: filteredNewTree,
+            filterValue: filterValue
+        };
+        this.moveToSpecificPage(this.state.currentPage, true, outputData);
+    }*/
+    //from here down the functions deal with rendering
 
   }, {
     key: "getMaxRowID",
@@ -708,18 +689,7 @@ function (_React$Component) {
     value: function render() {
       var headingRows = this.generateHeaderRow();
       var tableBody = this.generateTableBody(this.state.enhancedTableData, this.state.startRow, this.state.endRow);
-      return _react.default.createElement("div", null, _react.default.createElement("div", null, _react.default.createElement("span", {
-        className: this.props.control.showFilterInput ? '' : 'hidden'
-      }, _react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
-        icon: _freeSolidSvgIcons.faSearch,
-        pull: "left"
-      }), _react.default.createElement("input", {
-        type: "text",
-        value: this.state.filterValue,
-        onChange: this.applyFilter.bind(this),
-        placeholder: this.props.control.filterInputPlaceholderText,
-        className: this.props.control.filterInputClasses
-      })), _react.default.createElement("span", null, _react.default.createElement("button", {
+      return _react.default.createElement("div", null, _react.default.createElement("div", null, _react.default.createElement("span", null, _react.default.createElement("button", {
         onClick: this.expandOrCollapseAll.bind(this),
         className: this.props.control.showExpandCollapseButton ? this.props.control.expandCollapseButtonClasses : 'hidden'
       }, this.state.expanded ? 'Collapse All' : 'Expand All')), _react.default.createElement("span", null, _react.default.createElement("button", {
