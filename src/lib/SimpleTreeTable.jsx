@@ -147,13 +147,13 @@ class SimpleTreeTable extends React.Component {
 
     //sorting
 
-    sortByField(fieldName) {
+    sortByField(fieldName, renderer) {
         let sortStatus = this.getSortStatus(fieldName);
         let sortOrder = 'asc';
         if (sortStatus === 'asc') {
             sortOrder = 'desc';
         }
-        let newTree = this.sortBy(this.state.enhancedTableData, fieldName, sortOrder);
+        let newTree = this.sortBy(this.state.enhancedTableData, fieldName, sortOrder, renderer);
         let n = 0;
         let orderedNewTree = (function recurse(children) {
             if (children) {
@@ -181,19 +181,31 @@ class SimpleTreeTable extends React.Component {
         });
     }
 
-    sortBy(data, fieldName, direction) {
+    sortBy(data, fieldName, direction, renderer) {
         data.forEach(entry => {
             if (entry.children && entry.children.length > 0) {
-                entry.children = this.sortBy(entry.children, fieldName, direction);
+                entry.children = this.sortBy(entry.children, fieldName, direction, renderer);
             }
         });
         if (direction === 'asc') {
             return data.sort((a, b) => {
-                return a.data[fieldName] < b.data[fieldName] ? -1 : a.data[fieldName] > b.data[fieldName] ? 1 : 0;
+                let aValue = a.data[fieldName];
+                let bValue = b.data[fieldName];
+                if (renderer) {
+                    aValue = renderer(a, fieldName);
+                    bValue = renderer(b, fieldName);
+                }
+                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
             });
         } else {
             return data.sort((b, a) => {
-                return a.data[fieldName] < b.data[fieldName] ? -1 : a.data[fieldName] > b.data[fieldName] ? 1 : 0;
+                let aValue = a.data[fieldName];
+                let bValue = b.data[fieldName];
+                if (renderer) {
+                    aValue = renderer(a, fieldName);
+                    bValue = renderer(b, fieldName);
+                }
+                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
             });
         }
     };
@@ -216,23 +228,52 @@ class SimpleTreeTable extends React.Component {
     }
 
     //pagination
-    moveToSpecificPage(page) {
+    moveToSpecificPage(page, filtered = false, filteredData) {
         let newStartRow = (page - 1) * this.props.control.initialRowsPerPage;
         let newEndRow = newStartRow + this.props.control.initialRowsPerPage - 1;
+        /*if (filtered) {
+            //need to count from newStartRow forward to get the right number of visible rows
+            console.log('newStartRow: ' + newStartRow);
+            console.log('this.props.control.initialRowsPerPage: ' + this.props.control.initialRowsPerPage);
+            console.log('old newEndRow: ' + newEndRow);
+            console.log(' ');
+            let visibleRows = 0;
+            let checkRow = newStartRow;
+            while (visibleRows < this.props.control.initialRowsPerPage) {
+                console.log('checkRow: ' + checkRow + ' ' + filteredData.enhancedTableData[checkRow].filtered);
+                if (!filteredData.enhancedTableData[checkRow].filtered) {
+                    console.log('visible');
+                    visibleRows++;
+                }
+                if (visibleRows === this.props.control.initialRowsPerPage - 1 || checkRow === filteredData.enhancedTableData.length - 1) {
+                    newEndRow = checkRow;
+                    break;
+                } else {
+                    checkRow++;
+                }
+            }
+            console.log('new newEndRow: ' + newEndRow);
+            this.setState({
+                startRow: newStartRow,
+                endRow: newEndRow,
+                currentPage: page,
+                enhancedTableData: filteredData.enhancedTableData,
+                filterValue: filteredData.filterValue
+            })
+        } else {*/
         this.setState({
             startRow: newStartRow,
             endRow: newEndRow,
             currentPage: page
-        });
+        })
+        //}
+        ;
     }
 
     //filtering
-    applyFilter(event) {
+    /*applyFilter(event) {
         let filterValue = event.target.value;
         let columns = this.props.columns;
-        //is the list already filtered? If so, discard
-
-        //apply filter
         let filteredNewTree = (function recurse(children) {
             if (children) {
                 return children.map(node => {
@@ -261,11 +302,12 @@ class SimpleTreeTable extends React.Component {
                 });
             }
         })(this.state.enhancedTableData);
-        this.setState({
+        let outputData = {
             enhancedTableData: filteredNewTree,
             filterValue: filterValue
-        });
-    }
+        };
+        this.moveToSpecificPage(this.state.currentPage, true, outputData);
+    }*/
 
     //from here down the functions deal with rendering
 
@@ -316,18 +358,22 @@ class SimpleTreeTable extends React.Component {
     }
 
     generateExpandColumn(dataRow, key, dataField) {
+        let output = dataRow.data[dataField];
+        if (this.state.enhancedColumns[0].renderer) {
+            output = this.state.enhancedColumns[0].renderer(dataRow, dataField);
+        }
         if (!this.state.childrenPresent) {
             //no expander required
             if (this.state.enhancedColumns[0].fixedWidth) {
                 return (
                     <td key={key} className={this.state.enhancedColumns[0].styleClass}
                         width={this.state.enhancedColumns[0].percentageWidth + '%'}>
-                        {dataRow.data[dataField]}
+                        {output}
                     </td>);
             } else {
                 return (
                     <td key={key} className={this.state.enhancedColumns[0].styleClass}>
-                        {dataRow.data[dataField]}
+                        {output}
                     </td>);
             }
         }
@@ -342,12 +388,12 @@ class SimpleTreeTable extends React.Component {
                 return (<td key={key} className={this.state.enhancedColumns[0].styleClass}
                             width={this.state.enhancedColumns[0].percentageWidth + '%'}><span
                         style={{marginLeft: dataRow.rowLevel + 'em'}}>{iconCell}<span
-                        className="iconPadding">{dataRow.data[dataField]}</span></span></td>
+                        className="iconPadding">{output}</span></span></td>
                 );
             } else {
                 return (<td key={key} className={this.state.enhancedColumns[0].styleClass}><span
                         style={{marginLeft: dataRow.rowLevel + 'em'}}>{iconCell}<span
-                        className="iconPadding">{dataRow.data[dataField]}</span></span></td>
+                        className="iconPadding">{output}</span></span></td>
                 );
             }
         } else {
@@ -356,14 +402,14 @@ class SimpleTreeTable extends React.Component {
                     <td key={key} className={this.state.enhancedColumns[0].styleClass}
                         width={this.state.enhancedColumns[0].percentageWidth + '%'}><span
                         style={{marginLeft: (dataRow.rowLevel + 1.25) + 'em'}}>
-                    <span className="iconPadding">{dataRow.data[dataField]}</span>
+                    <span className="iconPadding">{output}</span>
                 </span>
                     </td>);
             } else {
                 return (
                     <td key={key} className={this.state.enhancedColumns[0].styleClass}><span
                         style={{marginLeft: (dataRow.rowLevel + 1.25) + 'em'}}>
-                    <span className="iconPadding">{dataRow.data[dataField]}</span>
+                    <span className="iconPadding">{output}</span>
                 </span>
                     </td>);
             }
@@ -409,7 +455,7 @@ class SimpleTreeTable extends React.Component {
                     }
                     if (this.props.control.allowSorting && column.sortable) {
                         return <th key={fieldTitle}
-                                   onClick={this.sortByField.bind(this, column.dataField)}>{sortIcon}{fieldTitle}</th>;
+                                   onClick={this.sortByField.bind(this, column.dataField, column.renderer)}>{sortIcon}{fieldTitle}</th>;
                     } else {
                         return <th key={fieldTitle}>{fieldTitle}</th>;
                     }
@@ -439,21 +485,27 @@ class SimpleTreeTable extends React.Component {
         let tableBody = this.generateTableBody(this.state.enhancedTableData, this.state.startRow, this.state.endRow);
         return (
             <div>
-                <span
+                <div>
+                    {/*<span
                     className={this.props.control.showFilterInput ? '' : 'hidden'}>
                     <FontAwesomeIcon icon={faSearch} pull="left"/>
                     <input type="text" value={this.state.filterValue} onChange={this.applyFilter.bind(this)}
                            placeholder={this.props.control.filterInputPlaceholderText}
                            className={this.props.control.filterInputClasses}/>
-                </span>
-                <button onClick={this.expandOrCollapseAll.bind(this)}
-                        className={this.props.control.showExpandCollapseButton ? this.props.control.expandCollapseButtonClasses : 'hidden'}>
-                    {this.state.expanded ? 'Collapse All' : 'Expand All'}
-                </button>
-                <button onClick={this.resetSorting.bind(this)}
-                        className={this.state.showResetSortingButton ? this.props.control.resetSortingButtonClasses : 'hidden'}>
-                    Reset Sorting
-                </button>
+                </span>*/}
+                    <span>
+                    <button onClick={this.expandOrCollapseAll.bind(this)}
+                            className={this.props.control.showExpandCollapseButton ? this.props.control.expandCollapseButtonClasses : 'hidden'}>
+                        {this.state.expanded ? 'Collapse All' : 'Expand All'}
+                    </button>
+                    </span>
+                    <span>
+                    <button onClick={this.resetSorting.bind(this)}
+                            className={this.state.showResetSortingButton ? this.props.control.resetSortingButtonClasses : 'hidden'}>
+                        Reset Sorting
+                    </button>
+                    </span>
+                </div>
                 <table className={this.props.control.tableClasses}>
                     <thead>
                     <tr>

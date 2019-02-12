@@ -10,6 +10,13 @@ import 'highlight.js/styles/rainbow.css';
 let descriptionRenderer = function (dataRow, dataField) {
     return <span dangerouslySetInnerHTML={{__html: dataRow.data[dataField]}}></span>;
 };
+
+let orderRenderer = function (dataRow, dataField) {
+    let newValue = dataRow.data[dataField] + 100;
+    return newValue;
+}
+
+
 let fixedColumns = [
     {
         dataField: "name",
@@ -39,6 +46,7 @@ let fixedColumns = [
     {
         dataField: "order",
         heading: "Order",
+        renderer: orderRenderer,
         fixedWidth: true,
         percentageWidth: 15
     }
@@ -50,7 +58,7 @@ let tableData = [
             dataType: "string",
             example: "ex0gb",
             description: "desc0g7",
-            order: 17
+            order: 17.7
         },
         children: [
             {
@@ -85,7 +93,8 @@ let tableData = [
                             name: "name0-2-1",
                             dataType: "string",
                             example: "ex0-2-1",
-                            description: "desc0-2-1"
+                            description: "desc0-2-1",
+                            order: 23
                         },
                         children: []
                     }
@@ -99,7 +108,7 @@ let tableData = [
             dataType: "string",
             example: "ex1",
             description: "desc1 &euro; &euro;",
-            order: 6
+            order: 6.8
         },
         children: []
     },
@@ -109,7 +118,7 @@ let tableData = [
             dataType: "string",
             example: "ex2",
             description: "desc2 &euro; &euro; &euro; &euro;",
-            order: 9
+            order: 9.7
         },
         children: []
     },
@@ -119,7 +128,7 @@ let tableData = [
             dataType: "Number",
             example: "1",
             description: "number blah",
-            order: 3
+            order: 3.04
         },
         children: []
     }
@@ -193,14 +202,14 @@ let dataTableData = [
 ];
 let dataTableControls = {
     tableClasses: "table table-bordered",
-    allowSorting: false,
+    allowSorting: true,
     showResetSortingButton: true,
     resetSortingButtonClasses: "btn btn-default float-right",
     showPagination: true,
     initialRowsPerPage: 10,
     showFilterInput: true,
-    // filterInputClasses: "form-control form-control-sm float-left",
-    filterInputPlaceholderText: 'fred',
+    filterInputClasses: "form-control float-left  col-xs-2",
+    filterInputPlaceholderText: 'Filter...',
     paginationClasses: {
         listClasses: "pagination justify-content-center",
         listItemClasses: 'page-item',

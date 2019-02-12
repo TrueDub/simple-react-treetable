@@ -262,7 +262,7 @@ function (_React$Component) {
 
   }, {
     key: "sortByField",
-    value: function sortByField(fieldName) {
+    value: function sortByField(fieldName, renderer) {
       var sortStatus = this.getSortStatus(fieldName);
       var sortOrder = 'asc';
 
@@ -270,7 +270,7 @@ function (_React$Component) {
         sortOrder = 'desc';
       }
 
-      var newTree = this.sortBy(this.state.enhancedTableData, fieldName, sortOrder);
+      var newTree = this.sortBy(this.state.enhancedTableData, fieldName, sortOrder, renderer);
       var n = 0;
 
       var orderedNewTree = function recurse(children) {
@@ -303,22 +303,40 @@ function (_React$Component) {
     }
   }, {
     key: "sortBy",
-    value: function sortBy(data, fieldName, direction) {
+    value: function sortBy(data, fieldName, direction, renderer) {
       var _this2 = this;
 
       data.forEach(function (entry) {
         if (entry.children && entry.children.length > 0) {
-          entry.children = _this2.sortBy(entry.children, fieldName, direction);
+          entry.children = _this2.sortBy(entry.children, fieldName, direction, renderer);
         }
       });
 
       if (direction === 'asc') {
         return data.sort(function (a, b) {
-          return a.data[fieldName] < b.data[fieldName] ? -1 : a.data[fieldName] > b.data[fieldName] ? 1 : 0;
+          var aValue = a.data[fieldName];
+          var bValue = b.data[fieldName];
+
+          if (renderer) {
+            aValue = renderer(a, fieldName);
+            bValue = renderer(b, fieldName);
+          }
+
+          console.log('sorting ' + aValue + ' against ' + bValue);
+          return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
         });
       } else {
         return data.sort(function (b, a) {
-          return a.data[fieldName] < b.data[fieldName] ? -1 : a.data[fieldName] > b.data[fieldName] ? 1 : 0;
+          var aValue = a.data[fieldName];
+          var bValue = b.data[fieldName];
+
+          if (renderer) {
+            aValue = renderer(a, fieldName);
+            bValue = renderer(b, fieldName);
+          }
+
+          console.log('sorting ' + aValue + ' against ' + bValue);
+          return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
         });
       }
     }
@@ -345,21 +363,60 @@ function (_React$Component) {
   }, {
     key: "moveToSpecificPage",
     value: function moveToSpecificPage(page) {
+      var filtered = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var filteredData = arguments.length > 2 ? arguments[2] : undefined;
       var newStartRow = (page - 1) * this.props.control.initialRowsPerPage;
       var newEndRow = newStartRow + this.props.control.initialRowsPerPage - 1;
-      this.setState({
-        startRow: newStartRow,
-        endRow: newEndRow,
-        currentPage: page
-      });
+
+      if (filtered) {
+        //need to count from newStartRow forward to get the right number of visible rows
+        console.log('newStartRow: ' + newStartRow);
+        console.log('this.props.control.initialRowsPerPage: ' + this.props.control.initialRowsPerPage);
+        console.log('old newEndRow: ' + newEndRow);
+        console.log(' ');
+        var visibleRows = 0;
+        var checkRow = newStartRow;
+
+        while (visibleRows < this.props.control.initialRowsPerPage) {
+          console.log('checkRow: ' + checkRow + ' ' + filteredData.enhancedTableData[checkRow].filtered);
+
+          if (!filteredData.enhancedTableData[checkRow].filtered) {
+            console.log('visible');
+            visibleRows++;
+          }
+
+          if (visibleRows === this.props.control.initialRowsPerPage - 1 || checkRow === filteredData.enhancedTableData.length - 1) {
+            newEndRow = checkRow;
+            break;
+          } else {
+            checkRow++;
+          }
+        }
+
+        console.log('new newEndRow: ' + newEndRow);
+        this.setState({
+          startRow: newStartRow,
+          endRow: newEndRow,
+          currentPage: page,
+          enhancedTableData: filteredData.enhancedTableData,
+          filterValue: filteredData.filterValue
+        });
+      } else {
+        this.setState({
+          startRow: newStartRow,
+          endRow: newEndRow,
+          currentPage: page
+        });
+      }
+
+      ;
     } //filtering
 
   }, {
     key: "applyFilter",
     value: function applyFilter(event) {
       var filterValue = event.target.value;
-      var columns = this.props.columns; //is the list already filtered? If so, discard
-      //apply filter
+      var columns = this.props.columns;
 
       var filteredNewTree = function recurse(children) {
         if (children) {
@@ -394,10 +451,11 @@ function (_React$Component) {
         }
       }(this.state.enhancedTableData);
 
-      this.setState({
+      var outputData = {
         enhancedTableData: filteredNewTree,
         filterValue: filterValue
-      });
+      };
+      this.moveToSpecificPage(this.state.currentPage, true, outputData);
     } //from here down the functions deal with rendering
 
   }, {
@@ -466,6 +524,12 @@ function (_React$Component) {
   }, {
     key: "generateExpandColumn",
     value: function generateExpandColumn(dataRow, key, dataField) {
+      var output = dataRow.data[dataField];
+
+      if (this.state.enhancedColumns[0].renderer) {
+        output = this.state.enhancedColumns[0].renderer(dataRow, dataField);
+      }
+
       if (!this.state.childrenPresent) {
         //no expander required
         if (this.state.enhancedColumns[0].fixedWidth) {
@@ -473,12 +537,12 @@ function (_React$Component) {
             key: key,
             className: this.state.enhancedColumns[0].styleClass,
             width: this.state.enhancedColumns[0].percentageWidth + '%'
-          }, dataRow.data[dataField]);
+          }, output);
         } else {
           return _react.default.createElement("td", {
             key: key,
             className: this.state.enhancedColumns[0].styleClass
-          }, dataRow.data[dataField]);
+          }, output);
         }
       }
 
@@ -508,7 +572,7 @@ function (_React$Component) {
             }
           }, iconCell, _react.default.createElement("span", {
             className: "iconPadding"
-          }, dataRow.data[dataField])));
+          }, output)));
         } else {
           return _react.default.createElement("td", {
             key: key,
@@ -519,7 +583,7 @@ function (_React$Component) {
             }
           }, iconCell, _react.default.createElement("span", {
             className: "iconPadding"
-          }, dataRow.data[dataField])));
+          }, output)));
         }
       } else {
         if (this.state.enhancedColumns[0].fixedWidth) {
@@ -533,7 +597,7 @@ function (_React$Component) {
             }
           }, _react.default.createElement("span", {
             className: "iconPadding"
-          }, dataRow.data[dataField])));
+          }, output)));
         } else {
           return _react.default.createElement("td", {
             key: key,
@@ -544,7 +608,7 @@ function (_React$Component) {
             }
           }, _react.default.createElement("span", {
             className: "iconPadding"
-          }, dataRow.data[dataField])));
+          }, output)));
         }
       }
     }
@@ -612,7 +676,7 @@ function (_React$Component) {
           if (_this5.props.control.allowSorting && column.sortable) {
             return _react.default.createElement("th", {
               key: fieldTitle,
-              onClick: _this5.sortByField.bind(_this5, column.dataField)
+              onClick: _this5.sortByField.bind(_this5, column.dataField, column.renderer)
             }, sortIcon, fieldTitle);
           } else {
             return _react.default.createElement("th", {
@@ -644,7 +708,7 @@ function (_React$Component) {
     value: function render() {
       var headingRows = this.generateHeaderRow();
       var tableBody = this.generateTableBody(this.state.enhancedTableData, this.state.startRow, this.state.endRow);
-      return _react.default.createElement("div", null, _react.default.createElement("span", {
+      return _react.default.createElement("div", null, _react.default.createElement("div", null, _react.default.createElement("span", {
         className: this.props.control.showFilterInput ? '' : 'hidden'
       }, _react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
         icon: _freeSolidSvgIcons.faSearch,
@@ -655,13 +719,13 @@ function (_React$Component) {
         onChange: this.applyFilter.bind(this),
         placeholder: this.props.control.filterInputPlaceholderText,
         className: this.props.control.filterInputClasses
-      })), _react.default.createElement("button", {
+      })), _react.default.createElement("span", null, _react.default.createElement("button", {
         onClick: this.expandOrCollapseAll.bind(this),
         className: this.props.control.showExpandCollapseButton ? this.props.control.expandCollapseButtonClasses : 'hidden'
-      }, this.state.expanded ? 'Collapse All' : 'Expand All'), _react.default.createElement("button", {
+      }, this.state.expanded ? 'Collapse All' : 'Expand All')), _react.default.createElement("span", null, _react.default.createElement("button", {
         onClick: this.resetSorting.bind(this),
         className: this.state.showResetSortingButton ? this.props.control.resetSortingButtonClasses : 'hidden'
-      }, "Reset Sorting"), _react.default.createElement("table", {
+      }, "Reset Sorting"))), _react.default.createElement("table", {
         className: this.props.control.tableClasses
       }, _react.default.createElement("thead", null, _react.default.createElement("tr", null, headingRows)), _react.default.createElement("tbody", null, tableBody)), this.generatePaginatorRow());
     }

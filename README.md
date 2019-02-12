@@ -128,7 +128,7 @@ This function should accept 2 parameters:
 
 Thus the actual data for the column will be provided as `dataRow.data[dataField]`
 
-The function should return HTML - see the example below:
+The function should return a simple type (string, number etc) or HTML - see the example below:
 
 ````javascript
 let descriptionRenderer = function (dataRow, dataField) {
