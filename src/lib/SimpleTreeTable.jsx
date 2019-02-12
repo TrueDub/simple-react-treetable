@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faAngleRight, faAngleDown, faAngleUp, faSearch} from '@fortawesome/free-solid-svg-icons';
+import {faAngleRight, faAngleDown, faAngleUp} from '@fortawesome/free-solid-svg-icons';
 
 import Paginator from './Paginator';
 import './SimpleTreeTable.css';
@@ -147,13 +147,14 @@ class SimpleTreeTable extends React.Component {
 
     //sorting
 
-    sortByField(fieldName, renderer) {
-        let sortStatus = this.getSortStatus(fieldName);
+    sortByField(sortColumn, renderer) {
+        //let fieldName = this.state.enhancedColumns[sortColumn].dataField;
+        let sortStatus = this.state.enhancedColumns[sortColumn].sortOrder;
         let sortOrder = 'asc';
         if (sortStatus === 'asc') {
             sortOrder = 'desc';
         }
-        let newTree = this.sortBy(this.state.enhancedTableData, fieldName, sortOrder, renderer);
+        let newTree = this.sortBy(this.state.enhancedTableData, sortColumn, sortOrder, renderer);
         let n = 0;
         let orderedNewTree = (function recurse(children) {
             if (children) {
@@ -165,15 +166,17 @@ class SimpleTreeTable extends React.Component {
                 });
             }
         })(newTree);
-        let newColumns = this.state.enhancedColumns.map(node => {
-            let newSortOrder = 'none';
-            if (node.dataField === fieldName) {
-                newSortOrder = sortOrder;
-            }
-            return Object.assign({}, node, {
-                sortOrder: newSortOrder
-            })
-        });
+        const newColumns = this.state.enhancedColumns.map(a => ({...a, sortOrder: 'none'}));
+        newColumns[sortColumn].sortOrder = sortOrder;
+        /*        let newColumns = this.state.enhancedColumns.map(node => {
+                    let newSortOrder = 'none';
+                    if (node.dataField === fieldName) {
+                        newSortOrder = sortOrder;
+                    }
+                    return Object.assign({}, node, {
+                        sortOrder: newSortOrder
+                    })
+                });*/
         this.setState({
             enhancedTableData: orderedNewTree,
             enhancedColumns: newColumns,
@@ -181,12 +184,13 @@ class SimpleTreeTable extends React.Component {
         });
     }
 
-    sortBy(data, fieldName, direction, renderer) {
+    sortBy(data, sortColumn, direction, renderer) {
         data.forEach(entry => {
             if (entry.children && entry.children.length > 0) {
-                entry.children = this.sortBy(entry.children, fieldName, direction, renderer);
+                entry.children = this.sortBy(entry.children, sortColumn, direction, renderer);
             }
         });
+        let fieldName = this.state.enhancedColumns[sortColumn].dataField;
         if (direction === 'asc') {
             return data.sort((a, b) => {
                 let aValue = a.data[fieldName];
@@ -210,13 +214,13 @@ class SimpleTreeTable extends React.Component {
         }
     };
 
-    getSortStatus(fieldName) {
+    /*getSortStatus(fieldName) {
         for (let i = 0; i < this.state.enhancedColumns.length; i++) {
             if (this.state.enhancedColumns[i].dataField === fieldName) {
                 return this.state.enhancedColumns[i].sortOrder;
             }
         }
-    }
+    }*/
 
     resetSorting() {
         let initialState = this.generateInitialState();
@@ -443,7 +447,7 @@ class SimpleTreeTable extends React.Component {
     generateHeaderRow() {
         let headingRows = [];
         if (this.state.enhancedColumns) {
-            headingRows.push(this.state.enhancedColumns.map((column) => {
+            headingRows.push(this.state.enhancedColumns.map((column, index) => {
                     let fieldTitle = column.heading ? column.heading : column.dataField;
                     let sortIcon = null;
                     if (column.sortOrder === 'asc') {
@@ -455,7 +459,7 @@ class SimpleTreeTable extends React.Component {
                     }
                     if (this.props.control.allowSorting && column.sortable) {
                         return <th key={fieldTitle}
-                                   onClick={this.sortByField.bind(this, column.dataField, column.renderer)}>{sortIcon}{fieldTitle}</th>;
+                                   onClick={this.sortByField.bind(this, index, column.renderer)}>{sortIcon}{fieldTitle}</th>;
                     } else {
                         return <th key={fieldTitle}>{fieldTitle}</th>;
                     }

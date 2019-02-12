@@ -11,6 +11,10 @@ require("core-js/modules/es6.array.from");
 
 require("core-js/modules/es6.regexp.to-string");
 
+require("core-js/modules/es6.array.iterator");
+
+require("core-js/modules/es6.object.keys");
+
 require("core-js/modules/es6.object.set-prototype-of");
 
 require("core-js/modules/es6.array.sort");
@@ -46,6 +50,10 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -258,15 +266,16 @@ function (_React$Component) {
 
   }, {
     key: "sortByField",
-    value: function sortByField(fieldName, renderer) {
-      var sortStatus = this.getSortStatus(fieldName);
+    value: function sortByField(sortColumn, renderer) {
+      //let fieldName = this.state.enhancedColumns[sortColumn].dataField;
+      var sortStatus = this.state.enhancedColumns[sortColumn].sortOrder;
       var sortOrder = 'asc';
 
       if (sortStatus === 'asc') {
         sortOrder = 'desc';
       }
 
-      var newTree = this.sortBy(this.state.enhancedTableData, fieldName, sortOrder, renderer);
+      var newTree = this.sortBy(this.state.enhancedTableData, sortColumn, sortOrder, renderer);
       var n = 0;
 
       var orderedNewTree = function recurse(children) {
@@ -280,17 +289,22 @@ function (_React$Component) {
         }
       }(newTree);
 
-      var newColumns = this.state.enhancedColumns.map(function (node) {
-        var newSortOrder = 'none';
-
-        if (node.dataField === fieldName) {
-          newSortOrder = sortOrder;
-        }
-
-        return Object.assign({}, node, {
-          sortOrder: newSortOrder
+      var newColumns = this.state.enhancedColumns.map(function (a) {
+        return _objectSpread({}, a, {
+          sortOrder: 'none'
         });
       });
+      newColumns[sortColumn].sortOrder = sortOrder;
+      /*        let newColumns = this.state.enhancedColumns.map(node => {
+                  let newSortOrder = 'none';
+                  if (node.dataField === fieldName) {
+                      newSortOrder = sortOrder;
+                  }
+                  return Object.assign({}, node, {
+                      sortOrder: newSortOrder
+                  })
+              });*/
+
       this.setState({
         enhancedTableData: orderedNewTree,
         enhancedColumns: newColumns,
@@ -299,14 +313,15 @@ function (_React$Component) {
     }
   }, {
     key: "sortBy",
-    value: function sortBy(data, fieldName, direction, renderer) {
+    value: function sortBy(data, sortColumn, direction, renderer) {
       var _this2 = this;
 
       data.forEach(function (entry) {
         if (entry.children && entry.children.length > 0) {
-          entry.children = _this2.sortBy(entry.children, fieldName, direction, renderer);
+          entry.children = _this2.sortBy(entry.children, sortColumn, direction, renderer);
         }
       });
+      var fieldName = this.state.enhancedColumns[sortColumn].dataField;
 
       if (direction === 'asc') {
         return data.sort(function (a, b) {
@@ -335,16 +350,15 @@ function (_React$Component) {
       }
     }
   }, {
-    key: "getSortStatus",
-    value: function getSortStatus(fieldName) {
-      for (var i = 0; i < this.state.enhancedColumns.length; i++) {
-        if (this.state.enhancedColumns[i].dataField === fieldName) {
-          return this.state.enhancedColumns[i].sortOrder;
-        }
-      }
-    }
-  }, {
     key: "resetSorting",
+
+    /*getSortStatus(fieldName) {
+        for (let i = 0; i < this.state.enhancedColumns.length; i++) {
+            if (this.state.enhancedColumns[i].dataField === fieldName) {
+                return this.state.enhancedColumns[i].sortOrder;
+            }
+        }
+    }*/
     value: function resetSorting() {
       var initialState = this.generateInitialState();
       this.setState({
@@ -634,7 +648,7 @@ function (_React$Component) {
       var headingRows = [];
 
       if (this.state.enhancedColumns) {
-        headingRows.push(this.state.enhancedColumns.map(function (column) {
+        headingRows.push(this.state.enhancedColumns.map(function (column, index) {
           var fieldTitle = column.heading ? column.heading : column.dataField;
           var sortIcon = null;
 
@@ -657,7 +671,7 @@ function (_React$Component) {
           if (_this5.props.control.allowSorting && column.sortable) {
             return _react.default.createElement("th", {
               key: fieldTitle,
-              onClick: _this5.sortByField.bind(_this5, column.dataField, column.renderer)
+              onClick: _this5.sortByField.bind(_this5, index, column.renderer)
             }, sortIcon, fieldTitle);
           } else {
             return _react.default.createElement("th", {
