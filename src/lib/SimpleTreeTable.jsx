@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faAngleRight, faAngleDown, faAngleUp} from '@fortawesome/free-solid-svg-icons';
+import moment from 'moment';
 
 import Paginator from './Paginator';
 import './SimpleTreeTable.css';
@@ -88,6 +89,7 @@ class SimpleTreeTable extends React.Component {
             let sortOrder = node.hasOwnProperty('sortOrder') ? node.sorted : 'none';
             return Object.assign({}, node, {
                 sortable: node.hasOwnProperty('sortable') ? node.sortable : true,
+                sortType: node.hasOwnProperty('sortType') ? node.sortType : 'string',
                 sortOrder: sortOrder
             })
         });
@@ -148,7 +150,6 @@ class SimpleTreeTable extends React.Component {
     //sorting
 
     sortByField(sortColumn, renderer) {
-        //let fieldName = this.state.enhancedColumns[sortColumn].dataField;
         let sortStatus = this.state.enhancedColumns[sortColumn].sortOrder;
         let sortOrder = 'asc';
         if (sortStatus === 'asc') {
@@ -168,15 +169,6 @@ class SimpleTreeTable extends React.Component {
         })(newTree);
         const newColumns = this.state.enhancedColumns.map(a => ({...a, sortOrder: 'none'}));
         newColumns[sortColumn].sortOrder = sortOrder;
-        /*        let newColumns = this.state.enhancedColumns.map(node => {
-                    let newSortOrder = 'none';
-                    if (node.dataField === fieldName) {
-                        newSortOrder = sortOrder;
-                    }
-                    return Object.assign({}, node, {
-                        sortOrder: newSortOrder
-                    })
-                });*/
         this.setState({
             enhancedTableData: orderedNewTree,
             enhancedColumns: newColumns,
@@ -198,6 +190,10 @@ class SimpleTreeTable extends React.Component {
                 if (renderer) {
                     aValue = renderer(a, fieldName);
                     bValue = renderer(b, fieldName);
+                } else if (this.state.enhancedColumns[sortColumn].sortType === 'date') {
+                    aValue = moment(a.data[fieldName], this.state.enhancedColumns[sortColumn].sortDateFormat);
+                    bValue = moment(b.data[fieldName], this.state.enhancedColumns[sortColumn].sortDateFormat);
+                    return aValue.isBefore(bValue) ? -1 : aValue.isAfter(bValue) ? 1 : 0;
                 }
                 return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
             });
@@ -208,19 +204,15 @@ class SimpleTreeTable extends React.Component {
                 if (renderer) {
                     aValue = renderer(a, fieldName);
                     bValue = renderer(b, fieldName);
+                } else if (this.state.enhancedColumns[sortColumn].sortType === 'date') {
+                    aValue = moment(a.data[fieldName], this.state.enhancedColumns[sortColumn].sortDateFormat);
+                    bValue = moment(b.data[fieldName], this.state.enhancedColumns[sortColumn].sortDateFormat);
+                    return aValue.isBefore(bValue) ? -1 : aValue.isAfter(bValue) ? 1 : 0;
                 }
                 return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
             });
         }
     };
-
-    /*getSortStatus(fieldName) {
-        for (let i = 0; i < this.state.enhancedColumns.length; i++) {
-            if (this.state.enhancedColumns[i].dataField === fieldName) {
-                return this.state.enhancedColumns[i].sortOrder;
-            }
-        }
-    }*/
 
     resetSorting() {
         let initialState = this.generateInitialState();
@@ -561,6 +553,8 @@ SimpleTreeTable.propTypes = {
         renderer: PropTypes.func,
         sortable: PropTypes.bool,
         sortOrder: PropTypes.string,
+        sortType: PropTypes.oneOf(['string', 'date', 'number']),
+        sortDateFormat: PropTypes.string,
         filterable: PropTypes.bool
     }))
 };
@@ -589,7 +583,9 @@ SimpleTreeTable.defaultProps = {
         styleClass: '',
         renderer: null,
         sortable: true,
-        filterable: true
+        sortType: 'string',
+        sortDateFormat: null,
+        filterable: false
     }]
 };
 
