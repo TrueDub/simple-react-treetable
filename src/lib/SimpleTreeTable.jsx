@@ -187,32 +187,40 @@ class SimpleTreeTable extends React.Component {
             return data.sort((a, b) => {
                 let aValue = a.data[fieldName];
                 let bValue = b.data[fieldName];
-                if (renderer) {
+                if (renderer && this.state.enhancedColumns[sortColumn].sortType === 'date') {
+                    return this.compareDates(renderer(a, fieldName), renderer(b, fieldName), this.state.enhancedColumns[sortColumn].sortDateFormat);
+                } else if (this.state.enhancedColumns[sortColumn].sortType === 'date') {
+                    return this.compareDates(aValue, bValue, this.state.enhancedColumns[sortColumn].sortDateFormat);
+                } else if (renderer) {
                     aValue = renderer(a, fieldName);
                     bValue = renderer(b, fieldName);
-                } else if (this.state.enhancedColumns[sortColumn].sortType === 'date') {
-                    aValue = moment(a.data[fieldName], this.state.enhancedColumns[sortColumn].sortDateFormat);
-                    bValue = moment(b.data[fieldName], this.state.enhancedColumns[sortColumn].sortDateFormat);
-                    return aValue.isBefore(bValue) ? -1 : aValue.isAfter(bValue) ? 1 : 0;
                 }
                 return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
             });
         } else {
             return data.sort((b, a) => {
-                let aValue = a.data[fieldName];
-                let bValue = b.data[fieldName];
-                if (renderer) {
-                    aValue = renderer(a, fieldName);
-                    bValue = renderer(b, fieldName);
-                } else if (this.state.enhancedColumns[sortColumn].sortType === 'date') {
-                    aValue = moment(a.data[fieldName], this.state.enhancedColumns[sortColumn].sortDateFormat);
-                    bValue = moment(b.data[fieldName], this.state.enhancedColumns[sortColumn].sortDateFormat);
-                    return aValue.isBefore(bValue) ? -1 : aValue.isAfter(bValue) ? 1 : 0;
+                    let aValue = a.data[fieldName];
+                    let bValue = b.data[fieldName];
+                    if (renderer && this.state.enhancedColumns[sortColumn].sortType === 'date') {
+                        return this.compareDates(renderer(a, fieldName), renderer(b, fieldName), this.state.enhancedColumns[sortColumn].sortDateFormat);
+                    } else if (this.state.enhancedColumns[sortColumn].sortType === 'date') {
+                        return this.compareDates(aValue, bValue, this.state.enhancedColumns[sortColumn].sortDateFormat);
+                    } else if (renderer) {
+                        aValue = renderer(a, fieldName);
+                        bValue = renderer(b, fieldName);
+                    }
+                    return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
                 }
-                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-            });
+            );
         }
-    };
+    }
+    ;
+
+    compareDates(aValue, bValue, sortDateFormat) {
+        aValue = moment(aValue, sortDateFormat);
+        bValue = moment(bValue, sortDateFormat);
+        return aValue.isBefore(bValue) ? -1 : aValue.isAfter(bValue) ? 1 : 0;
+    }
 
     resetSorting() {
         let initialState = this.generateInitialState();
@@ -223,7 +231,7 @@ class SimpleTreeTable extends React.Component {
         });
     }
 
-    //pagination
+//pagination
     moveToSpecificPage(page, filtered = false, filteredData) {
         let newStartRow = (page - 1) * this.props.control.initialRowsPerPage;
         let newEndRow = newStartRow + this.props.control.initialRowsPerPage - 1;
@@ -266,7 +274,7 @@ class SimpleTreeTable extends React.Component {
         ;
     }
 
-    //filtering
+//filtering
     /*applyFilter(event) {
         let filterValue = event.target.value;
         let columns = this.props.columns;
@@ -305,7 +313,7 @@ class SimpleTreeTable extends React.Component {
         this.moveToSpecificPage(this.state.currentPage, true, outputData);
     }*/
 
-    //from here down the functions deal with rendering
+//from here down the functions deal with rendering
 
     getMaxRowID(tree) {
         let entry = tree[tree.length - 1];

@@ -320,13 +320,13 @@ function (_React$Component) {
           var aValue = a.data[fieldName];
           var bValue = b.data[fieldName];
 
-          if (renderer) {
+          if (renderer && _this2.state.enhancedColumns[sortColumn].sortType === 'date') {
+            return _this2.compareDates(renderer(a, fieldName), renderer(b, fieldName), _this2.state.enhancedColumns[sortColumn].sortDateFormat);
+          } else if (_this2.state.enhancedColumns[sortColumn].sortType === 'date') {
+            return _this2.compareDates(aValue, bValue, _this2.state.enhancedColumns[sortColumn].sortDateFormat);
+          } else if (renderer) {
             aValue = renderer(a, fieldName);
             bValue = renderer(b, fieldName);
-          } else if (_this2.state.enhancedColumns[sortColumn].sortType === 'date') {
-            aValue = (0, _moment.default)(a.data[fieldName], _this2.state.enhancedColumns[sortColumn].sortDateFormat);
-            bValue = (0, _moment.default)(b.data[fieldName], _this2.state.enhancedColumns[sortColumn].sortDateFormat);
-            return aValue.isBefore(bValue) ? -1 : aValue.isAfter(bValue) ? 1 : 0;
           }
 
           return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
@@ -336,18 +336,25 @@ function (_React$Component) {
           var aValue = a.data[fieldName];
           var bValue = b.data[fieldName];
 
-          if (renderer) {
+          if (renderer && _this2.state.enhancedColumns[sortColumn].sortType === 'date') {
+            return _this2.compareDates(renderer(a, fieldName), renderer(b, fieldName), _this2.state.enhancedColumns[sortColumn].sortDateFormat);
+          } else if (_this2.state.enhancedColumns[sortColumn].sortType === 'date') {
+            return _this2.compareDates(aValue, bValue, _this2.state.enhancedColumns[sortColumn].sortDateFormat);
+          } else if (renderer) {
             aValue = renderer(a, fieldName);
             bValue = renderer(b, fieldName);
-          } else if (_this2.state.enhancedColumns[sortColumn].sortType === 'date') {
-            aValue = (0, _moment.default)(a.data[fieldName], _this2.state.enhancedColumns[sortColumn].sortDateFormat);
-            bValue = (0, _moment.default)(b.data[fieldName], _this2.state.enhancedColumns[sortColumn].sortDateFormat);
-            return aValue.isBefore(bValue) ? -1 : aValue.isAfter(bValue) ? 1 : 0;
           }
 
           return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
         });
       }
+    }
+  }, {
+    key: "compareDates",
+    value: function compareDates(aValue, bValue, sortDateFormat) {
+      aValue = (0, _moment.default)(aValue, sortDateFormat);
+      bValue = (0, _moment.default)(bValue, sortDateFormat);
+      return aValue.isBefore(bValue) ? -1 : aValue.isAfter(bValue) ? 1 : 0;
     }
   }, {
     key: "resetSorting",
