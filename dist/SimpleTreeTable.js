@@ -685,7 +685,7 @@ function (_React$Component) {
   }, {
     key: "generatePaginatorRow",
     value: function generatePaginatorRow() {
-      if (this.props.control.showPagination) {
+      if (this.props.control.showPagination && this.state.enhancedTableData.length > this.props.control.initialRowsPerPage) {
         return _react.default.createElement("div", null, _react.default.createElement(_Paginator.default, {
           currentPage: this.state.currentPage,
           tableLength: this.state.enhancedTableData.length,

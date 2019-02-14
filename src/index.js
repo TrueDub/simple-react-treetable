@@ -141,8 +141,14 @@ let controlWithButton = {
     expandCollapseButtonClasses: "btn btn-default float-left",
     showResetSortingButton: true,
     resetSortingButtonClasses: "btn btn-default float-right",
-    showPagination: false,
-    initialRowsPerPage: 2
+    showPagination: true,
+    paginationClasses: {
+        listClasses: "pagination justify-content-center",
+        listItemClasses: 'page-item',
+        linkClasses: 'page-link',
+        activePageClasses: 'active'
+    },
+    initialRowsPerPage: 3
 };
 let dataTableColumns = [
     {
