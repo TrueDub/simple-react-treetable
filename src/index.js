@@ -48,7 +48,8 @@ let fixedColumns = [
         heading: "Order",
         renderer: orderRenderer,
         fixedWidth: true,
-        percentageWidth: 15
+        percentageWidth: 15,
+        //sortOrder: 'desc'
     }
 ];
 let tableData = [
@@ -148,7 +149,7 @@ let controlWithButton = {
         linkClasses: 'page-link',
         activePageClasses: 'active'
     },
-    initialRowsPerPage: 3
+    initialRowsPerPage: 4
 };
 let dataTableColumns = [
     {

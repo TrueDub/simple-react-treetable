@@ -86,7 +86,7 @@ class SimpleTreeTable extends React.Component {
 
     generateColumnState(initialColumns) {
         return initialColumns.map(node => {
-            let sortOrder = node.hasOwnProperty('sortOrder') ? node.sorted : 'none';
+            let sortOrder = node.hasOwnProperty('sortOrder') ? node.sortOrder : 'none';
             return Object.assign({}, node, {
                 sortable: node.hasOwnProperty('sortable') ? node.sortable : true,
                 sortType: node.hasOwnProperty('sortType') ? node.sortType : 'string',
@@ -185,36 +185,32 @@ class SimpleTreeTable extends React.Component {
         let fieldName = this.state.enhancedColumns[sortColumn].dataField;
         if (direction === 'asc') {
             return data.sort((a, b) => {
-                let aValue = a.data[fieldName];
-                let bValue = b.data[fieldName];
-                if (renderer && this.state.enhancedColumns[sortColumn].sortType === 'date') {
-                    return this.compareDates(renderer(a, fieldName), renderer(b, fieldName), this.state.enhancedColumns[sortColumn].sortDateFormat);
-                } else if (this.state.enhancedColumns[sortColumn].sortType === 'date') {
-                    return this.compareDates(aValue, bValue, this.state.enhancedColumns[sortColumn].sortDateFormat);
-                } else if (renderer) {
-                    aValue = renderer(a, fieldName);
-                    bValue = renderer(b, fieldName);
-                }
-                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+                return this.performSort(a, b, fieldName, renderer, this.state.enhancedColumns[sortColumn].sortType,
+                    this.state.enhancedColumns[sortColumn].sortDateFormat);
             });
         } else {
             return data.sort((b, a) => {
-                    let aValue = a.data[fieldName];
-                    let bValue = b.data[fieldName];
-                    if (renderer && this.state.enhancedColumns[sortColumn].sortType === 'date') {
-                        return this.compareDates(renderer(a, fieldName), renderer(b, fieldName), this.state.enhancedColumns[sortColumn].sortDateFormat);
-                    } else if (this.state.enhancedColumns[sortColumn].sortType === 'date') {
-                        return this.compareDates(aValue, bValue, this.state.enhancedColumns[sortColumn].sortDateFormat);
-                    } else if (renderer) {
-                        aValue = renderer(a, fieldName);
-                        bValue = renderer(b, fieldName);
-                    }
-                    return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+                    return this.performSort(a, b, fieldName, renderer, this.state.enhancedColumns[sortColumn].sortType,
+                        this.state.enhancedColumns[sortColumn].sortDateFormat);
+
                 }
             );
         }
     }
-    ;
+
+    performSort(a, b, fieldName, renderer, sortType, sortDateFormat) {
+        let aValue = a.data[fieldName];
+        let bValue = b.data[fieldName];
+        if (renderer && sortType === 'date') {
+            return this.compareDates(renderer(a, fieldName), renderer(b, fieldName), sortDateFormat);
+        } else if (sortType === 'date') {
+            return this.compareDates(aValue, bValue, sortDateFormat);
+        } else if (renderer) {
+            aValue = renderer(a, fieldName);
+            bValue = renderer(b, fieldName);
+        }
+        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+    }
 
     compareDates(aValue, bValue, sortDateFormat) {
         aValue = moment(aValue, sortDateFormat);
