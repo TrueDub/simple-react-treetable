@@ -41,7 +41,8 @@ let fixedColumns = [
         heading: "Description",
         fixedWidth: true,
         percentageWidth: 25,
-        renderer: descriptionRenderer
+        renderer: descriptionRenderer,
+        sortUsingRenderer: false
     },
     {
         dataField: "order",
@@ -49,7 +50,8 @@ let fixedColumns = [
         renderer: orderRenderer,
         fixedWidth: true,
         percentageWidth: 15,
-        //sortOrder: 'desc'
+        sortOrder: 'desc',
+        sortUsingRenderer: true
     }
 ];
 let tableData = [

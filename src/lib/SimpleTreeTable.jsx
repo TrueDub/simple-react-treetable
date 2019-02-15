@@ -37,11 +37,13 @@ class SimpleTreeTable extends React.Component {
         let enhancedTableData = this.generateStateTableData(this.props.tableData, visibleRows);
         let enhancedColumns = this.generateColumnState(this.props.columns);
         let initialSortField = null;
+        let initialSortColumn = null;
         let initialSortOrder = null;
         let showResetSortingButton = false;
-        enhancedColumns.forEach(column => {
+        enhancedColumns.forEach((column, index) => {
             if (column.sortOrder !== 'none') {
                 initialSortField = column.dataField;
+                initialSortColumn = index;
                 initialSortOrder = column.sortOrder;
                 showResetSortingButton = true;
             }
@@ -53,7 +55,9 @@ class SimpleTreeTable extends React.Component {
             }
         }
         if (initialSortField !== null) {
-            enhancedTableData = this.sortBy(enhancedTableData, initialSortField, initialSortOrder);
+            enhancedTableData = this.sortBy(enhancedTableData, initialSortColumn, initialSortField, initialSortOrder,
+                enhancedColumns[initialSortColumn].sortUsingRenderer, enhancedColumns[initialSortColumn].renderer,
+                enhancedColumns[initialSortColumn].sortType, enhancedColumns[initialSortColumn].sortDateFormat);
         }
         return {
             enhancedTableData: enhancedTableData,
@@ -149,13 +153,15 @@ class SimpleTreeTable extends React.Component {
 
     //sorting
 
-    sortByField(sortColumn, renderer) {
+    sortByField(sortColumn) {
         let sortStatus = this.state.enhancedColumns[sortColumn].sortOrder;
         let sortOrder = 'asc';
         if (sortStatus === 'asc') {
             sortOrder = 'desc';
         }
-        let newTree = this.sortBy(this.state.enhancedTableData, sortColumn, sortOrder, renderer);
+        let newTree = this.sortBy(this.state.enhancedTableData, sortColumn, this.state.enhancedColumns[sortColumn].dataField,
+            sortOrder, this.state.enhancedColumns[sortColumn].sortUsingRenderer, this.state.enhancedColumns[sortColumn].renderer,
+            this.state.enhancedColumns[sortColumn].sortType, this.state.enhancedColumns[sortColumn].sortDateFormat);
         let n = 0;
         let orderedNewTree = (function recurse(children) {
             if (children) {
@@ -176,38 +182,37 @@ class SimpleTreeTable extends React.Component {
         });
     }
 
-    sortBy(data, sortColumn, direction, renderer) {
+    sortBy(data, sortColumn, fieldName, direction, sortUsingRenderer, renderer, sortType, sortDateFormat) {
         data.forEach(entry => {
             if (entry.children && entry.children.length > 0) {
-                entry.children = this.sortBy(entry.children, sortColumn, direction, renderer);
+                entry.children = this.sortBy(entry.children, sortColumn, fieldName, direction, sortUsingRenderer, renderer, sortType, sortDateFormat);
             }
         });
-        let fieldName = this.state.enhancedColumns[sortColumn].dataField;
         if (direction === 'asc') {
             return data.sort((a, b) => {
-                return this.performSort(a, b, fieldName, renderer, this.state.enhancedColumns[sortColumn].sortType,
-                    this.state.enhancedColumns[sortColumn].sortDateFormat);
+                return this.performSort(a, b, fieldName, sortUsingRenderer, renderer, sortType, sortDateFormat);
             });
         } else {
             return data.sort((b, a) => {
-                    return this.performSort(a, b, fieldName, renderer, this.state.enhancedColumns[sortColumn].sortType,
-                        this.state.enhancedColumns[sortColumn].sortDateFormat);
-
-                }
-            );
+                return this.performSort(a, b, fieldName, sortUsingRenderer, renderer, sortType, sortDateFormat);
+            });
         }
     }
 
-    performSort(a, b, fieldName, renderer, sortType, sortDateFormat) {
+    performSort(a, b, fieldName, sortUsingRenderer, renderer, sortType, sortDateFormat) {
         let aValue = a.data[fieldName];
         let bValue = b.data[fieldName];
-        if (renderer && sortType === 'date') {
-            return this.compareDates(renderer(a, fieldName), renderer(b, fieldName), sortDateFormat);
-        } else if (sortType === 'date') {
-            return this.compareDates(aValue, bValue, sortDateFormat);
-        } else if (renderer) {
-            aValue = renderer(a, fieldName);
-            bValue = renderer(b, fieldName);
+        if (sortUsingRenderer) {
+            if (sortType === 'date') {
+                return this.compareDates(renderer(a, fieldName), renderer(b, fieldName), sortDateFormat);
+            } else {
+                aValue = renderer(a, fieldName);
+                bValue = renderer(b, fieldName);
+            }
+        } else {
+            if (sortType === 'date') {
+                return this.compareDates(aValue, bValue, sortDateFormat);
+            }
         }
         return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
     }
@@ -455,7 +460,7 @@ class SimpleTreeTable extends React.Component {
                     }
                     if (this.props.control.allowSorting && column.sortable) {
                         return <th key={fieldTitle}
-                                   onClick={this.sortByField.bind(this, index, column.renderer)}>{sortIcon}{fieldTitle}</th>;
+                                   onClick={this.sortByField.bind(this, index)}>{sortIcon}{fieldTitle}</th>;
                     } else {
                         return <th key={fieldTitle}>{fieldTitle}</th>;
                     }
@@ -556,6 +561,7 @@ SimpleTreeTable.propTypes = {
         styleClass: PropTypes.string,
         renderer: PropTypes.func,
         sortable: PropTypes.bool,
+        sortUsingRenderer: PropTypes.bool,
         sortOrder: PropTypes.string,
         sortType: PropTypes.oneOf(['string', 'date', 'number']),
         sortDateFormat: PropTypes.string,
@@ -587,6 +593,7 @@ SimpleTreeTable.defaultProps = {
         styleClass: '',
         renderer: null,
         sortable: true,
+        sortUsingRenderer: false,
         sortType: 'string',
         sortDateFormat: null,
         filterable: false
