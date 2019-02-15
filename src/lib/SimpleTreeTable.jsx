@@ -45,7 +45,6 @@ class SimpleTreeTable extends React.Component {
                 initialSortField = column.dataField;
                 initialSortColumn = index;
                 initialSortOrder = column.sortOrder;
-                showResetSortingButton = true;
             }
         });
         let childrenPresent = false;
@@ -203,16 +202,11 @@ class SimpleTreeTable extends React.Component {
         let aValue = a.data[fieldName];
         let bValue = b.data[fieldName];
         if (sortUsingRenderer) {
-            if (sortType === 'date') {
-                return this.compareDates(renderer(a, fieldName), renderer(b, fieldName), sortDateFormat);
-            } else {
-                aValue = renderer(a, fieldName);
-                bValue = renderer(b, fieldName);
-            }
-        } else {
-            if (sortType === 'date') {
-                return this.compareDates(aValue, bValue, sortDateFormat);
-            }
+            aValue = renderer(a, fieldName);
+            bValue = renderer(b, fieldName);
+        }
+        if (sortType === 'date') {
+            return this.compareDates(aValue, bValue, sortDateFormat);
         }
         return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
     }
