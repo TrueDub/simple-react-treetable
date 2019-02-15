@@ -117,11 +117,13 @@ function (_React$Component) {
       var enhancedTableData = this.generateStateTableData(this.props.tableData, visibleRows);
       var enhancedColumns = this.generateColumnState(this.props.columns);
       var initialSortField = null;
+      var initialSortColumn = null;
       var initialSortOrder = null;
       var showResetSortingButton = false;
-      enhancedColumns.forEach(function (column) {
+      enhancedColumns.forEach(function (column, index) {
         if (column.sortOrder !== 'none') {
           initialSortField = column.dataField;
+          initialSortColumn = index;
           initialSortOrder = column.sortOrder;
           showResetSortingButton = true;
         }
@@ -155,7 +157,7 @@ function (_React$Component) {
       }
 
       if (initialSortField !== null) {
-        enhancedTableData = this.sortBy(enhancedTableData, initialSortField, initialSortOrder);
+        enhancedTableData = this.sortBy(enhancedTableData, initialSortColumn, initialSortField, initialSortOrder, enhancedColumns[initialSortColumn].sortUsingRenderer, enhancedColumns[initialSortColumn].renderer, enhancedColumns[initialSortColumn].sortType, enhancedColumns[initialSortColumn].sortDateFormat);
       }
 
       return {
@@ -194,7 +196,7 @@ function (_React$Component) {
     key: "generateColumnState",
     value: function generateColumnState(initialColumns) {
       return initialColumns.map(function (node) {
-        var sortOrder = node.hasOwnProperty('sortOrder') ? node.sorted : 'none';
+        var sortOrder = node.hasOwnProperty('sortOrder') ? node.sortOrder : 'none';
         return Object.assign({}, node, {
           sortable: node.hasOwnProperty('sortable') ? node.sortable : true,
           sortType: node.hasOwnProperty('sortType') ? node.sortType : 'string',
@@ -269,7 +271,7 @@ function (_React$Component) {
 
   }, {
     key: "sortByField",
-    value: function sortByField(sortColumn, renderer) {
+    value: function sortByField(sortColumn) {
       var sortStatus = this.state.enhancedColumns[sortColumn].sortOrder;
       var sortOrder = 'asc';
 
@@ -277,7 +279,7 @@ function (_React$Component) {
         sortOrder = 'desc';
       }
 
-      var newTree = this.sortBy(this.state.enhancedTableData, sortColumn, sortOrder, renderer);
+      var newTree = this.sortBy(this.state.enhancedTableData, sortColumn, this.state.enhancedColumns[sortColumn].dataField, sortOrder, this.state.enhancedColumns[sortColumn].sortUsingRenderer, this.state.enhancedColumns[sortColumn].renderer, this.state.enhancedColumns[sortColumn].sortType, this.state.enhancedColumns[sortColumn].sortDateFormat);
       var n = 0;
 
       var orderedNewTree = function recurse(children) {
@@ -305,49 +307,45 @@ function (_React$Component) {
     }
   }, {
     key: "sortBy",
-    value: function sortBy(data, sortColumn, direction, renderer) {
+    value: function sortBy(data, sortColumn, fieldName, direction, sortUsingRenderer, renderer, sortType, sortDateFormat) {
       var _this2 = this;
 
       data.forEach(function (entry) {
         if (entry.children && entry.children.length > 0) {
-          entry.children = _this2.sortBy(entry.children, sortColumn, direction, renderer);
+          entry.children = _this2.sortBy(entry.children, sortColumn, fieldName, direction, sortUsingRenderer, renderer, sortType, sortDateFormat);
         }
       });
-      var fieldName = this.state.enhancedColumns[sortColumn].dataField;
 
       if (direction === 'asc') {
         return data.sort(function (a, b) {
-          var aValue = a.data[fieldName];
-          var bValue = b.data[fieldName];
-
-          if (renderer && _this2.state.enhancedColumns[sortColumn].sortType === 'date') {
-            return _this2.compareDates(renderer(a, fieldName), renderer(b, fieldName), _this2.state.enhancedColumns[sortColumn].sortDateFormat);
-          } else if (_this2.state.enhancedColumns[sortColumn].sortType === 'date') {
-            return _this2.compareDates(aValue, bValue, _this2.state.enhancedColumns[sortColumn].sortDateFormat);
-          } else if (renderer) {
-            aValue = renderer(a, fieldName);
-            bValue = renderer(b, fieldName);
-          }
-
-          return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+          return _this2.performSort(a, b, fieldName, sortUsingRenderer, renderer, sortType, sortDateFormat);
         });
       } else {
         return data.sort(function (b, a) {
-          var aValue = a.data[fieldName];
-          var bValue = b.data[fieldName];
-
-          if (renderer && _this2.state.enhancedColumns[sortColumn].sortType === 'date') {
-            return _this2.compareDates(renderer(a, fieldName), renderer(b, fieldName), _this2.state.enhancedColumns[sortColumn].sortDateFormat);
-          } else if (_this2.state.enhancedColumns[sortColumn].sortType === 'date') {
-            return _this2.compareDates(aValue, bValue, _this2.state.enhancedColumns[sortColumn].sortDateFormat);
-          } else if (renderer) {
-            aValue = renderer(a, fieldName);
-            bValue = renderer(b, fieldName);
-          }
-
-          return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+          return _this2.performSort(a, b, fieldName, sortUsingRenderer, renderer, sortType, sortDateFormat);
         });
       }
+    }
+  }, {
+    key: "performSort",
+    value: function performSort(a, b, fieldName, sortUsingRenderer, renderer, sortType, sortDateFormat) {
+      var aValue = a.data[fieldName];
+      var bValue = b.data[fieldName];
+
+      if (sortUsingRenderer) {
+        if (sortType === 'date') {
+          return this.compareDates(renderer(a, fieldName), renderer(b, fieldName), sortDateFormat);
+        } else {
+          aValue = renderer(a, fieldName);
+          bValue = renderer(b, fieldName);
+        }
+      } else {
+        if (sortType === 'date') {
+          return this.compareDates(aValue, bValue, sortDateFormat);
+        }
+      }
+
+      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
     }
   }, {
     key: "compareDates",
@@ -670,7 +668,7 @@ function (_React$Component) {
           if (_this5.props.control.allowSorting && column.sortable) {
             return _react.default.createElement("th", {
               key: fieldTitle,
-              onClick: _this5.sortByField.bind(_this5, index, column.renderer)
+              onClick: _this5.sortByField.bind(_this5, index)
             }, sortIcon, fieldTitle);
           } else {
             return _react.default.createElement("th", {
@@ -750,6 +748,7 @@ SimpleTreeTable.propTypes = {
     styleClass: _propTypes.default.string,
     renderer: _propTypes.default.func,
     sortable: _propTypes.default.bool,
+    sortUsingRenderer: _propTypes.default.bool,
     sortOrder: _propTypes.default.string,
     sortType: _propTypes.default.oneOf(['string', 'date', 'number']),
     sortDateFormat: _propTypes.default.string,
@@ -780,6 +779,7 @@ SimpleTreeTable.defaultProps = {
     styleClass: '',
     renderer: null,
     sortable: true,
+    sortUsingRenderer: false,
     sortType: 'string',
     sortDateFormat: null,
     filterable: false
