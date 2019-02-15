@@ -174,7 +174,8 @@ let dataTableColumns = [
         dataField: "date",
         heading: "Date",
         sortType: 'date',
-        sortDateFormat: 'DD-MMM-YYYY'
+        sortDateFormat: 'DD-MMM-YYYY',
+        sortOrder: 'desc'
     }
 ];
 let dataTableData = [

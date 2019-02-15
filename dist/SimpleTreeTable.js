@@ -157,6 +157,7 @@ function (_React$Component) {
 
       if (initialSortField !== null) {
         enhancedTableData = this.sortBy(enhancedTableData, initialSortColumn, initialSortField, initialSortOrder, enhancedColumns[initialSortColumn].sortUsingRenderer, enhancedColumns[initialSortColumn].renderer, enhancedColumns[initialSortColumn].sortType, enhancedColumns[initialSortColumn].sortDateFormat);
+        enhancedTableData = this.generateRowOrderedTree(enhancedTableData);
       }
 
       return {
@@ -280,18 +281,7 @@ function (_React$Component) {
 
       var newTree = this.sortBy(this.state.enhancedTableData, sortColumn, this.state.enhancedColumns[sortColumn].dataField, sortOrder, this.state.enhancedColumns[sortColumn].sortUsingRenderer, this.state.enhancedColumns[sortColumn].renderer, this.state.enhancedColumns[sortColumn].sortType, this.state.enhancedColumns[sortColumn].sortDateFormat);
       var n = 0;
-
-      var orderedNewTree = function recurse(children) {
-        if (children) {
-          return children.map(function (node) {
-            return Object.assign({}, node, {
-              rowOrder: n++,
-              children: recurse(node.children)
-            });
-          });
-        }
-      }(newTree);
-
+      var orderedNewTree = this.generateRowOrderedTree(newTree);
       var newColumns = this.state.enhancedColumns.map(function (a) {
         return _objectSpread({}, a, {
           sortOrder: 'none'
@@ -303,6 +293,21 @@ function (_React$Component) {
         enhancedColumns: newColumns,
         showResetSortingButton: true
       });
+    }
+  }, {
+    key: "generateRowOrderedTree",
+    value: function generateRowOrderedTree(oldTree) {
+      var n = 0;
+      return function recurse(children) {
+        if (children) {
+          return children.map(function (node) {
+            return Object.assign({}, node, {
+              rowOrder: n++,
+              children: recurse(node.children)
+            });
+          });
+        }
+      }(oldTree);
     }
   }, {
     key: "sortBy",

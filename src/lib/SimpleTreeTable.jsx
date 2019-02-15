@@ -57,6 +57,7 @@ class SimpleTreeTable extends React.Component {
             enhancedTableData = this.sortBy(enhancedTableData, initialSortColumn, initialSortField, initialSortOrder,
                 enhancedColumns[initialSortColumn].sortUsingRenderer, enhancedColumns[initialSortColumn].renderer,
                 enhancedColumns[initialSortColumn].sortType, enhancedColumns[initialSortColumn].sortDateFormat);
+            enhancedTableData = this.generateRowOrderedTree(enhancedTableData);
         }
         return {
             enhancedTableData: enhancedTableData,
@@ -162,7 +163,19 @@ class SimpleTreeTable extends React.Component {
             sortOrder, this.state.enhancedColumns[sortColumn].sortUsingRenderer, this.state.enhancedColumns[sortColumn].renderer,
             this.state.enhancedColumns[sortColumn].sortType, this.state.enhancedColumns[sortColumn].sortDateFormat);
         let n = 0;
-        let orderedNewTree = (function recurse(children) {
+        let orderedNewTree = this.generateRowOrderedTree(newTree);
+        const newColumns = this.state.enhancedColumns.map(a => ({...a, sortOrder: 'none'}));
+        newColumns[sortColumn].sortOrder = sortOrder;
+        this.setState({
+            enhancedTableData: orderedNewTree,
+            enhancedColumns: newColumns,
+            showResetSortingButton: true
+        });
+    }
+
+    generateRowOrderedTree(oldTree) {
+        let n = 0;
+        return (function recurse(children) {
             if (children) {
                 return children.map(node => {
                     return Object.assign({}, node, {
@@ -171,14 +184,7 @@ class SimpleTreeTable extends React.Component {
                     })
                 });
             }
-        })(newTree);
-        const newColumns = this.state.enhancedColumns.map(a => ({...a, sortOrder: 'none'}));
-        newColumns[sortColumn].sortOrder = sortOrder;
-        this.setState({
-            enhancedTableData: orderedNewTree,
-            enhancedColumns: newColumns,
-            showResetSortingButton: true
-        });
+        })(oldTree);
     }
 
     sortBy(data, sortColumn, fieldName, direction, sortUsingRenderer, renderer, sortType, sortDateFormat) {
