@@ -9,14 +9,7 @@ class SimpleTreeTable extends React.Component {
     constructor(props) {
         super(props);
         let initialState = this.generateInitialState();
-        let endRow = 0;
-        if (this.props.control.showPagination) {
-            endRow = this.props.control.initialRowsPerPage > initialState.enhancedTableData.length ? initialState.enhancedTableData.length - 1 : this.props.control.initialRowsPerPage - 1;
-        } else {
-            endRow = initialState.enhancedTableData.length - 1;
-        }
         //bind functions passed to TreeTable
-        //this.moveToSpecificPage = this.moveToSpecificPage.bind(this);
         this.sortByField = this.sortByField.bind(this);
         this.applyFilter = this.applyFilter.bind(this);
         this.expandOrCollapseAll = this.expandOrCollapseAll.bind(this);
@@ -29,10 +22,8 @@ class SimpleTreeTable extends React.Component {
             enhancedColumns: initialState.enhancedColumns,
             showResetSortingButton: initialState.showResetSortingButton,
             childrenPresent: initialState.childrenPresent,
-            startRow: 0,
-            endRow: endRow,
-            currentPage: 1,
-            filterValue: ''
+            filterValue: '',
+            filtered: false
         };
     }
 
@@ -235,69 +226,26 @@ class SimpleTreeTable extends React.Component {
         });
     }
 
-//pagination
-    /*moveToSpecificPage(page, filtered = false, filteredData) {
-        console.log('page: ' + page);
-        let newStartRow = (page - 1) * this.props.control.initialRowsPerPage;
-        let newEndRow = newStartRow + this.props.control.initialRowsPerPage - 1;
-        /!*if (filtered) {
-            //need to count from newStartRow forward to get the right number of visible rows
-            console.log('newStartRow: ' + newStartRow);
-            console.log('this.props.control.initialRowsPerPage: ' + this.props.control.initialRowsPerPage);
-            console.log('old newEndRow: ' + newEndRow);
-            console.log(' ');
-            let visibleRows = 0;
-            let checkRow = newStartRow;
-            while (visibleRows < this.props.control.initialRowsPerPage) {
-                console.log('checkRow: ' + checkRow + ' ' + filteredData.enhancedTableData[checkRow].filtered);
-                if (!filteredData.enhancedTableData[checkRow].filtered) {
-                    console.log('visible');
-                    visibleRows++;
-                }
-                if (visibleRows === this.props.control.initialRowsPerPage - 1 || checkRow === filteredData.enhancedTableData.length - 1) {
-                    newEndRow = checkRow;
-                    break;
-                } else {
-                    checkRow++;
-                }
-            }
-            console.log('new newEndRow: ' + newEndRow);
-            this.setState({
-                startRow: newStartRow,
-                endRow: newEndRow,
-                currentPage: page,
-                enhancedTableData: filteredData.enhancedTableData,
-                filterValue: filteredData.filterValue
-            })
-        } else {*!/
-        console.log(newStartRow + ' ' + newEndRow);
-        this.setState({
-            startRow: newStartRow,
-            endRow: newEndRow,
-            currentPage: page
-        })
-        // }
-    }*/
-
 //filtering
     applyFilter(event) {
         let filterValue = event.target.value;
         let columns = this.props.columns;
-        console.log(filterValue);
+        let overallFiltered = false;
         let filteredNewTree = (function recurse(children) {
             if (children) {
                 return children.map(node => {
                     let filtered = false;
                     for (let i = 0; i < columns.length; i++) {
                         let column = columns[i];
-                        let filter = column.hasOwnProperty("filterable") ? column.filterable : true;
+                        let filter = column.hasOwnProperty("filterable") ? column.filterable : false;
                         if (filter) {
                             let columnValue = node.data[column.dataField];
                             if (filterValue === '') {
                                 filtered = false;
                             } else {
-                                if (String(columnValue).includes(String(filterValue))) {
+                                if (String(columnValue).indexOf(String(filterValue)) !== -1) {
                                     filtered = false;
+                                    overallFiltered = true;
                                     break;
                                 } else {
                                     filtered = true;
@@ -312,27 +260,29 @@ class SimpleTreeTable extends React.Component {
                 });
             }
         })(this.state.enhancedTableData);
-        let outputData = {
+        this.setState({
             enhancedTableData: filteredNewTree,
-            filterValue: filterValue
-        };
-        //this.moveToSpecificPage(this.state.currentPage, true, outputData);
+            filterValue: filterValue,
+            filtered: overallFiltered
+        });
     }
 
     render() {
-        return (<TreeTable tableData={this.state.enhancedTableData}
-                           control={this.props.control}
-                           filterValue={this.state.filterValue}
-                           applyFilter={this.applyFilter}
-                           expandOrCollapseAll={this.expandOrCollapseAll}
-                           expanded={this.state.expanded}
-                           resetSorting={this.resetSorting}
-                           showResetSortingButton={this.state.showResetSortingButton}
-                           enhancedColumns={this.state.enhancedColumns}
-                           sortByField={this.sortByField}
-                           childrenPresent={this.state.childrenPresent}
-                           rowExpandOrCollapse={this.rowExpandOrCollapse}
-        />);
+        return (
+            <TreeTable tableData={this.state.enhancedTableData}
+                       control={this.props.control}
+                       filterValue={this.state.filterValue}
+                       filtered={this.state.filtered}
+                       applyFilter={this.applyFilter}
+                       expandOrCollapseAll={this.expandOrCollapseAll}
+                       expanded={this.state.expanded}
+                       resetSorting={this.resetSorting}
+                       showResetSortingButton={this.state.showResetSortingButton}
+                       enhancedColumns={this.state.enhancedColumns}
+                       sortByField={this.sortByField}
+                       childrenPresent={this.state.childrenPresent}
+                       rowExpandOrCollapse={this.rowExpandOrCollapse}
+            />);
     }
 }
 

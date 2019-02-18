@@ -10,19 +10,43 @@ class TreeTable extends React.Component {
     constructor(props) {
         super(props);
         this.moveToSpecificPage = this.moveToSpecificPage.bind(this);
+        let newTableData = this.filterNonVisibleRows(this.props.tableData);
         let endRow = 0;
         if (this.props.control.showPagination) {
-            endRow = this.props.control.initialRowsPerPage > this.props.tableData.length ?
-                this.props.tableData.length - 1 :
+            endRow = this.props.control.initialRowsPerPage > newTableData.length ?
+                newTableData.length - 1 :
                 this.props.control.initialRowsPerPage - 1;
         } else {
-            endRow = this.props.tableData.length - 1;
+            endRow = newTableData.length - 1;
         }
         this.state = {
             startRow: 0,
             endRow: endRow,
-            currentPage: 1
+            currentPage: 1,
+            tableData: newTableData
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        let newTableData = this.filterNonVisibleRows(nextProps.tableData);
+        let newStartAndEnd = this.calculateNewStartAndEndRows(this.state.currentPage,
+            this.props.control.initialRowsPerPage, this.state.tableData.length);
+        this.setState({
+            tableData: newTableData,
+            filtered: nextProps.filtered,
+            startRow: newStartAndEnd.startRow,
+            endRow: newStartAndEnd.endRow,
+            currentPage: newStartAndEnd.currentPage
+        });
+    }
+
+    filterNonVisibleRows(data) {
+        let self = this;
+        let r = data.filter(function (o) {
+            if (o.children) o.children = self.filterNonVisibleRows(o.children);
+            return !o.filtered;
+        });
+        return r;
     }
 
     getMaxRowID(tree) {
@@ -35,13 +59,30 @@ class TreeTable extends React.Component {
 
     //pagination
     moveToSpecificPage(page) {
-        let newStartRow = (page - 1) * this.props.control.initialRowsPerPage;
-        let newEndRow = newStartRow + this.props.control.initialRowsPerPage - 1;
+        let newStartAndEnd = this.calculateNewStartAndEndRows(page,
+            this.props.control.initialRowsPerPage, this.state.tableData.length);
         this.setState({
+            startRow: newStartAndEnd.startRow,
+            endRow: newStartAndEnd.endRow,
+            currentPage: newStartAndEnd.currentPage
+        });
+    }
+
+    calculateNewStartAndEndRows(page, rowsPerPage, tableLength) {
+        let newPage = page;
+        //check the current page isn't too high for the data provided
+        let max = (page - 1) * rowsPerPage;
+        if (max > tableLength) {
+            newPage = Math.ceil(tableLength / rowsPerPage);
+        }
+        //calculate the start & end rows
+        let newStartRow = (newPage - 1) * rowsPerPage;
+        let newEndRow = newStartRow + rowsPerPage - 1;
+        return {
             startRow: newStartRow,
             endRow: newEndRow,
-            currentPage: page
-        })
+            currentPage: newPage
+        };
     }
 
 
@@ -58,21 +99,20 @@ class TreeTable extends React.Component {
     }
 
     generateTableBody(tableData, startRow, endRow) {
-        let startRowID = tableData[startRow].rowOrder;
-        let endRowID = this.getNextRowID(tableData, endRow);
-        return this.generateTableBodyRows(tableData, startRowID, endRowID);
+        if (tableData.length > 0) {
+            return this.generateTableBodyRows(tableData, startRow, endRow);
+        } else {
+            return null;
+        }
     }
 
     generateTableBodyRows(tableData, startRow, endRow) {
         let tableBody = [];
-        tableData.forEach((dataRow) => {
-                if (dataRow.rowOrder >= startRow && dataRow.rowOrder <= endRow) {
+        tableData.forEach((dataRow, index) => {
+                if (index >= startRow && index <= endRow) {
                     let rowData = this.processDataRow(dataRow);
                     let key = dataRow.parentRowID + '-' + dataRow.rowID;
                     let rowClass = dataRow.visible ? 'shown' : 'hidden';
-                    if (dataRow.filtered) {
-                        rowClass = 'hidden';
-                    }
                     tableBody.push(<tr className={rowClass} key={key}>{rowData}</tr>);
                     if (dataRow.children) {
                         tableBody.push(...this.generateTableBodyRows(dataRow.children, startRow, endRow));
@@ -192,11 +232,11 @@ class TreeTable extends React.Component {
     }
 
     generatePaginatorRow() {
-        if (this.props.control.showPagination && this.props.tableData.length > this.props.control.initialRowsPerPage) {
+        if (this.props.control.showPagination && this.state.tableData.length > this.props.control.initialRowsPerPage) {
             return (
                 <div>
                     <Paginator currentPage={this.state.currentPage}
-                               tableLength={this.props.tableData.length}
+                               tableLength={this.state.tableData.length}
                                rowsPerPage={this.props.control.initialRowsPerPage}
                                rowMover={this.moveToSpecificPage}
                                paginationClasses={this.props.control.paginationClasses}/>
@@ -208,7 +248,7 @@ class TreeTable extends React.Component {
 
     render() {
         let headingRows = this.generateHeaderRow();
-        let tableBody = this.generateTableBody(this.props.tableData, this.state.startRow, this.state.endRow);
+        let tableBody = this.generateTableBody(this.state.tableData, this.state.startRow, this.state.endRow);
         return (
             <div>
                 <div>

@@ -5,7 +5,7 @@ class Paginator extends React.Component {
 
     constructor(props) {
         super(props);
-        let data = this.performCalcs(this.props.currentPage);
+        let data = this.performCalcs(this.props.currentPage, this.props.tableLength);
         this.state = {
             pos1Value: data.pos1Value,
             pos2Value: data.pos2Value,
@@ -28,7 +28,7 @@ class Paginator extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        let data = this.performCalcs(nextProps.currentPage);
+        let data = this.performCalcs(nextProps.currentPage, nextProps.tableLength);
         this.setState({
             pos1Value: data.pos1Value,
             pos2Value: data.pos2Value,
@@ -48,7 +48,7 @@ class Paginator extends React.Component {
         });
     }
 
-    performCalcs(currentPage) {
+    performCalcs(currentPage, tableLength) {
         let pos1Value = 1;
         let pos2Value = 2;
         let pos3Value = 3;
@@ -61,7 +61,7 @@ class Paginator extends React.Component {
             pos4Value = currentPage + 1;
             pos5Value = currentPage + 2;
         }
-        let totalNumberOfPages = Math.ceil(this.props.tableLength / this.props.rowsPerPage);
+        let totalNumberOfPages = Math.ceil(tableLength / this.props.rowsPerPage);
         if (totalNumberOfPages - currentPage === 0) {
             pos1Value = currentPage - 4;
             pos2Value = currentPage - 3;

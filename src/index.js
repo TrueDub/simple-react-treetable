@@ -164,7 +164,8 @@ let dataTableColumns = [
     },
     {
         dataField: "description",
-        heading: "Description"
+        heading: "Description",
+        filterable: true
     },
     {
         dataField: "type",
@@ -190,7 +191,7 @@ let dataTableData = [
     {data: {name: 'fred556', size: 556, description: 'desc811', type: 'white', date: '09-Jan-2018'}},
     {data: {name: 'fred212', size: 212, description: 'desc2766', type: 'white', date: '10-Jan-2018'}},
     {data: {name: 'fred979', size: 979, description: 'desc12', type: 'black', date: '11-Jan-2018'}},
-    {data: {name: 'fred237', size: 237, description: 'desc2985', type: 'black', date: '12-Jan-2018'}},
+    {data: {name: 'fred237', size: 237, description: 'desc1985', type: 'black', date: '12-Jan-2018'}},
     {data: {name: 'fred3', size: 3, description: 'desc346', type: 'black', date: '13-Jan-2018'}},
     {data: {name: 'fred792', size: 792, description: 'desc927', type: 'white', date: '14-Jan-2018'}},
     {data: {name: 'fred755', size: 755, description: 'desc490', type: 'black', date: '15-Jan-2018'}},
