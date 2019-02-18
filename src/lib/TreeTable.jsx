@@ -251,24 +251,21 @@ class TreeTable extends React.Component {
         let tableBody = this.generateTableBody(this.state.tableData, this.state.startRow, this.state.endRow);
         return (
             <div>
-                <div>
-                    <span className={this.props.control.showFilterInput ? '' : 'hidden'}>
+                <div className='topbar-container'>
                     <input type="text" value={this.props.filterValue} onChange={this.props.applyFilter.bind(null)}
                            placeholder={this.props.control.filterInputPlaceholderText}
-                           className={this.props.control.filterInputClasses}/>
-                </span>
-                    <span>
+                           className={this.props.control.showFilterInput ? this.props.control.filterInputClasses : 'hidden'}/>
+
                     <button onClick={this.props.expandOrCollapseAll.bind(null)}
                             className={this.props.control.showExpandCollapseButton ? this.props.control.expandCollapseButtonClasses : 'hidden'}>
                         {this.props.expanded ? 'Collapse All' : 'Expand All'}
                     </button>
-                    </span>
-                    <span>
+
                     <button onClick={this.props.resetSorting.bind(null)}
                             className={this.props.showResetSortingButton ? this.props.control.resetSortingButtonClasses : 'hidden'}>
                         Reset Sorting
                     </button>
-                    </span>
+                    <span className='count-area'>Showing x to y of {this.state.tableData.length} records</span>
                 </div>
                 <table className={this.props.control.tableClasses}>
                     <thead>

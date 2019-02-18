@@ -310,7 +310,8 @@ SimpleTreeTable
             listClasses: PropTypes.string,
             listItemClasses: PropTypes.string,
             linkClasses: PropTypes.string,
-            activePageClasses: PropTypes.string
+            activePageClasses: PropTypes.string,
+            countClasses: PropTypes.string
         })
     }),
     columns: PropTypes.arrayOf(PropTypes.shape({

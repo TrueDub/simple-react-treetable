@@ -225,13 +225,14 @@ let dataTableControls = {
     showPagination: true,
     initialRowsPerPage: 10,
     showFilterInput: true,
-    filterInputClasses: "form-control float-left  col-xs-2",
+    filterInputClasses: "float-left col-xs-2",
     filterInputPlaceholderText: 'Filter...',
     paginationClasses: {
         listClasses: "pagination justify-content-center",
         listItemClasses: 'page-item',
         linkClasses: 'page-link',
-        activePageClasses: 'active'
+        activePageClasses: 'active',
+        //countClasses: 'float-right'
     }
 };
 
