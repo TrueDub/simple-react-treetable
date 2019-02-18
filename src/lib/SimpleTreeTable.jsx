@@ -1,11 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faAngleRight, faAngleDown, faAngleUp} from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
 
-import Paginator from './Paginator';
-import './SimpleTreeTable.css';
+import TreeTable from "./TreeTable";
 
 class SimpleTreeTable extends React.Component {
 
@@ -18,7 +15,14 @@ class SimpleTreeTable extends React.Component {
         } else {
             endRow = initialState.enhancedTableData.length - 1;
         }
-        this.moveToSpecificPage = this.moveToSpecificPage.bind(this);
+        //bind functions passed to TreeTable
+        //this.moveToSpecificPage = this.moveToSpecificPage.bind(this);
+        this.sortByField = this.sortByField.bind(this);
+        this.applyFilter = this.applyFilter.bind(this);
+        this.expandOrCollapseAll = this.expandOrCollapseAll.bind(this);
+        this.resetSorting = this.resetSorting.bind(this);
+        this.rowExpandOrCollapse = this.rowExpandOrCollapse.bind(this);
+        // set state
         this.state = {
             enhancedTableData: initialState.enhancedTableData,
             expanded: false,
@@ -162,7 +166,6 @@ class SimpleTreeTable extends React.Component {
         let newTree = this.sortBy(this.state.enhancedTableData, sortColumn, this.state.enhancedColumns[sortColumn].dataField,
             sortOrder, this.state.enhancedColumns[sortColumn].sortUsingRenderer, this.state.enhancedColumns[sortColumn].renderer,
             this.state.enhancedColumns[sortColumn].sortType, this.state.enhancedColumns[sortColumn].sortDateFormat);
-        let n = 0;
         let orderedNewTree = this.generateRowOrderedTree(newTree);
         const newColumns = this.state.enhancedColumns.map(a => ({...a, sortOrder: 'none'}));
         newColumns[sortColumn].sortOrder = sortOrder;
@@ -233,10 +236,11 @@ class SimpleTreeTable extends React.Component {
     }
 
 //pagination
-    moveToSpecificPage(page, filtered = false, filteredData) {
+    /*moveToSpecificPage(page, filtered = false, filteredData) {
+        console.log('page: ' + page);
         let newStartRow = (page - 1) * this.props.control.initialRowsPerPage;
         let newEndRow = newStartRow + this.props.control.initialRowsPerPage - 1;
-        /*if (filtered) {
+        /!*if (filtered) {
             //need to count from newStartRow forward to get the right number of visible rows
             console.log('newStartRow: ' + newStartRow);
             console.log('this.props.control.initialRowsPerPage: ' + this.props.control.initialRowsPerPage);
@@ -265,20 +269,21 @@ class SimpleTreeTable extends React.Component {
                 enhancedTableData: filteredData.enhancedTableData,
                 filterValue: filteredData.filterValue
             })
-        } else {*/
+        } else {*!/
+        console.log(newStartRow + ' ' + newEndRow);
         this.setState({
             startRow: newStartRow,
             endRow: newEndRow,
             currentPage: page
         })
-        //}
-        ;
-    }
+        // }
+    }*/
 
 //filtering
-    /*applyFilter(event) {
+    applyFilter(event) {
         let filterValue = event.target.value;
         let columns = this.props.columns;
+        console.log(filterValue);
         let filteredNewTree = (function recurse(children) {
             if (children) {
                 return children.map(node => {
@@ -311,223 +316,28 @@ class SimpleTreeTable extends React.Component {
             enhancedTableData: filteredNewTree,
             filterValue: filterValue
         };
-        this.moveToSpecificPage(this.state.currentPage, true, outputData);
-    }*/
-
-//from here down the functions deal with rendering
-
-    getMaxRowID(tree) {
-        let entry = tree[tree.length - 1];
-        if (entry.children && entry.children.length > 0) {
-            return this.getMaxRowID(entry.children);
-        }
-        return entry.rowOrder;
-    }
-
-    getNextRowID(tree, position) {
-        let entry = tree[position];
-        if (entry) {
-            if (entry.children && entry.children.length > 0) {
-                return this.getMaxRowID(entry.children);
-            }
-            return entry.rowOrder;
-        }
-        //if no entry at that position, return the last element
-        return tree[tree.length - 1].rowOrder;
-    }
-
-    generateTableBody(tableData, startRow, endRow) {
-        let startRowID = tableData[startRow].rowOrder;
-        let endRowID = this.getNextRowID(tableData, endRow);
-        return this.generateTableBodyRows(tableData, startRowID, endRowID);
-    }
-
-    generateTableBodyRows(tableData, startRow, endRow) {
-        let tableBody = [];
-        tableData.forEach((dataRow) => {
-                if (dataRow.rowOrder >= startRow && dataRow.rowOrder <= endRow) {
-                    let rowData = this.processDataRow(dataRow);
-                    let key = dataRow.parentRowID + '-' + dataRow.rowID;
-                    let rowClass = dataRow.visible ? 'shown' : 'hidden';
-                    if (dataRow.filtered) {
-                        rowClass = 'hidden';
-                    }
-                    tableBody.push(<tr className={rowClass} key={key}>{rowData}</tr>);
-                    if (dataRow.children) {
-                        tableBody.push(...this.generateTableBodyRows(dataRow.children, startRow, endRow));
-                    }
-                }
-            }
-        );
-        return tableBody;
-    }
-
-    generateExpandColumn(dataRow, key, dataField) {
-        let output = dataRow.data[dataField];
-        if (this.state.enhancedColumns[0].renderer) {
-            output = this.state.enhancedColumns[0].renderer(dataRow, dataField);
-        }
-        if (!this.state.childrenPresent) {
-            //no expander required
-            if (this.state.enhancedColumns[0].fixedWidth) {
-                return (
-                    <td key={key} className={this.state.enhancedColumns[0].styleClass}
-                        width={this.state.enhancedColumns[0].percentageWidth + '%'}>
-                        {output}
-                    </td>);
-            } else {
-                return (
-                    <td key={key} className={this.state.enhancedColumns[0].styleClass}>
-                        {output}
-                    </td>);
-            }
-        }
-        if (dataRow.children && dataRow.children.length > 0) {
-            let iconCell = <FontAwesomeIcon icon={faAngleRight} fixedWidth
-                                            onClick={this.rowExpandOrCollapse.bind(this, dataRow.rowID)}/>;
-            if (dataRow.expanded) {
-                iconCell = <FontAwesomeIcon icon={faAngleDown} fixedWidth
-                                            onClick={this.rowExpandOrCollapse.bind(this, dataRow.rowID)}/>;
-            }
-            if (this.state.enhancedColumns[0].fixedWidth) {
-                return (<td key={key} className={this.state.enhancedColumns[0].styleClass}
-                            width={this.state.enhancedColumns[0].percentageWidth + '%'}><span
-                        style={{marginLeft: dataRow.rowLevel + 'em'}}>{iconCell}<span
-                        className="iconPadding">{output}</span></span></td>
-                );
-            } else {
-                return (<td key={key} className={this.state.enhancedColumns[0].styleClass}><span
-                        style={{marginLeft: dataRow.rowLevel + 'em'}}>{iconCell}<span
-                        className="iconPadding">{output}</span></span></td>
-                );
-            }
-        } else {
-            if (this.state.enhancedColumns[0].fixedWidth) {
-                return (
-                    <td key={key} className={this.state.enhancedColumns[0].styleClass}
-                        width={this.state.enhancedColumns[0].percentageWidth + '%'}><span
-                        style={{marginLeft: (dataRow.rowLevel + 1.25) + 'em'}}>
-                    <span className="iconPadding">{output}</span>
-                </span>
-                    </td>);
-            } else {
-                return (
-                    <td key={key} className={this.state.enhancedColumns[0].styleClass}><span
-                        style={{marginLeft: (dataRow.rowLevel + 1.25) + 'em'}}>
-                    <span className="iconPadding">{output}</span>
-                </span>
-                    </td>);
-            }
-        }
-    }
-
-    processDataRow(dataRow) {
-        let rowBody = [];
-        rowBody.push(this.state.enhancedColumns.map((column, index) => {
-                let key = dataRow.parentRowID + '-' + dataRow.rowID + '-' + index;
-                let output = dataRow.data[column.dataField];
-                if (column.renderer) {
-                    output = this.state.enhancedColumns[index].renderer(dataRow, column.dataField);
-                }
-                if (index === 0) {
-                    return this.generateExpandColumn(dataRow, key, column.dataField);
-                } else {
-                    if (column.fixedWidth) {
-                        return (<td key={key} className={column.styleClass}
-                                    width={column.percentageWidth + '%'}>{output}</td>)
-                    } else {
-                        return (
-                            <td key={key} className={column.styleClass}>{output}</td>)
-                    }
-                }
-            }
-        ));
-        return rowBody;
-    }
-
-    generateHeaderRow() {
-        let headingRows = [];
-        if (this.state.enhancedColumns) {
-            headingRows.push(this.state.enhancedColumns.map((column, index) => {
-                    let fieldTitle = column.heading ? column.heading : column.dataField;
-                    let sortIcon = null;
-                    if (column.sortOrder === 'asc') {
-                        sortIcon = <FontAwesomeIcon icon={faAngleUp} fixedWidth pull="right"/>;
-                    } else if (column.sortOrder === 'desc') {
-                        sortIcon = <FontAwesomeIcon icon={faAngleDown} fixedWidth pull="right"/>;
-                    } else {
-                        sortIcon = null;
-                    }
-                    if (this.props.control.allowSorting && column.sortable) {
-                        return <th key={fieldTitle}
-                                   onClick={this.sortByField.bind(this, index)}>{sortIcon}{fieldTitle}</th>;
-                    } else {
-                        return <th key={fieldTitle}>{fieldTitle}</th>;
-                    }
-                }
-            ))
-        }
-        return headingRows;
-    }
-
-    generatePaginatorRow() {
-        if (this.props.control.showPagination && this.state.enhancedTableData.length > this.props.control.initialRowsPerPage) {
-            return (
-                <div>
-                    <Paginator currentPage={this.state.currentPage}
-                               tableLength={this.state.enhancedTableData.length}
-                               rowsPerPage={this.props.control.initialRowsPerPage}
-                               rowMover={this.moveToSpecificPage}
-                               paginationClasses={this.props.control.paginationClasses}/>
-                </div>
-            );
-        }
-        return <div></div>;
+        //this.moveToSpecificPage(this.state.currentPage, true, outputData);
     }
 
     render() {
-        let headingRows = this.generateHeaderRow();
-        let tableBody = this.generateTableBody(this.state.enhancedTableData, this.state.startRow, this.state.endRow);
-        return (
-            <div>
-                <div>
-                    {/*<span
-                    className={this.props.control.showFilterInput ? '' : 'hidden'}>
-                    <FontAwesomeIcon icon={faSearch} pull="left"/>
-                    <input type="text" value={this.state.filterValue} onChange={this.applyFilter.bind(this)}
-                           placeholder={this.props.control.filterInputPlaceholderText}
-                           className={this.props.control.filterInputClasses}/>
-                </span>*/}
-                    <span>
-                    <button onClick={this.expandOrCollapseAll.bind(this)}
-                            className={this.props.control.showExpandCollapseButton ? this.props.control.expandCollapseButtonClasses : 'hidden'}>
-                        {this.state.expanded ? 'Collapse All' : 'Expand All'}
-                    </button>
-                    </span>
-                    <span>
-                    <button onClick={this.resetSorting.bind(this)}
-                            className={this.state.showResetSortingButton ? this.props.control.resetSortingButtonClasses : 'hidden'}>
-                        Reset Sorting
-                    </button>
-                    </span>
-                </div>
-                <table className={this.props.control.tableClasses}>
-                    <thead>
-                    <tr>
-                        {headingRows}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {tableBody}
-                    </tbody>
-                </table>
-                {this.generatePaginatorRow()}
-            </div>
-        );
+        return (<TreeTable tableData={this.state.enhancedTableData}
+                           control={this.props.control}
+                           filterValue={this.state.filterValue}
+                           applyFilter={this.applyFilter}
+                           expandOrCollapseAll={this.expandOrCollapseAll}
+                           expanded={this.state.expanded}
+                           resetSorting={this.resetSorting}
+                           showResetSortingButton={this.state.showResetSortingButton}
+                           enhancedColumns={this.state.enhancedColumns}
+                           sortByField={this.sortByField}
+                           childrenPresent={this.state.childrenPresent}
+                           rowExpandOrCollapse={this.rowExpandOrCollapse}
+        />);
     }
 }
 
-SimpleTreeTable.propTypes = {
+SimpleTreeTable
+    .propTypes = {
     tableData: PropTypes.arrayOf(
         PropTypes.shape({
             data: PropTypes.object,
@@ -569,7 +379,8 @@ SimpleTreeTable.propTypes = {
     }))
 };
 
-SimpleTreeTable.defaultProps = {
+SimpleTreeTable
+    .defaultProps = {
     tableData: [],
     control: {
         visibleRows: 1,
