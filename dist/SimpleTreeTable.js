@@ -418,24 +418,25 @@ SimpleTreeTable.propTypes = {
   })).isRequired,
   control: _propTypes.default.shape({
     visibleRows: _propTypes.default.number,
-    tableClasses: _propTypes.default.string,
     showExpandCollapseButton: _propTypes.default.bool,
-    expandCollapseButtonClasses: _propTypes.default.string,
     allowSorting: _propTypes.default.bool,
-    resetSortingButtonClasses: _propTypes.default.string,
-    showFilterInput: _propTypes.default.bool,
-    filterInputClasses: _propTypes.default.string,
+    allowFiltering: _propTypes.default.bool,
     filterInputPlaceholderText: _propTypes.default.string,
     showPagination: _propTypes.default.bool,
     initialRowsPerPage: _propTypes.default.number,
-    paginationClasses: _propTypes.default.shape({
-      listClasses: _propTypes.default.string,
-      listItemClasses: _propTypes.default.string,
-      linkClasses: _propTypes.default.string,
-      activePageClasses: _propTypes.default.string,
-      countClasses: _propTypes.default.string
-    }),
-    bootstrapStyling: _propTypes.default.bool
+    bootstrapStyling: _propTypes.default.bool,
+    styling: _propTypes.default.shape({
+      tableClasses: _propTypes.default.string,
+      expandCollapseButtonClasses: _propTypes.default.string,
+      resetSortingButtonClasses: _propTypes.default.string,
+      filterInputClasses: _propTypes.default.string,
+      paginationClasses: _propTypes.default.shape({
+        listClasses: _propTypes.default.string,
+        listItemClasses: _propTypes.default.string,
+        linkClasses: _propTypes.default.string,
+        activePageClasses: _propTypes.default.string
+      })
+    })
   }),
   columns: _propTypes.default.arrayOf(_propTypes.default.shape({
     dataField: _propTypes.default.string.isRequired,
@@ -461,7 +462,7 @@ SimpleTreeTable.defaultProps = {
     expandCollapseButtonClasses: '',
     allowSorting: false,
     resetSortingButtonClasses: '',
-    showFilterInput: false,
+    allowFiltering: false,
     filterInputPlaceholderText: "filter",
     showPagination: false,
     initialRowsPerPage: 0,
@@ -472,13 +473,24 @@ SimpleTreeTable.defaultProps = {
     heading: '',
     fixedWidth: false,
     percentageWidth: 0,
-    styleClass: '',
     renderer: null,
     sortable: true,
     sortUsingRenderer: false,
     sortType: 'string',
     sortDateFormat: null,
-    filterable: false
+    filterable: false,
+    styling: {
+      tableClasses: '',
+      expandCollapseButtonClasses: '',
+      resetSortingButtonClasses: '',
+      filterInputClasses: '',
+      paginationClasses: {
+        listClasses: '',
+        listItemClasses: '',
+        linkClasses: '',
+        activePageClasses: ''
+      }
+    }
   }]
 };
 var _default = SimpleTreeTable;

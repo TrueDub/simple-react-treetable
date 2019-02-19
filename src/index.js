@@ -6,7 +6,6 @@ import SimpleTreeTable from "./lib/SimpleTreeTable.jsx";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'highlight.js/styles/rainbow.css';
-import PropTypes from "prop-types";
 
 let descriptionRenderer = function (dataRow, dataField) {
     return <span dangerouslySetInnerHTML={{__html: dataRow.data[dataField]}}></span>;
@@ -16,7 +15,6 @@ let orderRenderer = function (dataRow, dataField) {
     let newValue = dataRow.data[dataField] + 100;
     return newValue;
 }
-
 
 let fixedColumns = [
     {
@@ -139,19 +137,22 @@ let tableData = [
 ];
 let controlWithButton = {
     visibleRows: 1,
-    tableClasses: "table table-bordered",
     allowSorting: true,
     showExpandCollapseButton: true,
-    expandCollapseButtonClasses: "btn btn-default float-left",
-    resetSortingButtonClasses: "btn btn-default float-right",
+    bootstrapStyling: false,
     showPagination: true,
-    paginationClasses: {
-        listClasses: "pagination justify-content-center",
-        listItemClasses: 'page-item',
-        linkClasses: 'page-link',
-        activePageClasses: 'active'
-    },
-    initialRowsPerPage: 4
+    initialRowsPerPage: 4,
+    styling: {
+        tableClasses: "table table-bordered",
+        expandCollapseButtonClasses: "btn btn-default float-left",
+        resetSortingButtonClasses: "btn btn-default float-right",
+        paginationClasses: {
+            listClasses: "pagination justify-content-center",
+            listItemClasses: 'page-item',
+            linkClasses: 'page-link',
+            activePageClasses: 'active'
+        },
+    }
 };
 let dataTableColumns = [
     {
@@ -218,140 +219,164 @@ let dataTableData = [
     {data: {name: 'fred770', size: 770, description: 'desc1035', type: 'white', date: '06-Feb-2018'}}
 ];
 let dataTableControls = {
-    tableClasses: "table table-bordered",
     allowSorting: true,
-    //resetSortingButtonClasses: "btn btn-default float-right",
     showPagination: true,
     initialRowsPerPage: 10,
-    showFilterInput: true,
+    allowFiltering: true,
     bootstrapStyling: true,
-    filterInputClasses: "float-left col-xs-2",
-    filterInputPlaceholderText: 'Filter...',
-    paginationClasses: {
-        listClasses: "pagination justify-content-center",
-        listItemClasses: 'page-item',
-        linkClasses: 'page-link',
-        activePageClasses: 'active'
-    }
+    filterInputPlaceholderText: 'Filter...'
 };
 
 const App = () => (
-        <div style={{width: "90%", margin: "15px auto"}}>
-            <h1>Simple React TreeTable Demo</h1>
+    <div style={{width: "90%", margin: "15px auto"}}>
+        <h1>Simple React TreeTable Demo</h1>
+        <div>
             <div>
-                <div>
-                    <h3>TreeTable</h3>
-                    Clicking any column heading will sort that column in ascending order - a second click will reverse the
-                    sort order. The "Reset Sorting" button will appear when a sort is applied, and will be present if an
-                    initial sort is applied via the <code>columns</code> prop.
-                    <SimpleTreeTable columns={fixedColumns} tableData={tableData} control={controlWithButton}/>
-                    <table className="table table-bordered">
-                        <tbody>
-                        <tr>
-                            <td>Component declaration</td>
-                            <td><Highlight language="javascript">
-                                {"<SimpleTreeTable columns={fixedColumns} tableData={tableData} control={controlWithButton}/>"}
-                            </Highlight></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <table className="table table-bordered">
-                        <tbody>
-                        <tr>
-                            <th width="10%">Prop Name</th>
-                            <th>Value</th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <pre><code>columns</code></pre>
-                            </td>
-                            <td><Highlight language="javascript">
-                                {JSON.stringify(fixedColumns, null, 2)}
-                            </Highlight></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <pre><code>control</code></pre>
-                            </td>
-                            <td>
-                                <Highlight language="javascript">
-                                    {JSON.stringify(controlWithButton, null, 2)}
-                                </Highlight>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <pre><code>tableData</code></pre>
-                            </td>
-                            <td><Highlight className='javascript'>
-                                {JSON.stringify(tableData, null, 2)}
-                            </Highlight></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <pre><code>descriptionRenderer</code></pre>
-                                - the renderer function passed in the columns prop
-                            </td>
-                            <td><Highlight language="javascript">{"function (dataRow, dataField) {\n" +
-                            "    return <span dangerouslySetInnerHTML={{__html: dataRow.data[dataField]}}></span>;\n" +
-                            "};"}</Highlight></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div>
-                    <h3>DataTable with Pagination</h3>
-                    Sorting is switched off on this table.
-                    <SimpleTreeTable columns={dataTableColumns} tableData={dataTableData} control={dataTableControls}/>
-                    <table className="table table-bordered">
-                        <tbody>
-                        <tr>
-                            <td>Component declaration</td>
-                            <td><Highlight language="javascript">
-                                {"<SimpleTreeTable columns={dataTableColumns} tableData={dataTableData} control={dataTableControls}/>"}
-                            </Highlight></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <table className="table table-bordered">
-                        <tbody>
-                        <tr>
-                            <th width="10%">Prop Name</th>
-                            <th>Value</th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <pre><code>columns</code></pre>
-                            </td>
-                            <td><Highlight language="javascript">
-                                {JSON.stringify(dataTableColumns, null, 2)}
-                            </Highlight></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <pre><code>control</code></pre>
-                            </td>
-                            <td>
-                                <Highlight language="javascript">
-                                    {JSON.stringify(dataTableControls, null, 2)}
-                                </Highlight>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <pre><code>tableData</code></pre>
-                            </td>
-                            <td><Highlight className='javascript'>
-                                {JSON.stringify(dataTableData, null, 2)}
-                            </Highlight></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <h3>TreeTable</h3>
+                Notes:
+                <ol>
+                    <li>Clicking any column heading will sort that column in ascending order - a second click will
+                        reverse the sort order. The "Reset Sorting" button will appear when a sort is applied.
+                    </li>
+                    <li>An initial sort is applied to the Order column via the <code>columns</code> prop.</li>
+                    <li>The Order and Description columns each has a <code>renderer</code> applied to it. In addition,
+                        the Order column is sorted by the output of that renderer, not by the input value.
+                    </li>
+                </ol>
+                <SimpleTreeTable columns={fixedColumns} tableData={tableData} control={controlWithButton}/>
+                <table className="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <td>Component declaration</td>
+                        <td><Highlight language="javascript">
+                            {"<SimpleTreeTable columns={fixedColumns} tableData={tableData} control={controlWithButton}/>"}
+                        </Highlight></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table className="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <th width="10%">Prop Name</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code>columns</code></pre>
+                        </td>
+                        <td><Highlight language="javascript">
+                            {JSON.stringify(fixedColumns, null, 2)}
+                        </Highlight></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code>control</code></pre>
+                        </td>
+                        <td>
+                            <Highlight language="javascript">
+                                {JSON.stringify(controlWithButton, null, 2)}
+                            </Highlight>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code>tableData</code></pre>
+                        </td>
+                        <td><Highlight className='javascript'>
+                            {JSON.stringify(tableData, null, 2)}
+                        </Highlight></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code>descriptionRenderer</code></pre>
+                            - the renderer function passed in the columns prop
+                        </td>
+                        <td><Highlight language="javascript">{"function (dataRow, dataField) {\n" +
+                        "    return <span dangerouslySetInnerHTML={{__html: dataRow.data[dataField]}}></span>;\n" +
+                        "};"}</Highlight></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code>orderRenderer</code></pre>
+                            - the renderer function passed in the columns prop
+                        </td>
+                        <td><Highlight language="javascript">{"function (dataRow, dataField) {\n" +
+                        "    let newValue = dataRow.data[dataField] + 100;\n" +
+                        "    return newValue;\n" +
+                        "}"}</Highlight></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <h3>DataTable with Pagination</h3>
+                Notes:
+                <ol>
+                    <li>This column is styled using the default style i.e. by setting
+                        the <code>columns.bootstrapStyling</code> attribute to <code>true</code>.
+                    </li>
+                    <li>Clicking any column heading will sort that column in ascending order - a second click will
+                        reverse the sort order. The "Reset Sorting" button will appear when a sort is applied.
+                    </li>
+                    <li>An initial sort is applied to the Date column via the <code>columns.sortOrder</code> prop. In
+                        addition, the <code>sortType</code> of <code>date</code> is specified, with
+                        a <code>sortDateFormat</code> of <code>DD-MMM-YYYY</code>. This causes this column to be sorted
+                        as dates, with the supplied format being used in the conversion to Date objects by <a
+                            href="http://momentjs.com">Moment.js</a>.
+                    </li>
+                    <li>Filtering is allowed on the Description column only. The paginator adjusts to provide correct
+                        navigation and information when the table is filtered.
+                    </li>
+                </ol>
+                <SimpleTreeTable columns={dataTableColumns} tableData={dataTableData} control={dataTableControls}/>
+                <table className="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <td>Component declaration</td>
+                        <td><Highlight language="javascript">
+                            {"<SimpleTreeTable columns={dataTableColumns} tableData={dataTableData} control={dataTableControls}/>"}
+                        </Highlight></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table className="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <th width="10%">Prop Name</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code>columns</code></pre>
+                        </td>
+                        <td><Highlight language="javascript">
+                            {JSON.stringify(dataTableColumns, null, 2)}
+                        </Highlight></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code>control</code></pre>
+                        </td>
+                        <td>
+                            <Highlight language="javascript">
+                                {JSON.stringify(dataTableControls, null, 2)}
+                            </Highlight>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code>tableData</code></pre>
+                        </td>
+                        <td><Highlight className='javascript'>
+                            {JSON.stringify(dataTableData, null, 2)}
+                        </Highlight></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-    )
-;
+    </div>
+);
 
 render(
     <App/>

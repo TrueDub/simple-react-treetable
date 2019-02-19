@@ -109,10 +109,10 @@ function (_React$Component) {
         };
       } else {
         return {
-          tableClasses: this.props.control.tableClasses,
-          resetSortingButtonClasses: this.props.control.resetSortingButtonClasses,
-          filterInputClasses: this.props.control.filterInputClasses,
-          paginationClasses: this.props.control.paginationClasses
+          tableClasses: this.props.control.styling.tableClasses,
+          resetSortingButtonClasses: this.props.control.styling.resetSortingButtonClasses,
+          filterInputClasses: this.props.control.styling.filterInputClasses,
+          paginationClasses: this.props.control.styling.paginationClasses
         };
       }
     }
@@ -429,7 +429,7 @@ function (_React$Component) {
         value: this.props.filterValue,
         onChange: this.props.applyFilter.bind(null),
         placeholder: this.props.control.filterInputPlaceholderText,
-        className: this.props.control.showFilterInput ? this.state.styling.filterInputClasses : 'hidden'
+        className: this.props.control.allowFiltering ? this.state.styling.filterInputClasses : 'hidden'
       }), _react.default.createElement("button", {
         onClick: this.props.expandOrCollapseAll.bind(null),
         className: this.props.control.showExpandCollapseButton ? this.state.styling.expandCollapseButtonClasses : 'hidden'

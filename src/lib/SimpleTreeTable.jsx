@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import TreeTable from "./TreeTable";
+import TreeTable from "./TreeTable.jsx";
 
 class SimpleTreeTable extends React.Component {
 
@@ -295,24 +295,25 @@ SimpleTreeTable
         })).isRequired,
     control: PropTypes.shape({
         visibleRows: PropTypes.number,
-        tableClasses: PropTypes.string,
         showExpandCollapseButton: PropTypes.bool,
-        expandCollapseButtonClasses: PropTypes.string,
         allowSorting: PropTypes.bool,
-        resetSortingButtonClasses: PropTypes.string,
-        showFilterInput: PropTypes.bool,
-        filterInputClasses: PropTypes.string,
+        allowFiltering: PropTypes.bool,
         filterInputPlaceholderText: PropTypes.string,
         showPagination: PropTypes.bool,
         initialRowsPerPage: PropTypes.number,
-        paginationClasses: PropTypes.shape({
-            listClasses: PropTypes.string,
-            listItemClasses: PropTypes.string,
-            linkClasses: PropTypes.string,
-            activePageClasses: PropTypes.string,
-            countClasses: PropTypes.string
-        }),
-        bootstrapStyling: PropTypes.bool
+        bootstrapStyling: PropTypes.bool,
+        styling: PropTypes.shape({
+            tableClasses: PropTypes.string,
+            expandCollapseButtonClasses: PropTypes.string,
+            resetSortingButtonClasses: PropTypes.string,
+            filterInputClasses: PropTypes.string,
+            paginationClasses: PropTypes.shape({
+                listClasses: PropTypes.string,
+                listItemClasses: PropTypes.string,
+                linkClasses: PropTypes.string,
+                activePageClasses: PropTypes.string
+            })
+        })
     }),
     columns: PropTypes.arrayOf(PropTypes.shape({
         dataField: PropTypes.string.isRequired,
@@ -340,7 +341,7 @@ SimpleTreeTable
         expandCollapseButtonClasses: '',
         allowSorting: false,
         resetSortingButtonClasses: '',
-        showFilterInput: false,
+        allowFiltering: false,
         filterInputPlaceholderText: "filter",
         showPagination: false,
         initialRowsPerPage: 0,
@@ -351,13 +352,24 @@ SimpleTreeTable
         heading: '',
         fixedWidth: false,
         percentageWidth: 0,
-        styleClass: '',
         renderer: null,
         sortable: true,
         sortUsingRenderer: false,
         sortType: 'string',
         sortDateFormat: null,
-        filterable: false
+        filterable: false,
+        styling: {
+            tableClasses: '',
+            expandCollapseButtonClasses: '',
+            resetSortingButtonClasses: '',
+            filterInputClasses: '',
+            paginationClasses: {
+                listClasses: '',
+                listItemClasses: '',
+                linkClasses: '',
+                activePageClasses: ''
+            }
+        }
     }]
 };
 

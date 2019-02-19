@@ -1,5 +1,5 @@
 # simple-react-treetable
-A React component that presents a simple TreeTable, allowing the user to supply styling and rendering options.
+A React component that presents a simple TreeTable, allowing the user to supply styling and rendering options. A default styling (using Bootstrap 4) is also available.
 
 ## Installation
 Run the following command:
@@ -11,7 +11,7 @@ or
 
 Firstly, import the component as follows:
 
-`import SimpleTreeTable from "simple-react-treetable";`
+`import SimpleTreeTable from 'simple-react-treetable';`
 
 Then include it in your components as follows:
 
@@ -104,19 +104,24 @@ Obviously, the tableData prop is required. There is one other required prop:
 | styleClass     | String | A CSS class to be applied to the TD element for this field | whatever | No |
 | renderer       | function | A function to be applied to the data - see further detail below | whatever | No |
 | sortable       | Boolean | Is this field sortable? Default is yes | false | No |
+| sortUsingRenderer | Boolean | When sorting, sort using the output of the renderer | false | No |
 | sortOrder      | String | Indicates that the table should be sorted by this field in this order - values are 'asc' or 'desc' | asc | No |
+| sortType       | String | Indicates the data type this field should be sorted as - options are string, date or number | string | No |
+| sortDateFormat | String | The format of the date to be sorted (assuming sortType is date). This uses Moment, so the formats are specified [here](https://momentjs.com/docs/#/parsing) | string | No |  
 
 Further control of how the table is displayed can be provided using the **control** prop.
 
 | Attribute Name | Type | Description | Example | Required |
 | -------------- | ---- | ----------- | ------- | -------- |
 | visibleRows    | Number | Number of levels to display automatically - default is 1 | 2 | No |
-| tableClasses   | String | CSS class(es) to be applied to the table. See the styling section for more information. | | No |
-| showExpandCollapseButton     | Boolean | Should the Expand All/Collapse All button be displayed? | False | No | 
-| expandCollapseButtonClasses  | String | CSS classes to be applied to the button, if displayed | | No |
-| showResetSortingButton     | Boolean | Should the Reset Sorting button be displayed, when appropriate? | False | No | 
-| resetSortingButtonClasses  | String | CSS classes to be applied to the button, if displayed | | No |
-        
+| showExpandCollapseButton     | Boolean | Should the Expand All/Collapse All button be displayed? | false | No | 
+| allowSorting   | boolean | Enable or disable sorting on this table - default is false | false | No |
+| allowFiltering | boolean | Enable or disable filtering on this table - default is false | false | No |
+| filterInputPlaceholderText | string | Text to display as the placeholder in the filter input box | Filter... | No |
+| showPagination | boolean | Paginate the table, and provide a set of links at the bottom for navigation | false | No |
+| initialRowsPerPage | number | Number of rows to display when paginated | 10 | No |
+| bootstrapStyling | boolean | Use the default styles for the table - currently using Bootstrap 4 | false | No  
+| Styling | Object | CSS classes to be used, assuming bootstrapStyling is false. See the Styling section below for details |   | No |        
 #### Rendering option
 
 A function can be provided on a per-column basis to control the display of the data from that column.
@@ -138,11 +143,38 @@ let descriptionRenderer = function (dataRow, dataField) {
 
 #### Styling options
 
-The table is by default entirely unstyled. To style it, simply provide a string of class names (separated by spaces) in the `control.tableClasses` prop.
+Two options exist for styling the table.
 
-For example, to use Bootstrap styling, you can pass "table table-bordered" to the prop, and assuming the Bootstrap CSS is available, the relevant styling will be applied.
+To use a default styling, using Bootstrap 4, simply set the relevant option in the `control` object. Note that Bootstrap 4 is not supplied as part of this project and so must be included as a dependency of your project instead.
 
-Note that Bootstrap table striping won't work on a table where rows are expandable, as the striping is applied once at render time and doesn't adjust to the display changing.
+Alternativles, you can simply provide a string of class names (separated by spaces) in the `control.tableClasses` prop.
+
+The classes can be supplied in the `styling` section of the `control` object. It consists of the following options:
+
+```javascript
+styling: {
+            tableClasses: '',
+            expandCollapseButtonClasses: '',
+            resetSortingButtonClasses: '',
+            filterInputClasses: '',
+            paginationClasses: {
+                listClasses: '',
+                listItemClasses: '',
+                linkClasses: '',
+                activePageClasses: ''
+            }
+        }
+```
+Most are self-explanatory, and you can supply classes to style things as you require. Please note, though, that table striping will not work correctly with a table with expandable rows, as the striping will be applied at render time, not when the rows are expanded or contracted.
+
+The pagination classes are applied to an Unordered List (`<ul>`) as follows:
+
+```javascript
+<ul className={this.state.listClasses}>
+                    <li className={this.state.listItemClasses}>
+                        <a href="#!" className={this.state.linkClasses}> First </a>
+                    </li>
+```
 
 ### Sorting
 The table can be sorted by default, simply set the `sortOrder` attribute of the relevant column.
@@ -159,7 +191,7 @@ To use this component as a simple datatable (i.e. no expandable capabilities), s
 
 | Release | Description | Release date |
 | ------- | ----------- | ------------ |
-|  2.0.0  | Added sorting | TBD |
+|  2.0.0  | Added sorting, pagination, filtering and default styling | TBD |
 |  1.0.3  | Corrected the configuration | Nov 19 2018 |
 |  1.0.2  | Changed Babel setup to the correct dependency | Nov 19 2018 |
 |  1.0.1  | IE11 compatibility | Nov 19 2018 |
