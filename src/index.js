@@ -143,7 +143,6 @@ let controlWithButton = {
     allowSorting: true,
     showExpandCollapseButton: true,
     expandCollapseButtonClasses: "btn btn-default float-left",
-    showResetSortingButton: true,
     resetSortingButtonClasses: "btn btn-default float-right",
     showPagination: true,
     paginationClasses: {
@@ -219,22 +218,21 @@ let dataTableData = [
     {data: {name: 'fred770', size: 770, description: 'desc1035', type: 'white', date: '06-Feb-2018'}}
 ];
 let dataTableControls = {
-    //tableClasses: "table table-bordered",
+    tableClasses: "table table-bordered",
     allowSorting: true,
-    showResetSortingButton: true,
     //resetSortingButtonClasses: "btn btn-default float-right",
     showPagination: true,
     initialRowsPerPage: 10,
     showFilterInput: true,
     bootstrapStyling: true,
-    //filterInputClasses: "float-left col-xs-2",
+    filterInputClasses: "float-left col-xs-2",
     filterInputPlaceholderText: 'Filter...',
-    /*paginationClasses: {
+    paginationClasses: {
         listClasses: "pagination justify-content-center",
         listItemClasses: 'page-item',
         linkClasses: 'page-link',
         activePageClasses: 'active'
-    }*/
+    }
 };
 
 const App = () => (
