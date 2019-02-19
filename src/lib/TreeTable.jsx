@@ -19,12 +19,37 @@ class TreeTable extends React.Component {
         } else {
             endRow = newTableData.length - 1;
         }
+        let styling = this.addStyling();
         this.state = {
             startRow: 0,
             endRow: endRow,
             currentPage: 1,
-            tableData: newTableData
+            tableData: newTableData,
+            styling: styling
         };
+    }
+
+    addStyling() {
+        if (this.props.control.bootstrapStyling) {
+            return {
+                tableClasses: "table table-bordered",
+                resetSortingButtonClasses: "btn btn-default float-right",
+                filterInputClasses: "float-left col-xs-2",
+                paginationClasses: {
+                    listClasses: "pagination justify-content-center",
+                    listItemClasses: 'page-item',
+                    linkClasses: 'page-link',
+                    activePageClasses: 'active'
+                }
+            }
+        } else {
+            return {
+                tableClasses: this.props.control.tableClasses,
+                resetSortingButtonClasses: this.props.control.resetSortingButtonClasses,
+                filterInputClasses: this.props.control.filterInputClasses,
+                paginationClasses: this.props.control.paginationClasses,
+            }
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -241,7 +266,7 @@ class TreeTable extends React.Component {
                                tableLength={this.state.tableData.length}
                                rowsPerPage={this.props.control.initialRowsPerPage}
                                rowMover={this.moveToSpecificPage}
-                               paginationClasses={this.props.control.paginationClasses}
+                               paginationClasses={this.state.styling.paginationClasses}
                                displayStartRow={displayStartRow}
                                displayEndRow={displayEndRow}
                                displayTotal={this.state.tableData.length}
@@ -261,20 +286,19 @@ class TreeTable extends React.Component {
                 <div>
                     <input type="text" value={this.props.filterValue} onChange={this.props.applyFilter.bind(null)}
                            placeholder={this.props.control.filterInputPlaceholderText}
-                           className={this.props.control.showFilterInput ? this.props.control.filterInputClasses : 'hidden'}/>
+                           className={this.props.control.showFilterInput ? this.state.styling.filterInputClasses : 'hidden'}/>
 
                     <button onClick={this.props.expandOrCollapseAll.bind(null)}
-                            className={this.props.control.showExpandCollapseButton ? this.props.control.expandCollapseButtonClasses : 'hidden'}>
+                            className={this.props.control.showExpandCollapseButton ? this.state.styling.expandCollapseButtonClasses : 'hidden'}>
                         {this.props.expanded ? 'Collapse All' : 'Expand All'}
                     </button>
 
                     <button onClick={this.props.resetSorting.bind(null)}
-                            className={this.props.showResetSortingButton ? this.props.control.resetSortingButtonClasses : 'hidden'}>
+                            className={this.props.showResetSortingButton ? this.state.styling.resetSortingButtonClasses : 'hidden'}>
                         Reset Sorting
                     </button>
-                    <span className='count-area'>Showing x to y of {this.state.tableData.length} records</span>
                 </div>
-                <table className={this.props.control.tableClasses}>
+                <table className={this.state.styling.tableClasses}>
                     <thead>
                     <tr>
                         {headingRows}

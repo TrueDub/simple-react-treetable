@@ -6,6 +6,7 @@ import SimpleTreeTable from "./lib/SimpleTreeTable.jsx";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'highlight.js/styles/rainbow.css';
+import PropTypes from "prop-types";
 
 let descriptionRenderer = function (dataRow, dataField) {
     return <span dangerouslySetInnerHTML={{__html: dataRow.data[dataField]}}></span>;
@@ -218,21 +219,22 @@ let dataTableData = [
     {data: {name: 'fred770', size: 770, description: 'desc1035', type: 'white', date: '06-Feb-2018'}}
 ];
 let dataTableControls = {
-    tableClasses: "table table-bordered",
+    //tableClasses: "table table-bordered",
     allowSorting: true,
     showResetSortingButton: true,
-    resetSortingButtonClasses: "btn btn-default float-right",
+    //resetSortingButtonClasses: "btn btn-default float-right",
     showPagination: true,
     initialRowsPerPage: 10,
     showFilterInput: true,
-    filterInputClasses: "float-left col-xs-2",
+    bootstrapStyling: true,
+    //filterInputClasses: "float-left col-xs-2",
     filterInputPlaceholderText: 'Filter...',
-    paginationClasses: {
+    /*paginationClasses: {
         listClasses: "pagination justify-content-center",
         listItemClasses: 'page-item',
         linkClasses: 'page-link',
         activePageClasses: 'active'
-    }
+    }*/
 };
 
 const App = () => (

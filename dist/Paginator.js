@@ -47,7 +47,7 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Paginator).call(this, props));
 
-    var data = _this.performCalcs(_this.props.currentPage);
+    var data = _this.performCalcs(_this.props.currentPage, _this.props.tableLength);
 
     _this.state = {
       pos1Value: data.pos1Value,
@@ -65,7 +65,12 @@ function (_React$Component) {
       listClasses: data.listClasses,
       listItemClasses: data.listItemClasses,
       linkClasses: data.linkClasses,
-      activePageClasses: data.activePageClasses
+      activePageClasses: data.activePageClasses,
+      displayStartRow: _this.props.displayStartRow,
+      displayEndRow: _this.props.displayEndRow,
+      displayTotal: _this.props.displayTotal,
+      displayFiltered: _this.props.displayFiltered,
+      displayOverallTotal: _this.props.displayOverallTotal
     };
     return _this;
   }
@@ -73,7 +78,7 @@ function (_React$Component) {
   _createClass(Paginator, [{
     key: "componentWillReceiveProps",
     value: function componentWillReceiveProps(nextProps) {
-      var data = this.performCalcs(nextProps.currentPage);
+      var data = this.performCalcs(nextProps.currentPage, nextProps.tableLength);
       this.setState({
         pos1Value: data.pos1Value,
         pos2Value: data.pos2Value,
@@ -89,12 +94,17 @@ function (_React$Component) {
         pos2Classes: this.defineListItemClasses(data.pos2Value, data.currentPage, data.totalNumberOfPages),
         pos3Classes: this.defineListItemClasses(data.pos3Value, data.currentPage, data.totalNumberOfPages),
         pos4Classes: this.defineListItemClasses(data.pos4Value, data.currentPage, data.totalNumberOfPages),
-        pos5Classes: this.defineListItemClasses(data.pos5Value, data.currentPage, data.totalNumberOfPages)
+        pos5Classes: this.defineListItemClasses(data.pos5Value, data.currentPage, data.totalNumberOfPages),
+        displayStartRow: nextProps.displayStartRow,
+        displayEndRow: nextProps.displayEndRow,
+        displayTotal: nextProps.displayTotal,
+        displayFiltered: nextProps.displayFiltered,
+        displayOverallTotal: nextProps.displayOverallTotal
       });
     }
   }, {
     key: "performCalcs",
-    value: function performCalcs(currentPage) {
+    value: function performCalcs(currentPage, tableLength) {
       var pos1Value = 1;
       var pos2Value = 2;
       var pos3Value = 3;
@@ -109,7 +119,7 @@ function (_React$Component) {
         pos5Value = currentPage + 2;
       }
 
-      var totalNumberOfPages = Math.ceil(this.props.tableLength / this.props.rowsPerPage);
+      var totalNumberOfPages = Math.ceil(tableLength / this.props.rowsPerPage);
 
       if (totalNumberOfPages - currentPage === 0) {
         pos1Value = currentPage - 4;
@@ -255,7 +265,13 @@ function (_React$Component) {
         href: "#!",
         className: this.state.linkClasses,
         onClick: this.props.rowMover.bind(null, this.state.totalNumberOfPages)
-      }, "Last "))));
+      }, "Last ")), _react.default.createElement("li", {
+        className: this.state.listItemClasses + ' disabled'
+      }, _react.default.createElement("span", {
+        className: this.state.linkClasses
+      }, "Showing ", this.state.displayStartRow, " to ", this.state.displayEndRow, " of ", this.state.displayTotal, " records ", _react.default.createElement("span", {
+        className: this.state.displayFiltered ? 'shown' : 'hidden'
+      }, "(filtered from ", this.state.displayOverallTotal, ")")))));
     }
   }]);
 

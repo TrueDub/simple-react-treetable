@@ -312,7 +312,8 @@ SimpleTreeTable
             linkClasses: PropTypes.string,
             activePageClasses: PropTypes.string,
             countClasses: PropTypes.string
-        })
+        }),
+        bootstrapStyling: PropTypes.bool
     }),
     columns: PropTypes.arrayOf(PropTypes.shape({
         dataField: PropTypes.string.isRequired,
