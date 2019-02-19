@@ -2,7 +2,7 @@ import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faAngleRight, faAngleDown, faAngleUp} from '@fortawesome/free-solid-svg-icons';
 
-import Paginator from './Paginator.jsx';
+import Paginator from './Paginator';
 import './SimpleTreeTable.css';
 
 class TreeTable extends React.Component {

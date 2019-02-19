@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import TreeTable from "./TreeTable.jsx";
+import TreeTable from "./TreeTable";
 
 class SimpleTreeTable extends React.Component {
 
@@ -336,28 +336,13 @@ SimpleTreeTable
     tableData: [],
     control: {
         visibleRows: 1,
-        tableClasses: '',
-        showExpandCollapseButton: false,
-        expandCollapseButtonClasses: '',
+        showExpandCollapseButton: true,
         allowSorting: false,
-        resetSortingButtonClasses: '',
         allowFiltering: false,
-        filterInputPlaceholderText: "filter",
+        filterInputPlaceholderText: 'Filter...',
         showPagination: false,
-        initialRowsPerPage: 0,
-        bootstrapStyling: false
-    },
-    columns: [{
-        dataField: '',
-        heading: '',
-        fixedWidth: false,
-        percentageWidth: 0,
-        renderer: null,
-        sortable: true,
-        sortUsingRenderer: false,
-        sortType: 'string',
-        sortDateFormat: null,
-        filterable: false,
+        initialRowsPerPage: 10,
+        bootstrapStyling: false,
         styling: {
             tableClasses: '',
             expandCollapseButtonClasses: '',
@@ -370,6 +355,18 @@ SimpleTreeTable
                 activePageClasses: ''
             }
         }
+    },
+    columns: [{
+        dataField: '',
+        heading: '',
+        fixedWidth: false,
+        percentageWidth: 0,
+        renderer: null,
+        sortable: true,
+        sortUsingRenderer: false,
+        sortType: 'string',
+        sortDateFormat: null,
+        filterable: false
     }]
 };
 

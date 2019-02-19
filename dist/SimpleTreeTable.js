@@ -27,7 +27,7 @@ var _propTypes = _interopRequireDefault(require("prop-types"));
 
 var _moment = _interopRequireDefault(require("moment"));
 
-var _TreeTable = _interopRequireDefault(require("./TreeTable.jsx"));
+var _TreeTable = _interopRequireDefault(require("./TreeTable"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -457,28 +457,13 @@ SimpleTreeTable.defaultProps = {
   tableData: [],
   control: {
     visibleRows: 1,
-    tableClasses: '',
-    showExpandCollapseButton: false,
-    expandCollapseButtonClasses: '',
+    showExpandCollapseButton: true,
     allowSorting: false,
-    resetSortingButtonClasses: '',
     allowFiltering: false,
-    filterInputPlaceholderText: "filter",
+    filterInputPlaceholderText: 'Filter...',
     showPagination: false,
-    initialRowsPerPage: 0,
-    bootstrapStyling: false
-  },
-  columns: [{
-    dataField: '',
-    heading: '',
-    fixedWidth: false,
-    percentageWidth: 0,
-    renderer: null,
-    sortable: true,
-    sortUsingRenderer: false,
-    sortType: 'string',
-    sortDateFormat: null,
-    filterable: false,
+    initialRowsPerPage: 10,
+    bootstrapStyling: false,
     styling: {
       tableClasses: '',
       expandCollapseButtonClasses: '',
@@ -491,6 +476,18 @@ SimpleTreeTable.defaultProps = {
         activePageClasses: ''
       }
     }
+  },
+  columns: [{
+    dataField: '',
+    heading: '',
+    fixedWidth: false,
+    percentageWidth: 0,
+    renderer: null,
+    sortable: true,
+    sortUsingRenderer: false,
+    sortType: 'string',
+    sortDateFormat: null,
+    filterable: false
   }]
 };
 var _default = SimpleTreeTable;
