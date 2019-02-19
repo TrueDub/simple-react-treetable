@@ -25,7 +25,7 @@ var _reactFontawesome = require("@fortawesome/react-fontawesome");
 
 var _freeSolidSvgIcons = require("@fortawesome/free-solid-svg-icons");
 
-var _Paginator = _interopRequireDefault(require("./Paginator"));
+var _Paginator = _interopRequireDefault(require("./Paginator.jsx"));
 
 require("./SimpleTreeTable.css");
 

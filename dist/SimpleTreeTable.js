@@ -27,7 +27,7 @@ var _propTypes = _interopRequireDefault(require("prop-types"));
 
 var _moment = _interopRequireDefault(require("moment"));
 
-var _TreeTable = _interopRequireDefault(require("./TreeTable"));
+var _TreeTable = _interopRequireDefault(require("./TreeTable.jsx"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
