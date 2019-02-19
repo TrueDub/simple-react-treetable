@@ -22,8 +22,12 @@ class Paginator extends React.Component {
             listClasses: data.listClasses,
             listItemClasses: data.listItemClasses,
             linkClasses: data.linkClasses,
-            activePageClasses: data.activePageClasses
-
+            activePageClasses: data.activePageClasses,
+            displayStartRow: this.props.displayStartRow,
+            displayEndRow: this.props.displayEndRow,
+            displayTotal: this.props.displayTotal,
+            displayFiltered: this.props.displayFiltered,
+            displayOverallTotal: this.props.displayOverallTotal
         }
     }
 
@@ -44,7 +48,12 @@ class Paginator extends React.Component {
             pos2Classes: this.defineListItemClasses(data.pos2Value, data.currentPage, data.totalNumberOfPages),
             pos3Classes: this.defineListItemClasses(data.pos3Value, data.currentPage, data.totalNumberOfPages),
             pos4Classes: this.defineListItemClasses(data.pos4Value, data.currentPage, data.totalNumberOfPages),
-            pos5Classes: this.defineListItemClasses(data.pos5Value, data.currentPage, data.totalNumberOfPages)
+            pos5Classes: this.defineListItemClasses(data.pos5Value, data.currentPage, data.totalNumberOfPages),
+            displayStartRow: nextProps.displayStartRow,
+            displayEndRow: nextProps.displayEndRow,
+            displayTotal: nextProps.displayTotal,
+            displayFiltered: nextProps.displayFiltered,
+            displayOverallTotal: nextProps.displayOverallTotal
         });
     }
 
@@ -172,6 +181,10 @@ class Paginator extends React.Component {
                     <li className={this.state.listItemClasses}>
                         <a href="#!" className={this.state.linkClasses}
                            onClick={this.props.rowMover.bind(null, this.state.totalNumberOfPages)}>Last </a>
+                    </li>
+                    <li className={this.state.listItemClasses + ' disabled'}><span
+                        className={this.state.linkClasses}>Showing {this.state.displayStartRow} to {this.state.displayEndRow} of {this.state.displayTotal} records <span
+                        className={this.state.displayFiltered ? 'shown' : 'hidden'}>(filtered from {this.state.displayOverallTotal})</span></span>
                     </li>
                 </ul>
             </div>

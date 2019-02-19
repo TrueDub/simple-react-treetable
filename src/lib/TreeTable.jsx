@@ -233,13 +233,20 @@ class TreeTable extends React.Component {
 
     generatePaginatorRow() {
         if (this.props.control.showPagination && this.state.tableData.length > this.props.control.initialRowsPerPage) {
+            let displayStartRow = this.state.startRow + 1;
+            let displayEndRow = this.state.endRow > this.state.tableData.length ? this.state.tableData.length : this.state.endRow + 1;
             return (
                 <div>
                     <Paginator currentPage={this.state.currentPage}
                                tableLength={this.state.tableData.length}
                                rowsPerPage={this.props.control.initialRowsPerPage}
                                rowMover={this.moveToSpecificPage}
-                               paginationClasses={this.props.control.paginationClasses}/>
+                               paginationClasses={this.props.control.paginationClasses}
+                               displayStartRow={displayStartRow}
+                               displayEndRow={displayEndRow}
+                               displayTotal={this.state.tableData.length}
+                               displayFiltered={this.state.filtered}
+                               displayOverallTotal={this.props.tableData.length}/>
                 </div>
             );
         }
@@ -251,7 +258,7 @@ class TreeTable extends React.Component {
         let tableBody = this.generateTableBody(this.state.tableData, this.state.startRow, this.state.endRow);
         return (
             <div>
-                <div className='topbar-container'>
+                <div>
                     <input type="text" value={this.props.filterValue} onChange={this.props.applyFilter.bind(null)}
                            placeholder={this.props.control.filterInputPlaceholderText}
                            className={this.props.control.showFilterInput ? this.props.control.filterInputClasses : 'hidden'}/>
