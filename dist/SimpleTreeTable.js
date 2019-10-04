@@ -431,6 +431,7 @@ SimpleTreeTable.propTypes = {
       resetSortingButtonClasses: _propTypes.default.string,
       filterInputClasses: _propTypes.default.string,
       paginationClasses: _propTypes.default.shape({
+        containerClasses: _propTypes.default.string,
         listClasses: _propTypes.default.string,
         listItemClasses: _propTypes.default.string,
         linkClasses: _propTypes.default.string,
@@ -470,6 +471,7 @@ SimpleTreeTable.defaultProps = {
       resetSortingButtonClasses: '',
       filterInputClasses: '',
       paginationClasses: {
+        containerClasses: '',
         listClasses: '',
         listItemClasses: '',
         linkClasses: '',

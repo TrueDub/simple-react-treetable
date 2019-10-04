@@ -133,6 +133,36 @@ let tableData = [
             order: 3.04
         },
         children: []
+    },
+    {
+        data: {
+            name: "name0m",
+            dataType: "Number",
+            example: "1",
+            description: "number blah",
+            order: 3.04
+        },
+        children: []
+    },
+    {
+        data: {
+            name: "name0m",
+            dataType: "Number",
+            example: "1",
+            description: "number blah",
+            order: 3.04
+        },
+        children: []
+    },
+    {
+        data: {
+            name: "name0m",
+            dataType: "Number",
+            example: "1",
+            description: "number blah",
+            order: 3.04
+        },
+        children: []
     }
 ];
 let controlWithButton = {
@@ -147,6 +177,7 @@ let controlWithButton = {
         expandCollapseButtonClasses: "btn btn-default float-left",
         resetSortingButtonClasses: "btn btn-default float-right",
         paginationClasses: {
+            containerClasses: 'fred',
             listClasses: "pagination justify-content-center",
             listItemClasses: 'page-item',
             linkClasses: 'page-link',

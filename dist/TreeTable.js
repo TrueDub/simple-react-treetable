@@ -101,6 +101,7 @@ function (_React$Component) {
           resetSortingButtonClasses: "btn btn-default float-right",
           filterInputClasses: "float-left col-xs-2",
           paginationClasses: {
+            containerClasses: '',
             listClasses: "pagination justify-content-center",
             listItemClasses: 'page-item',
             linkClasses: 'page-link',
@@ -403,7 +404,7 @@ function (_React$Component) {
       if (this.props.control.showPagination && this.state.tableData.length > this.props.control.initialRowsPerPage) {
         var displayStartRow = this.state.startRow + 1;
         var displayEndRow = this.state.endRow > this.state.tableData.length ? this.state.tableData.length : this.state.endRow + 1;
-        return _react.default.createElement("div", null, _react.default.createElement(_Paginator.default, {
+        return _react.default.createElement(_Paginator.default, {
           currentPage: this.state.currentPage,
           tableLength: this.state.tableData.length,
           rowsPerPage: this.props.control.initialRowsPerPage,
@@ -414,7 +415,7 @@ function (_React$Component) {
           displayTotal: this.state.tableData.length,
           displayFiltered: this.state.filtered,
           displayOverallTotal: this.props.tableData.length
-        }));
+        });
       }
 
       return _react.default.createElement("div", null);

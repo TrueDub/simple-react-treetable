@@ -5,6 +5,7 @@ class Paginator extends React.Component {
 
     constructor(props) {
         super(props);
+        console.log(this.props.paginationClasses.containerClasses);
         let data = this.performCalcs(this.props.currentPage, this.props.tableLength);
         this.state = {
             pos1Value: data.pos1Value,
@@ -19,6 +20,7 @@ class Paginator extends React.Component {
             pos5Classes: data.pos5Classes,
             totalNumberOfPages: data.totalNumberOfPages,
             currentPage: data.currentPage,
+            containerClasses: data.containerClasses,
             listClasses: data.listClasses,
             listItemClasses: data.listItemClasses,
             linkClasses: data.linkClasses,
@@ -41,6 +43,7 @@ class Paginator extends React.Component {
             pos5Value: data.pos5Value,
             totalNumberOfPages: data.totalNumberOfPages,
             currentPage: data.currentPage,
+            containerClasses: data.containerClasses,
             listClasses: data.listClasses,
             listItemClasses: data.listItemClasses,
             linkClasses: data.linkClasses,
@@ -100,6 +103,10 @@ class Paginator extends React.Component {
         if (this.props.paginationClasses && this.props.paginationClasses.activePageClasses) {
             activePageClasses += this.props.paginationClasses.activePageClasses;
         }
+        let containerClasses = '';
+        if (this.props.paginationClasses && this.props.paginationClasses.containerClasses) {
+            containerClasses += this.props.paginationClasses.containerClasses;
+        }
         return {
             pos1Value: pos1Value,
             pos1Classes: this.defineListItemClasses(pos1Value, currentPage, totalNumberOfPages),
@@ -116,7 +123,8 @@ class Paginator extends React.Component {
             listClasses: listClasses,
             listItemClasses: listItemClasses,
             linkClasses: linkClasses,
-            activePageClasses: activePageClasses
+            activePageClasses: activePageClasses,
+            containerClasses: containerClasses
         }
     }
 
@@ -144,49 +152,51 @@ class Paginator extends React.Component {
 
     render() {
         return (
-            <div>
-                <ul className={this.state.listClasses}>
-                    <li className={this.state.listItemClasses}>
-                        <a href="#!" className={this.state.linkClasses}
-                           onClick={this.props.rowMover.bind(null, 1)}> First </a>
-                    </li>
-                    <li className={this.state.listItemClasses}>
-                        <a href="#!" className={this.state.linkClasses}
-                           onClick={this.props.rowMover.bind(null, this.state.currentPage - 1)}>Previous </a>
-                    </li>
-                    <li className={this.state.pos1Classes}>
-                        <a href="#!" className={this.state.linkClasses}
-                           onClick={this.props.rowMover.bind(null, this.state.pos1Value)}>{this.state.pos1Value}</a>
-                    </li>
-                    <li className={this.state.pos2Classes}>
-                        <a href="#!" className={this.state.linkClasses}
-                           onClick={this.props.rowMover.bind(null, this.state.pos2Value)}>{this.state.pos2Value}</a>
-                    </li>
-                    <li className={this.state.pos3Classes}>
-                        <a href="#!" className={this.state.linkClasses}
-                           onClick={this.props.rowMover.bind(null, this.state.pos3Value)}>{this.state.pos3Value}</a>
-                    </li>
-                    <li className={this.state.pos4Classes}>
-                        <a href="#!" className={this.state.linkClasses}
-                           onClick={this.props.rowMover.bind(null, this.state.pos4Value)}>{this.state.pos4Value}</a>
-                    </li>
-                    <li className={this.state.pos5Classes}>
-                        <a href="#!" className={this.state.linkClasses}
-                           onClick={this.props.rowMover.bind(null, this.state.pos5Value)}>{this.state.pos5Value}</a>
-                    </li>
-                    <li className={this.state.listItemClasses}>
-                        <a href="#!" className={this.state.linkClasses}
-                           onClick={this.props.rowMover.bind(null, this.state.currentPage + 1)}>Next </a>
-                    </li>
-                    <li className={this.state.listItemClasses}>
-                        <a href="#!" className={this.state.linkClasses}
-                           onClick={this.props.rowMover.bind(null, this.state.totalNumberOfPages)}>Last </a>
-                    </li>
-                    <li className={this.state.listItemClasses + ' disabled'}><span
-                        className={this.state.linkClasses}>Showing {this.state.displayStartRow} to {this.state.displayEndRow} of {this.state.displayTotal} records <span
-                        className={this.state.displayFiltered ? 'shown' : 'hidden'}>(filtered from {this.state.displayOverallTotal})</span></span>
-                    </li>
-                </ul>
+            <div className={this.state.containerClasses}>
+                <nav>
+                    <ul className={this.state.listClasses}>
+                        <li className={this.state.listItemClasses}>
+                            <a href="#!" className={this.state.linkClasses}
+                               onClick={this.props.rowMover.bind(null, 1)}> First </a>
+                        </li>
+                        <li className={this.state.listItemClasses}>
+                            <a href="#!" className={this.state.linkClasses}
+                               onClick={this.props.rowMover.bind(null, this.state.currentPage - 1)}>Previous </a>
+                        </li>
+                        <li className={this.state.pos1Classes}>
+                            <a href="#!" className={this.state.linkClasses}
+                               onClick={this.props.rowMover.bind(null, this.state.pos1Value)}>{this.state.pos1Value}</a>
+                        </li>
+                        <li className={this.state.pos2Classes}>
+                            <a href="#!" className={this.state.linkClasses}
+                               onClick={this.props.rowMover.bind(null, this.state.pos2Value)}>{this.state.pos2Value}</a>
+                        </li>
+                        <li className={this.state.pos3Classes}>
+                            <a href="#!" className={this.state.linkClasses}
+                               onClick={this.props.rowMover.bind(null, this.state.pos3Value)}>{this.state.pos3Value}</a>
+                        </li>
+                        <li className={this.state.pos4Classes}>
+                            <a href="#!" className={this.state.linkClasses}
+                               onClick={this.props.rowMover.bind(null, this.state.pos4Value)}>{this.state.pos4Value}</a>
+                        </li>
+                        <li className={this.state.pos5Classes}>
+                            <a href="#!" className={this.state.linkClasses}
+                               onClick={this.props.rowMover.bind(null, this.state.pos5Value)}>{this.state.pos5Value}</a>
+                        </li>
+                        <li className={this.state.listItemClasses}>
+                            <a href="#!" className={this.state.linkClasses}
+                               onClick={this.props.rowMover.bind(null, this.state.currentPage + 1)}>Next </a>
+                        </li>
+                        <li className={this.state.listItemClasses}>
+                            <a href="#!" className={this.state.linkClasses}
+                               onClick={this.props.rowMover.bind(null, this.state.totalNumberOfPages)}>Last </a>
+                        </li>
+                        <li className={this.state.listItemClasses + ' disabled'}><span
+                            className={this.state.linkClasses}>Showing {this.state.displayStartRow} to {this.state.displayEndRow} of {this.state.displayTotal} records <span
+                            className={this.state.displayFiltered ? 'shown' : 'hidden'}>(filtered from {this.state.displayOverallTotal})</span></span>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         );
     }

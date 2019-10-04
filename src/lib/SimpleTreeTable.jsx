@@ -308,6 +308,7 @@ SimpleTreeTable
             resetSortingButtonClasses: PropTypes.string,
             filterInputClasses: PropTypes.string,
             paginationClasses: PropTypes.shape({
+                containerClasses: PropTypes.string,
                 listClasses: PropTypes.string,
                 listItemClasses: PropTypes.string,
                 linkClasses: PropTypes.string,
@@ -349,6 +350,7 @@ SimpleTreeTable
             resetSortingButtonClasses: '',
             filterInputClasses: '',
             paginationClasses: {
+                containerClasses: '',
                 listClasses: '',
                 listItemClasses: '',
                 linkClasses: '',

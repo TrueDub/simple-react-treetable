@@ -36,6 +36,7 @@ class TreeTable extends React.Component {
                 resetSortingButtonClasses: "btn btn-default float-right",
                 filterInputClasses: "float-left col-xs-2",
                 paginationClasses: {
+                    containerClasses: '',
                     listClasses: "pagination justify-content-center",
                     listItemClasses: 'page-item',
                     linkClasses: 'page-link',
@@ -261,18 +262,16 @@ class TreeTable extends React.Component {
             let displayStartRow = this.state.startRow + 1;
             let displayEndRow = this.state.endRow > this.state.tableData.length ? this.state.tableData.length : this.state.endRow + 1;
             return (
-                <div>
-                    <Paginator currentPage={this.state.currentPage}
-                               tableLength={this.state.tableData.length}
-                               rowsPerPage={this.props.control.initialRowsPerPage}
-                               rowMover={this.moveToSpecificPage}
-                               paginationClasses={this.state.styling.paginationClasses}
-                               displayStartRow={displayStartRow}
-                               displayEndRow={displayEndRow}
-                               displayTotal={this.state.tableData.length}
-                               displayFiltered={this.state.filtered}
-                               displayOverallTotal={this.props.tableData.length}/>
-                </div>
+                <Paginator currentPage={this.state.currentPage}
+                           tableLength={this.state.tableData.length}
+                           rowsPerPage={this.props.control.initialRowsPerPage}
+                           rowMover={this.moveToSpecificPage}
+                           paginationClasses={this.state.styling.paginationClasses}
+                           displayStartRow={displayStartRow}
+                           displayEndRow={displayEndRow}
+                           displayTotal={this.state.tableData.length}
+                           displayFiltered={this.state.filtered}
+                           displayOverallTotal={this.props.tableData.length}/>
             );
         }
         return <div></div>;

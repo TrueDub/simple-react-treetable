@@ -46,6 +46,7 @@ function (_React$Component) {
     _classCallCheck(this, Paginator);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Paginator).call(this, props));
+    console.log(_this.props.paginationClasses.containerClasses);
 
     var data = _this.performCalcs(_this.props.currentPage, _this.props.tableLength);
 
@@ -62,6 +63,7 @@ function (_React$Component) {
       pos5Classes: data.pos5Classes,
       totalNumberOfPages: data.totalNumberOfPages,
       currentPage: data.currentPage,
+      containerClasses: data.containerClasses,
       listClasses: data.listClasses,
       listItemClasses: data.listItemClasses,
       linkClasses: data.linkClasses,
@@ -87,6 +89,7 @@ function (_React$Component) {
         pos5Value: data.pos5Value,
         totalNumberOfPages: data.totalNumberOfPages,
         currentPage: data.currentPage,
+        containerClasses: data.containerClasses,
         listClasses: data.listClasses,
         listItemClasses: data.listItemClasses,
         linkClasses: data.linkClasses,
@@ -159,6 +162,12 @@ function (_React$Component) {
         activePageClasses += this.props.paginationClasses.activePageClasses;
       }
 
+      var containerClasses = '';
+
+      if (this.props.paginationClasses && this.props.paginationClasses.containerClasses) {
+        containerClasses += this.props.paginationClasses.containerClasses;
+      }
+
       return {
         pos1Value: pos1Value,
         pos1Classes: this.defineListItemClasses(pos1Value, currentPage, totalNumberOfPages),
@@ -175,7 +184,8 @@ function (_React$Component) {
         listClasses: listClasses,
         listItemClasses: listItemClasses,
         linkClasses: linkClasses,
-        activePageClasses: activePageClasses
+        activePageClasses: activePageClasses,
+        containerClasses: containerClasses
       };
     }
   }, {
@@ -209,7 +219,9 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      return _react.default.createElement("div", null, _react.default.createElement("ul", {
+      return _react.default.createElement("div", {
+        className: this.state.containerClasses
+      }, _react.default.createElement("nav", null, _react.default.createElement("ul", {
         className: this.state.listClasses
       }, _react.default.createElement("li", {
         className: this.state.listItemClasses
@@ -271,7 +283,7 @@ function (_React$Component) {
         className: this.state.linkClasses
       }, "Showing ", this.state.displayStartRow, " to ", this.state.displayEndRow, " of ", this.state.displayTotal, " records ", _react.default.createElement("span", {
         className: this.state.displayFiltered ? 'shown' : 'hidden'
-      }, "(filtered from ", this.state.displayOverallTotal, ")")))));
+      }, "(filtered from ", this.state.displayOverallTotal, ")"))))));
     }
   }]);
 
