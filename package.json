@@ -42,7 +42,7 @@
     "del": "^3.0.0",
     "enzyme": "^3.7.0",
     "enzyme-adapter-react-16": "^1.7.0",
-    "highlight.js": "^9.13.1",
+    "highlight.js": "^10.4.1",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-highlight": "^0.12.0",
